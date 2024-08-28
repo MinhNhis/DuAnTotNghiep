@@ -29,6 +29,7 @@ const changPassword = async (id_nguoidung, {mat_khau, newMat_khau}) => {
         newMat_khau: newMat_khau
       }
     })
+    return res
   } catch (error) {
     throw error
   }
