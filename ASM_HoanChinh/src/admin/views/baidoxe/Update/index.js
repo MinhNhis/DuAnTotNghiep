@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 import { getBaidoxeById, putbaidoxe } from "../../../../services/Baidoxe";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 
@@ -11,7 +11,8 @@ const UpdateBaiDoXe = () => {
   const params = useParams();
   const id = params?.id_baidoxe;
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     fetchBaiDoXe();
@@ -26,12 +27,14 @@ const UpdateBaiDoXe = () => {
   const onSubmit = async (data) => {
     try {
       await putbaidoxe(id, {
-        bai_do_xe: data?.bai_do_xe
+        bai_do_xe: data?.bai_do_xe,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Cập nhật bãi đỗ xe thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Cập nhật bãi đỗ xe thành công!', { variant: 'success' });
       navigate("/admin/bai-do-xe");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi cập nhật bãi đỗ xe!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi cập nhật bãi đỗ xe!', { variant: 'error' });
       console.error("Lỗi khi cập nhật Bãi Đỗ Xe:", error);
     }
   };

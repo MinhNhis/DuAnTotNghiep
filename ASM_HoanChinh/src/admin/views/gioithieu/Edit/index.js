@@ -18,7 +18,6 @@ import { useForm, Controller } from "react-hook-form";
 import { getDichvu } from "../../../../services/Dichvu";
 import {
     editGioithieu,
-    getAnuong,
     getBaidoxe,
     getCacDichvu,
     getGioithieuById,
@@ -39,7 +38,6 @@ const EditGioiThieu = () => {
             tuychondichvu: '',
             dichvu: '',
             baidoxe: '',
-            anuong: '',
             khongkhi: '',
             khachhang: '',
             kehoach: '',
@@ -48,16 +46,18 @@ const EditGioiThieu = () => {
     })
     const [gioithieu, setGioithieu] = useState({});
     const [dichvu, setDichvu] = useState([]);
-    const [anuong, setAnuong] = useState([]);
     const [khongkhi, setKhongkhi] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [tiennghi, setTiennghi] = useState([]);
     const [khachhang, setKhachhang] = useState([]);
     const [baidoxe, setBaidoxe] = useState([]);
     const [cacdichvu, setCacdichvu] = useState([]);
+    const [account, setAccounts] = useState(null);
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        setAccounts(accounts);
         initData()
     }, [])
 
@@ -72,12 +72,6 @@ const EditGioiThieu = () => {
             setValue('dichvu', selectedDichvu.id_dichvu);
         }
 
-        const resultAnuong = await getAnuong();
-        setAnuong(resultAnuong.data)
-        const selectedAnuong = resultAnuong.data.find((e) => e.id_anuong === resultGioithieu.data.id_anuong);
-        if (selectedAnuong) {
-            setValue('anuong', selectedAnuong.id_anuong);
-        }
         const resultKhongkhi = await getKhongkhi();
         setKhongkhi(resultKhongkhi.data)
         const selectedKhongkhi = resultKhongkhi.data.find((e) => e.id_khongkhi === resultGioithieu.data.id_khongkhi);
@@ -121,25 +115,27 @@ const EditGioiThieu = () => {
     const submit = async (value) => {
         console.log("value====", value);
         try {
-        await editGioithieu(id,{
-            gioi_thieu: value?.gioithieu,
-            id_tuychondichvu: value?.tuychondichvu,
-            id_dichvu: value?.dichvu,
-            id_baidoxe: value?.baidoxe,
-            id_anuong: value?.anuong,
-            id_khongkhi: value?.khongkhi,
-            id_loaikh: value?.khachhang,
-            id_kehoach: value?.kehoach,
-            id_tiennghi: value?.tiennghi,
-        })
-        enqueueSnackbar('Cập nhật thành công!', { variant: 'success' }); 
+            await editGioithieu(id, {
+                gioi_thieu: value?.gioithieu,
+                id_tuychondichvu: value?.tuychondichvu,
+                id_dichvu: value?.dichvu,
+                id_baidoxe: value?.baidoxe,
+                id_anuong: value?.anuong,
+                id_khongkhi: value?.khongkhi,
+                id_loaikh: value?.khachhang,
+                id_kehoach: value?.kehoach,
+                id_tiennghi: value?.tiennghi,
+                created_user: account.id_nguoidung,
+                updated_user: account.id_nguoidung
+            })
+            enqueueSnackbar('Cập nhật thành công!', { variant: 'success' });
             navigate("/admin/gioi-thieu");
         } catch (error) {
-            enqueueSnackbar('Cập nhật thất bại!', { variant: 'error' }); 
+            enqueueSnackbar('Cập nhật thất bại!', { variant: 'error' });
         }
     }
 
-    const handleCancle = () =>{
+    const handleCancle = () => {
         navigate('/admin/gioi-thieu')
     }
 
@@ -175,11 +171,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {cacdichvu.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_cacdichvu}>
-                                                                {value.tuy_chon_dv}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {cacdichvu.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_cacdichvu} value={value.id_cacdichvu}>
+                                                                        {value.tuy_chon_dv}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -209,11 +214,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {dichvu.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_dichvu}>
-                                                                {value.dich_vu}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {dichvu.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_dichvu} value={value.id_dichvu}>
+                                                                        {value.dich_vu}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -243,11 +257,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {baidoxe.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_baidoxe}>
-                                                                {value.bai_do_xe}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {baidoxe.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_baidoxe} value={value.id_baidoxe}>
+                                                                        {value.bai_do_xe}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -259,39 +282,25 @@ const EditGioiThieu = () => {
                                         </FormControl>
                                     </Grid>
                                 </div>
-
-                                {/* Ăn uống */}
                                 <div className="mb-3">
-                                    <label className="form-label" style={{ fontSize: "16px", fontWeight: "bold" }}>Ăn uống</label>
-                                    <Grid item lg={4} md={6} sm={12}>
-                                        <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                                            <InputLabel id="service-options-label">Ăn uống</InputLabel>
-                                            <Controller
-                                                name="anuong"
-                                                control={control}
-                                                rules={{ required: 'Vui lòng chọn ăn uống' }}
-                                                render={({ field }) => (
-                                                    <Select
-                                                        labelId="service-options-label"
-                                                        id="service-options"
-                                                        label="Tùy chọn dịch vụ"
-                                                        {...field}
-                                                    >
-                                                        {anuong.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_anuong}>
-                                                                {value.an_uong}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                )}
-                                            />
-                                            {errors.anuong && (
-                                                <small className="text-danger">
-                                                    {errors.anuong.message}
-                                                </small>
-                                            )}
-                                        </FormControl>
-                                    </Grid>
+                                    <div className="form-floating">
+                                        <textarea className="form-control" defaultValue={gioithieu.gioi_thieu} placeholder="Leave a comment here" id="floatingTextarea2" style={{ height: "100px" }}
+                                            {
+                                            ...register("gioithieu", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Nội dung giới thiệu không được bỏ trống"
+                                                }
+                                            })
+                                            }
+                                        ></textarea>
+                                        <label className="form-lable"></label>
+                                    </div>
+                                    {formState?.errors?.gioithieu && (
+                                        <small className="text-danger">
+                                            {formState?.errors?.gioithieu?.message}
+                                        </small>
+                                    )}
                                 </div>
                             </div>
 
@@ -313,11 +322,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {khongkhi.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_khongkhi}>
-                                                                {value.khong_khi}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {khongkhi.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_khongkhi} value={value.id_khongkhi}>
+                                                                        {value.khong_khi}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -347,11 +365,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {khachhang.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_loaikh}>
-                                                                {value.khach_hang}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {khachhang.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_loaikh} value={value.id_loaikh}>
+                                                                        {value.khach_hang}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -381,11 +408,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {kehoach.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_kehoach}>
-                                                                {value.ke_hoach}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {kehoach.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_kehoach} value={value.id_kehoach}>
+                                                                        {value.ke_hoach}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -415,11 +451,20 @@ const EditGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {tiennghi.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_tiennghi}>
-                                                                {value.tien_nghi}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {tiennghi.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_tiennghi} value={value.id_tiennghi}>
+                                                                        {value.tien_nghi}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -433,31 +478,11 @@ const EditGioiThieu = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mb-3">
-                            <div className="form-floating">
-                                <textarea className="form-control" defaultValue={gioithieu.gioi_thieu} placeholder="Leave a comment here" id="floatingTextarea2" style={{ height: "100px" }}
-                                    {
-                                    ...register("gioithieu", {
-                                        required: {
-                                            value: true,
-                                            message: "Nội dung giới thiệu không được bỏ trống"
-                                        }
-                                    })
-                                    }
-                                ></textarea>
-                                <label className="form-lable"></label>
-                            </div>
-                            {formState?.errors?.gioithieu && (
-                                <small className="text-danger">
-                                    {formState?.errors?.gioithieu?.message}
-                                </small>
-                            )}
-                        </div>
                         <div>
-                            <Button color="primary" variant="contained" onClick={handleSubmit(submit)} style={{width: "100px"}}>
+                            <Button color="primary" variant="contained" onClick={handleSubmit(submit)} style={{ width: "100px" }}>
                                 Sửa
                             </Button>
-                            <Button color="error" variant="contained" onClick={handleCancle} style={{color: "white" ,width: "100px", marginLeft: "10px"}}>
+                            <Button color="error" variant="contained" onClick={handleCancle} style={{ color: "white", width: "100px", marginLeft: "10px" }}>
                                 Hủy
                             </Button>
                         </div>

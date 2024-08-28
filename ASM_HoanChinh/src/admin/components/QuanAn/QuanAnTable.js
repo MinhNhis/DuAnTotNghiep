@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { BASE_URL } from "../../../config/ApiConfig";
 import {
   Typography,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -15,15 +13,15 @@ import {
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
 import { getQuanan } from "../../../services/Quanan";
 
-
 const ExQuanAn = () => {
-  const navigate = useNavigate();
   const [quanan, setQuanan] = useState([])
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initFata()
   }, [])
   const initFata = async () => {
@@ -37,7 +35,7 @@ const ExQuanAn = () => {
     <Table aria-label="simple table" sx={{ mt: 3, }}>
       <TableHead>
         <TableRow>
-        <TableCell>
+          <TableCell>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               STT
             </Typography>
@@ -85,7 +83,7 @@ const ExQuanAn = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {quanan.map((items, index) => (
+        {quanan.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((items, index) => (
           <TableRow key={items.id_quanan}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
@@ -100,7 +98,7 @@ const ExQuanAn = () => {
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
                 {items.hinh_anh && (
-                  <img style={{height: '5rem', width: '6rem'}} src={`${BASE_URL}/uploads/${items.hinh_anh}`} alt=""></img>
+                  <img style={{ height: '5rem', width: '6rem' }} src={`${BASE_URL}/uploads/${items.hinh_anh}`} alt=""></img>
                 )}
               </Typography>
             </TableCell>
@@ -131,13 +129,13 @@ const ExQuanAn = () => {
             </TableCell>
             <TableCell>
               <Typography >
-              <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
-                  <IconButton aria-label="edit" color="primary" style={{width: "50px", height: "50px"}}>
+                <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
+                  <IconButton aria-label="edit" color="primary" style={{ width: "50px", height: "50px" }}>
                     <EditIcon />
                   </IconButton>
                 </Link>
                 <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
-                  <IconButton aria-label="edit" color="danger" style={{width: "50px", height: "50px"}}>
+                  <IconButton aria-label="edit" color="danger" style={{ width: "50px", height: "50px" }}>
                     <DeleteIcon />
                   </IconButton>
                 </Link>

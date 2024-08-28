@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -16,9 +16,11 @@ import { khongkhi } from "../../../services/Khongkhi";
 
 const KhongKhiTable = () => {
   const [khongkhis, setKhongkhi] = useState([]);
-  const navigate = useNavigate();
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
@@ -51,11 +53,11 @@ const KhongKhiTable = () => {
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Hành động
             </Typography>
-          </TableCell>
+          </TableCell> 
         </TableRow>
       </TableHead>
       <TableBody>
-        {khongkhis.map((khongkhi, index) => (
+        {khongkhis.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((khongkhi, index) => (
           <TableRow key={khongkhi.id_khongkhi}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -65,7 +67,7 @@ const KhongKhiTable = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {khongkhi.khong_khi}
                   </Typography>
                 </Box>

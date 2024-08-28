@@ -6,40 +6,48 @@ const kehoach = async () => {
       method: "GET",
       path: "/api/kehoachs",
     });
-    return res; 
+    return res;
   } catch (error) {
     console.error("Lỗi csdl:", error);
   }
 };
 
-const addkehoach = async (newKehoach) => {
+const addkehoach = async ({ ke_hoach, created_user }) => {
   try {
     const res = await request({
       method: "POST",
       path: "api/kehoachs",
-      data: newKehoach, 
+      data: {
+        ke_hoach: ke_hoach,
+        created_user: created_user,
+        updated_user: null
+      },
     });
     return res;
   } catch (error) {
     console.error("Lỗi khi thêm kế hoạch:", error);
-    throw error; 
+    throw error;
   }
 };
 const getKehoachById = async (id_kehoach) => {
-  
+
   const res = await request({
-      method: "GET",
-      path: `/api/kehoachs/${id_kehoach}`,
+    method: "GET",
+    path: `/api/kehoachs/${id_kehoach}`,
   });
   return res;
 }
 
-const putKehoach = async (id_kehoach, {ke_hoach}) => {
+const putKehoach = async (id_kehoach, { ke_hoach, created_user, updated_user }) => {
   try {
     const res = await request({
       method: "PUT",
       path: `api/kehoachs/${id_kehoach}`,
-      data: { ke_hoach: ke_hoach },
+      data: {
+        ke_hoach: ke_hoach,
+        created_user: created_user,
+        updated_user: updated_user
+      },
     });
     return res;
   } catch (error) {
@@ -50,11 +58,11 @@ const putKehoach = async (id_kehoach, {ke_hoach}) => {
 
 const deleteKehoach = async (id_kehoach) => {
   const res = await request({
-      method: "DELETE",
-      path: `api/kehoachs/${id_kehoach}`,
+    method: "DELETE",
+    path: `api/kehoachs/${id_kehoach}`,
   });
 
   return res;
 };
 
-export { addkehoach, kehoach, getKehoachById, putKehoach , deleteKehoach };
+export { addkehoach, kehoach, getKehoachById, putKehoach, deleteKehoach };

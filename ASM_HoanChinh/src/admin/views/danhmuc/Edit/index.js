@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { Card, CardContent, Divider, Box, Typography } from "@mui/material";
+import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { getDanhmucById, updateDanhmuc } from "../../../../services/Danhmuc";
 import { useSnackbar } from "notistack";
 
@@ -13,6 +13,7 @@ const EditDanhmuc = () => {
   const id = params.id_danhmuc;
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     inData();
@@ -28,6 +29,8 @@ const EditDanhmuc = () => {
     try {
       await updateDanhmuc(id, {
         danh_muc: data?.danh_muc,
+        created_user: accounts?.id_nguoidung,
+        updated_user: accounts?.id_nguoidung
       });
       enqueueSnackbar("Cập nhật danh mục thành công!", { variant: "success" });
       navigate("/admin/danhmuc");
@@ -68,10 +71,11 @@ const EditDanhmuc = () => {
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <input
+                    <TextField
                       {...field}
                       type="text"
-                      className="form-control w-60"
+                      variant="outlined"
+                      fullWidth
                     />
                   )}
                   {...register("danh_muc", {
@@ -87,26 +91,27 @@ const EditDanhmuc = () => {
                   </small>
                 )}
               </div>
-            </div>
+              <div className="mb-3">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmit(onSubmit)}
+                  sx={{ width: "100px", marginRight:2 }}
+                >
+                  {`Sửa`}
+                </Button>
 
-            <div className="mb-3">
-              <button
-                type="submit"
-                className="btn btn-primary m-lg-2"
-                onClick={handleSubmit(onSubmit)}
-                style={{ width: "100px" }}
-              >
-                {`Sửa`}
-              </button>
-
-              <button
-                type="button"
-                className="btn btn-danger m-lg-2"
-                onClick={handleCancle}
-                style={{ width: "100px" }}
-              >
-                {`Hủy`}
-              </button>
+                <Button
+                  type="button"
+                  variant="contained"
+                  color="error"
+                  onClick={handleCancle}
+                  sx={{ width: "100px" }}
+                >
+                  {`Hủy`}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>

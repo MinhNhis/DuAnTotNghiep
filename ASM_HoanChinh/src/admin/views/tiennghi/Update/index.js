@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 import { getTiennghiById, puttiennghi } from "../../../../services/Tiennghi";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 
@@ -11,7 +11,8 @@ const UpdateTienNghi = () => {
   const params = useParams();
   const id = params?.id_tiennghi;
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     fetchTiennghi();
@@ -30,12 +31,14 @@ const UpdateTienNghi = () => {
   const onSubmit = async (data) => {
     try {
       await puttiennghi(id, {
-        tien_nghi: data?.tien_nghi
+        tien_nghi: data?.tien_nghi,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Cập nhật tiện nghi thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Cập nhật tiện nghi thành công!', { variant: 'success' });
       navigate("/admin/tien-nghi");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi cập nhật tiện nghi!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi cập nhật tiện nghi!', { variant: 'error' });
       console.error("Lỗi khi cập nhật Tiện Nghi:", error);
     }
   };

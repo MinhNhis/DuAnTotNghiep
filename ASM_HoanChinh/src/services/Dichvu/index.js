@@ -18,26 +18,30 @@ const getDichvuById = async (id) => {
     return res
 }
 
-const addDichvu = async ({dich_vu}) => {
+const addDichvu = async ({dich_vu, created_user}) => {
     
     const res = await request({
         method: "POST",
         path: "api/dich-vu",
         data: {
-            dich_vu: dich_vu
+            dich_vu: dich_vu,
+            created_user: created_user,
+            updated_user: null
         }
     })
 
     return res
 }
 
-const editDichvu = async (id, {dich_vu}) => {
+const editDichvu = async (id, {dich_vu, created_user, updated_user}) => {
     
     const res = await request({
         method: "PUT",
         path: `api/dich-vu/${id}`,
         data: {
-            dich_vu: dich_vu
+            dich_vu: dich_vu,
+            created_user: created_user,
+            updated_user: updated_user
         }
     })
 

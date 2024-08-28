@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -16,9 +16,11 @@ import { tiennghi } from "../../../services/Tiennghi";
 
 const TienNghiTable = () => {
   const [tiennghis, setTiennghi] = useState([]);
-  const navigate = useNavigate();
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
@@ -55,7 +57,7 @@ const TienNghiTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {tiennghis.map((tien, index) => (
+        {tiennghis.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((tien, index) => (
           <TableRow key={tien.id_tiennghi}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -65,7 +67,7 @@ const TienNghiTable = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {tien.tien_nghi}
                   </Typography>
                 </Box>

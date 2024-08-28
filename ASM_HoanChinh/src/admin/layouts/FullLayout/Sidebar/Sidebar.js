@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useLocation } from "react-router";
 import { Link, NavLink } from "react-router-dom";
 import {
@@ -9,11 +9,12 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Collapse,
 } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { SidebarWidth } from "../../../assets/global/Theme-variable";
 import LogoIcon from "../Logo/LogoIcon";
 import Menuitems from "./data";
-
 
 const Sidebar = (props) => {
   const [open, setOpen] = React.useState(true);
@@ -22,12 +23,25 @@ const Sidebar = (props) => {
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
 
   const handleClick = (index) => {
-    if (open === index) {
-      setOpen((prevopen) => !prevopen);
-    } else {
-      setOpen(index);
-    }
+    setOpen((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
   };
+
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
+
+
+  const filteredMenuitems = useMemo(() => {
+    return Menuitems.filter(item => {
+      if (accounts.vai_tro === 2 && item.key === 2) {
+        return false;
+      }
+      return true;
+    }).map(item => {
+      return item;
+    });
+  }, [accounts.vai_tro, Menuitems]);
 
   const SidebarContent = (
     <Box sx={{ p: 3, height: "calc(100vh - 40px)" }}>
@@ -43,20 +57,18 @@ const Sidebar = (props) => {
             mt: 4,
           }}
         >
-          {Menuitems.map((item, index) => {
-            //{/********SubHeader**********/}
-
-            return (
-              <List component="li" disablePadding key={item.title}>
+          {filteredMenuitems.map((item, index) => (
+            <div key={item.title}>
+              <List component="li" disablePadding>
                 <ListItem
-                  onClick={() => handleClick(index)}
                   button
                   component={NavLink}
                   to={item.href}
-                  selected={pathDirect === item.href}
+                  selected={window.location.pathname === item.href}
+                  onClick={() => handleClick(index)}
                   sx={{
                     mb: 1,
-                    ...(pathDirect === item.href && {
+                    ...(window.location.pathname === item.href && {
                       color: "white",
                       backgroundColor: (theme) =>
                         `${theme.palette.primary.main}!important`,
@@ -65,18 +77,50 @@ const Sidebar = (props) => {
                 >
                   <ListItemIcon
                     sx={{
-                      ...(pathDirect === item.href && { color: "white" }),
+                      ...(window.location.pathname === item.href && {
+                        color: "white",
+                      }),
                     }}
                   >
                     <item.icon width="20" height="20" />
                   </ListItemIcon>
-                  <ListItemText>
-                    <strong>{item.title}</strong>
-                  </ListItemText>
+                  <ListItemText primary={item.title} />
+                  {item.children &&
+                    (open[index] ? <ExpandLess /> : <ExpandMore />)}
                 </ListItem>
+                {item.children && (
+                  <Collapse in={open[index]} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {item.children.map((child) => (
+                        <ListItem
+                          key={child.title}
+                          button
+                          component={NavLink}
+                          to={child.href}
+                          sx={{ pl: 4 }}
+                          selected={window.location.pathname === child.href}
+                        >
+                          <ListItemIcon
+                            sx={{
+                              ...(window.location.pathname === child.href && {
+                                color: "white",
+                              }),
+                            }}
+                          >
+                            <child.icon width="20" height="20" />
+                          </ListItemIcon>
+                          <ListItemText
+                            primary={child.title}
+                            style={{ fontWeight: "bold" }}
+                          />
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
               </List>
-            );
-          })}
+            </div>
+          ))}
         </List>
       </Box>
     </Box>

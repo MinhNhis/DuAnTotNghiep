@@ -18,7 +18,7 @@ const getGioithieuById = async (id) => {
     return res
 }
 
-const addGioithieu = async ({ gioi_thieu, id_tuychondichvu, id_dichvu, id_baidoxe, id_anuong, id_khongkhi, id_loaikh, id_kehoach, id_tiennghi, }) => {
+const addGioithieu = async ({ gioi_thieu, id_tuychondichvu, id_dichvu, id_baidoxe, id_anuong, id_khongkhi, id_loaikh, id_kehoach, id_tiennghi, created_user }) => {
 
     const res = await request({
         method: "POST",
@@ -33,13 +33,15 @@ const addGioithieu = async ({ gioi_thieu, id_tuychondichvu, id_dichvu, id_baidox
             id_loaikh: id_loaikh,
             id_kehoach: id_kehoach,
             id_tiennghi: id_tiennghi,
+            created_user: created_user,
+            updated_user: null
         }
     })
 
     return res
 }
 
-const editGioithieu = async (id, { gioi_thieu, id_tuychondichvu, id_dichvu, id_baidoxe, id_anuong, id_khongkhi, id_loaikh, id_kehoach, id_tiennghi, }) => {
+const editGioithieu = async (id, { gioi_thieu, id_tuychondichvu, id_dichvu, id_baidoxe, id_anuong, id_khongkhi, id_loaikh, id_kehoach, id_tiennghi, created_user, updated_user }) => {
 
     const res = await request({
         method: "PUT",
@@ -54,6 +56,8 @@ const editGioithieu = async (id, { gioi_thieu, id_tuychondichvu, id_dichvu, id_b
             id_loaikh: id_loaikh,
             id_kehoach: id_kehoach,
             id_tiennghi: id_tiennghi,
+            created_user: created_user,
+            updated_user: updated_user
         }
     })
 
@@ -125,16 +129,6 @@ const getCacDichvu = async () => {
     return res
 }
 
-const getAnuong = async () => {
-    const res = await request({
-        method: "GET",
-        path: "/api/anuongs"
-    });
-
-    return res
-}
 
 
-
-
-export { getGioithieu, addGioithieu,getGioithieuById, editGioithieu, deleteGioithieu, getAnuong, getBaidoxe, getCacDichvu, getKehoach, getKhachhang, getKhongkhi, getTiennghi }
+export { getGioithieu, addGioithieu, getGioithieuById, editGioithieu, deleteGioithieu, getBaidoxe, getCacDichvu, getKehoach, getKhachhang, getKhongkhi, getTiennghi }

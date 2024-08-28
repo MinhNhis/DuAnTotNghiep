@@ -14,18 +14,21 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { baidoxe } from "../../../services/Baidoxe";
 
+
 const BaiDoXeTable = () => {
   const [baidoxes, setBaidoxe] = useState([]);
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
   const initData = async () => {
     try {
       const result = await baidoxe();
-        setBaidoxe(result.data);
-        console.log(result.data);
+      setBaidoxe(result.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu bãi đỗ xe:", error);
       setBaidoxe([]);
@@ -54,7 +57,7 @@ const BaiDoXeTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {baidoxes.map((bai, index) => (
+        {baidoxes.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((bai, index) => (
           <TableRow key={bai.id_baidoxe}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -64,7 +67,7 @@ const BaiDoXeTable = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {bai.bai_do_xe}
                   </Typography>
                 </Box>

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { editLKH, getLKHById } from "../../../../services/Khachhang";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 
 const EditLKH = () => {
   const { control, register, handleSubmit, setValue, formState } = useForm();
@@ -11,7 +11,8 @@ const EditLKH = () => {
   const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const handleCancle = () => {
     navigate("/admin/loai-khach-hang");
@@ -33,14 +34,15 @@ const EditLKH = () => {
 
   const submit = async (value) => {
     try {
-      console.log(value);
       await editLKH(id, {
         khach_hang: value?.loaikhachhang,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Sửa loại khách hàng thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Sửa loại khách hàng thành công!', { variant: 'success' });
       navigate("/admin/loai-khach-hang");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi sửa loại khách hàng!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi sửa loại khách hàng!', { variant: 'error' });
       console.error('Lỗi khi sửa loại khách hàng:', error);
     }
   };

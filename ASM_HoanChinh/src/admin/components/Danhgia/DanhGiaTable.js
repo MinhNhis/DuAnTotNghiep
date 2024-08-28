@@ -10,25 +10,34 @@ import {
   Box,
 } from "@mui/material";
 
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
+// import IconButton from '@mui/material/IconButton';
+// import DeleteIcon from '@mui/icons-material/Delete';
+// import EditIcon from '@mui/icons-material/Edit';
 
 import { getDanhgia } from "../../../services/Danhgia";
+import { getQuanan } from "../../../services/Quanan";
 
 
 const ExDanhGia = () => {
   const [danhgia, setDanhGia] = useState([])
+  const [quanan, setQuanan] = useState([])
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initFata()
   }, [])
   const initFata = async () => {
     const result = await getDanhgia()
     setDanhGia(result.data)
+
+    const resultQuan = await getQuanan()
+    setQuanan(resultQuan.data)
   }
+  const quan = quanan.find((e) => e.created_user === accounts.id_nguoidung || e.updated_user === accounts.id_nguoidung)
 
   const renderStars = (stars) => {
     return [...Array(5)].map((_, i) => (
@@ -85,7 +94,7 @@ const ExDanhGia = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {danhgia.map((items, index) => (
+        {danhgia.filter(fil => fil?.id_quanan === quan?.id_quanan || accounts?.vai_tro === 0).map((items, index) => (
           <TableRow key={items.id_danhgia}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>

@@ -9,11 +9,12 @@ const AddBaiDoXe = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar(); 
-
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
   const submit = async (value) => {
     try {
       const newBaidoxe = {
         bai_do_xe: value.bai_do_xe, 
+        created_user: accounts.id_nguoidung
       };
       await addbaidoxe(newBaidoxe);
       enqueueSnackbar('Thêm bãi đỗ xe thành công!', { variant: 'success' });

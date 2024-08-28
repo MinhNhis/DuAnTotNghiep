@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
-import { getAnuong, getBaidoxe, getCacDichvu, getGioithieu, getKehoach, getKhongkhi, getTiennghi } from "../../../services/Gioithieu";
+import { getBaidoxe, getCacDichvu, getGioithieu, getKehoach, getKhongkhi, getTiennghi } from "../../../services/Gioithieu";
 import { getDichvu } from "../../../services/Dichvu";
 import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
@@ -23,7 +23,6 @@ const Gioithieu = () => {
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
-    const [anuong, setAnuong] = useState([]);
     const [baidoxe, setBaidoxe] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [loaikhachhang, setLoaikhachhang] = useState([]);
@@ -55,9 +54,6 @@ const Gioithieu = () => {
 
         const resultDv = await getDichvu()
         setDichvu(resultDv.data)
-
-        const resultAu = await getAnuong()
-        setAnuong(resultAu.data)
 
         const resultBdx = await getBaidoxe()
         setBaidoxe(resultBdx.data)
@@ -242,16 +238,6 @@ const Gioithieu = () => {
                                                             </div>
                                                         </div>
                                                         <div className="col-6">
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Ăn uống</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {anuong.map((au, index) => {
-                                                                        return (
-                                                                            au.id_anuong === value.id_anuong ? <div key={index} >{au.an_uong}</div> : ''
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            </div>
                                                             <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Kế hoạch</p>
                                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                                 <div className="col-sm-4">

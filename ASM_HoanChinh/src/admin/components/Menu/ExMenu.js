@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -14,16 +14,17 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { getMenus } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
-// import { deleteMenu } from "../../../services/MenuPhu";
 
 const ExMenu = () => {
   const [Menu, setMenus] = useState([]);
-  const navigate = useNavigate();
+  const [accounts, setAccounts] = useState(null);
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
-};
+  };
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
@@ -71,7 +72,7 @@ const ExMenu = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {Menu.map((menu, index) => (
+        {Menu.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((menu, index) => (
           <TableRow key={menu.id_menu}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -81,7 +82,7 @@ const ExMenu = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {menu.ten_menu}
                   </Typography>
                 </Box>
@@ -97,7 +98,7 @@ const ExMenu = () => {
                 {menu.hinh_anh && (
                   <img
                     src={`${BASE_URL}/uploads/${menu.hinh_anh}`}
-                    style={{ width: "50px", height: "50px" }}
+                    style={{ width: "6rem", height: "5rem" }}
                     alt=""
                   />
                 )}

@@ -17,12 +17,14 @@ const AddCDV = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       console.log(value);
       await addCDV({
         tuy_chon_dv: value?.cacdichvu,
+        created_user: accounts.id_nguoidung
       });
       enqueueSnackbar("Thêm dịch vụ thành công!", { variant: "success" });
       navigate("/admin/cac-dich-vu");

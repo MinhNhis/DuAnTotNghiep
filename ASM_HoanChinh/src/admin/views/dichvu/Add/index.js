@@ -18,11 +18,13 @@ const AddDichVu = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       await addDichvu({
-        dich_vu: value?.dich_vu
+        dich_vu: value?.dich_vu,
+        created_user: accounts.id_nguoidung
       });
       enqueueSnackbar('Thêm dịch vụ thành công!', { variant: 'success' }); // Show success message
       navigate("/admin/dich-vu");

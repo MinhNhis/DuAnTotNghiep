@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -16,10 +16,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import { getLKH } from "../../../services/Khachhang";
 
 const LHKTable = () => {
-  const navigate = useNavigate();
-
   const [LKH, setLKH] = useState([]);
+  const [accounts, setAccounts] = useState(null);
+
+  const index2 = 0;
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
   const initData = async () => {
@@ -49,11 +52,11 @@ const LHKTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {LKH.map((value, index) => (
+        {LKH.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((value, index) => (
           <TableRow key={index}>
             <TableCell>
               <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5 }}>
-                {Number(index) + 1}
+                {accounts?.vai_tro === 0 ? index + 1 : index2 + 1}
               </Typography>
             </TableCell>
             <TableCell>
@@ -68,12 +71,12 @@ const LHKTable = () => {
             <TableCell>
               <Typography>
                 <Link to={`/admin/loai-khach-hang/edit/${value.id_loaikh}`}>
-                  <IconButton aria-label="edit" color="primary" style={{width: "50px", height: "50px"}}>
+                  <IconButton aria-label="edit" color="primary" style={{ width: "50px", height: "50px" }}>
                     <EditIcon />
                   </IconButton>
                 </Link>
                 <Link to={`/admin/loai-khach-hang/delete/${value.id_loaikh}`}>
-                  <IconButton aria-label="delete" color="danger"style={{width: "50px", height: "50px"}}>
+                  <IconButton aria-label="delete" color="danger" style={{ width: "50px", height: "50px" }}>
                     <DeleteIcon />
                   </IconButton>
                 </Link>

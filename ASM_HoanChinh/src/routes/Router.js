@@ -87,11 +87,6 @@ const QuanAn = lazy(() => import("../admin/views/quanan/index.js"))
 const AddQuanAn = lazy(() => import("../admin/views/quanan/Add/index.js"));
 const EditQuanAn = lazy(() => import("../admin/views/quanan/Edit/index.js"));
 const DeleteQuanAn = lazy(() => import("../admin/views/quanan/Delete/index.js"));
-//Ăn uống
-const AnUong = lazy(() => import("../admin/views/anuong/index.js"));
-const AddAnUong = lazy(() => import("../admin/views/anuong/Add/index.js"));
-const DeleteAnuong = lazy(() => import("../admin/views/anuong/Delete/index.js"));
-const UpdateAnUong = lazy(() => import("../admin/views/anuong/Update/index.js"));
 /****Layouts*****/
 const FullLayout = lazy(() => import("../admin/layouts/FullLayout/FullLayout.js"));
 /****End Layouts*****/
@@ -215,11 +210,6 @@ const ThemeRoutes = [
       { path: "admin/dat-cho/delete/:id_datcho", element: <DeleteDatcho />, },
       { path: "admin/dat-cho/edit/:id_datcho", element: <EditDatcho />, },
 
-      { path: "admin/an-uong", element: <AnUong />, },
-      { path: "admin/an-uong/add", element: <AddAnUong />, },
-      { path: "admin/an-uong/delete/:id_anuong", element: <DeleteAnuong />, },
-      { path: "admin/an-uong/edit/:id_anuong", element: <UpdateAnUong />, },
-
       { path: "admin/dich-vu/add", exact: true, element: <AddDichVu /> },
       { path: "admin/dich-vu/edit/:id", exact: true, element: <EditDichVu /> },
       { path: "admin/dich-vu/delete/:id", exact: true, element: <DeleteDichVu /> },
@@ -281,7 +271,7 @@ const ThemeRoutes = [
       { path: "admin/cac-dich-vu", element: <CacDichVu />, },
 
       { path: "admin/nguoi-dung/add", exact: true, element: <AddNguoiDung /> },
-      { path: "admin/nguoi-dung/edit/:id", exact: true, element: <EditNguoiDung /> },
+      { path: "admin/nguoi-dung/chi-tiet/:id", exact: true, element: <EditNguoiDung /> },
       { path: "admin/nguoi-dung/delete/:id", exact: true, element: <DeleteNguoiDung /> },
       { path: "admin/nguoi-dung", element: <NguoiDung />, },
     ],

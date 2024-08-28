@@ -13,13 +13,15 @@ import {
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
 import { getDichvu } from "../../../services/Dichvu";
 
 const DichVuTable = () => {
   const [dichvu, setDichvu] = useState([])
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initFata()
   }, [])
   const initFata = async () => {
@@ -49,11 +51,11 @@ const DichVuTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {dichvu.map((dv, index) => (
+        {dichvu.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((dv, index) => (
           <TableRow key={index}>
             <TableCell>
               <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5, }}>
-                {Number(index) + 1}
+                {index + 1}
               </Typography>
             </TableCell>
             <TableCell>
@@ -68,12 +70,12 @@ const DichVuTable = () => {
             <TableCell>
               <Typography >
                 <Link to={`/admin/dich-vu/edit/${dv.id_dichvu}`}>
-                  <IconButton aria-label="edit" color="primary" style={{width: "50px", height: "50px"}}>
+                  <IconButton aria-label="edit" color="primary" style={{ width: "50px", height: "50px" }}>
                     <EditIcon />
                   </IconButton>
                 </Link>
                 <Link to={`/admin/dich-vu/delete/${dv.id_dichvu}`}>
-                  <IconButton aria-label="edit" color="danger" style={{width: "50px", height: "50px"}}>
+                  <IconButton aria-label="edit" color="danger" style={{ width: "50px", height: "50px" }}>
                     <DeleteIcon />
                   </IconButton>
                 </Link>

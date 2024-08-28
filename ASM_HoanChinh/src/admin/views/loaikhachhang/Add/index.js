@@ -3,24 +3,26 @@ import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { addLKH } from "../../../../services/Khachhang";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 
 const AddLKH = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       console.log(value);
       await addLKH({
         khach_hang: value?.loaikhachhang,
+        created_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Thêm loại khách hàng thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Thêm loại khách hàng thành công!', { variant: 'success' });
       navigate("/admin/loai-khach-hang");
       console.log(value);
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi thêm loại khách hàng!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi thêm loại khách hàng!', { variant: 'error' });
       console.error('Lỗi khi thêm loại khách hàng:', error);
     }
   };
@@ -40,7 +42,7 @@ const AddLKH = () => {
           <form>
             <TextField
               id="loaikhachhang"
-              label= "Loại khách hàng"
+              label="Loại khách hàng"
               variant="outlined"
               fullWidth
               {...register("loaikhachhang", {

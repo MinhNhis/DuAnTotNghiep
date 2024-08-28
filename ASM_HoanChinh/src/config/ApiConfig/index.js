@@ -26,8 +26,9 @@ const request = async ({
 
     return res.data;
   } catch (error) {
-    alert(error?.response?.data?.message || "Error");
-    return null;
+    //alert(error?.response?.data?.message || "Error");
+    throw error;
+    //return null;
   }
 };
 

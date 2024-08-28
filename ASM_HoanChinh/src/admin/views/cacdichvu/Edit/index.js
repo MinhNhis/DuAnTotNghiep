@@ -21,6 +21,7 @@ const EditCDV = () => {
   const params = useParams();
   const id = params.id;
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     initData();
@@ -40,6 +41,8 @@ const EditCDV = () => {
     try {
       await editCDV(id, {
         tuy_chon_dv: value?.cacdichvu,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
       enqueueSnackbar('Sửa dịch vụ thành công!', { variant: 'success' });
       navigate("/admin/cac-dich-vu");

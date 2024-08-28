@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -18,9 +18,11 @@ import { useState, useEffect } from "react";
 
 const ExDanhmuc = () => {
   const [Danhmuc, setDanhmuc] = useState([]);
-  const navigate = useNavigate();
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
@@ -46,7 +48,7 @@ const ExDanhmuc = () => {
           </TableCell>
           <TableCell>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Tên danh mục
+              Danh mục
             </Typography>
           </TableCell>
           <TableCell>
@@ -57,7 +59,7 @@ const ExDanhmuc = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {Danhmuc.map((danhmuc, index) => (
+        {Danhmuc.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((danhmuc, index) => (
           <TableRow key={danhmuc.id_danhmuc}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -67,7 +69,7 @@ const ExDanhmuc = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {danhmuc.danh_muc}
                   </Typography>
                 </Box>

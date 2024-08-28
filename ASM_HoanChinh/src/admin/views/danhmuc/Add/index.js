@@ -5,18 +5,20 @@ import { useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
 
 import "./style.css";
-import { Card, CardContent, Divider, Box, Typography } from "@mui/material";
+import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { addDanhmuc } from "../../../../services/Danhmuc";
 
 const AddDanhmuc = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const onSubmit = async (value) => {
     try {
       await addDanhmuc({
         danh_muc: value?.danh_muc,
+        created_user: accounts?.id_nguoidung
       });
       enqueueSnackbar("Thêm danh mục thành công!", { variant: "success" });
       navigate("/admin/danhmuc");
@@ -50,9 +52,10 @@ const AddDanhmuc = () => {
                 <label htmlFor="name" className="form-label">
                   Tên danh mục
                 </label>
-                <input
+                <TextField
                   type="text"
-                  className="form-control w-60"
+                  variant="outlined"
+                  fullWidth
                   name="name"
                   id="name"
                   placeholder="Tên danh mục"
@@ -69,26 +72,26 @@ const AddDanhmuc = () => {
                   </small>
                 )}
               </div>
-            </div>
+              <div className="mb-3">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  sx={{ width: "100px", marginRight: 2 }}
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  {`Thêm`}
+                </Button>
 
-            <div className="mb-3">
-              <button
-                type="submit"
-                className="btn btn-primary m-lg-2"
-                style={{ width: "100px" }}
-                onClick={handleSubmit(onSubmit)}
-              >
-                {`Thêm`}
-              </button>
-
-              <button
-                type="button"
-                style={{ width: "100px" }}
-                className="btn btn-danger m-lg-2"
-                onClick={handleCancle}
-              >
-                {`Hủy`}
-              </button>
+                <Button
+                  sx={{ width: "100px" }}
+                  variant="contained"
+                  color="error"
+                  onClick={handleCancle}
+                >
+                  {`Hủy`}
+                </Button>
+              </div>
             </div>
           </form>
         </CardContent>

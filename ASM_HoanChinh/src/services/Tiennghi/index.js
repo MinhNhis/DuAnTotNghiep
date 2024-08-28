@@ -19,12 +19,16 @@ const getTiennghiById = async (id_tiennghi) => {
   });
   return res;
 };
-const addtiennghi = async (newTiennghi) => {
+const addtiennghi = async ({ tien_nghi, created_user }) => {
   try {
     const res = await request({
       method: "POST",
       path: "api/tiennghis",
-      data: newTiennghi,
+      data: {
+        tien_nghi: tien_nghi,
+        created_user: created_user,
+        updated_user: null
+      },
     });
     return res;
   } catch (error) {
@@ -32,12 +36,16 @@ const addtiennghi = async (newTiennghi) => {
     throw error;
   }
 };
-const puttiennghi = async (id_tiennghi, { tien_nghi }) => {
+const puttiennghi = async (id_tiennghi, { tien_nghi, created_user, updated_user }) => {
   try {
     const res = await request({
       method: "PUT",
       path: `api/tiennghis/${id_tiennghi}`,
-      data: { tien_nghi: tien_nghi },
+      data: {
+        tien_nghi: tien_nghi,
+        created_user: created_user,
+        updated_user: updated_user
+      },
     });
     return res;
   } catch (error) {

@@ -17,7 +17,6 @@ import { useForm, Controller } from "react-hook-form";
 import { getDichvu } from "../../../../services/Dichvu";
 import {
     addGioithieu,
-    getAnuong,
     getBaidoxe,
     getCacDichvu,
     getKehoach,
@@ -30,7 +29,7 @@ import { useSnackbar } from 'notistack';
 
 const AddGioiThieu = () => {
     const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar(); 
+    const { enqueueSnackbar } = useSnackbar();
     const { control, register, handleSubmit, formState: { errors }, formState } = useForm({
         defaultValues: {
             tuychondichvu: '',
@@ -44,15 +43,17 @@ const AddGioiThieu = () => {
         },
     });
     const [dichvu, setDichvu] = useState([]);
-    const [anuong, setAnuong] = useState([]);
     const [khongkhi, setKhongkhi] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [tiennghi, setTiennghi] = useState([]);
     const [khachhang, setKhachhang] = useState([]);
     const [baidoxe, setBaidoxe] = useState([]);
     const [cacdichvu, setCacdichvu] = useState([]);
+    const [account, setAccounts] = useState(null);
 
     useEffect(() => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        setAccounts(accounts);
         initData();
     }, []);
 
@@ -60,8 +61,6 @@ const AddGioiThieu = () => {
         try {
             const result = await getDichvu();
             setDichvu(result.data);
-            const resultAnuong = await getAnuong();
-            setAnuong(resultAnuong.data);
             const resultKhongkhi = await getKhongkhi();
             setKhongkhi(resultKhongkhi.data);
             const resultKehoach = await getKehoach();
@@ -91,6 +90,7 @@ const AddGioiThieu = () => {
                 id_loaikh: value?.khachhang,
                 id_kehoach: value?.kehoach,
                 id_tiennghi: value?.tiennghi,
+                created_user: account.id_nguoidung
             });
             enqueueSnackbar('Thêm giới thiệu thành công!', { variant: 'success' }); // Show success message
             navigate("/admin/gioi-thieu");
@@ -131,11 +131,20 @@ const AddGioiThieu = () => {
                                                         label="Tùy chọn dịch vụ"
                                                         {...field}
                                                     >
-                                                        {cacdichvu.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_cacdichvu}>
-                                                                {value.tuy_chon_dv}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {cacdichvu.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_cacdichvu} value={value.id_cacdichvu}>
+                                                                        {value.tuy_chon_dv}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -165,11 +174,20 @@ const AddGioiThieu = () => {
                                                         label="Dịch vụ"
                                                         {...field}
                                                     >
-                                                        {dichvu.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_dichvu}>
-                                                                {value.dich_vu}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {dichvu.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_dichvu} value={value.id_dichvu}>
+                                                                        {value.dich_vu}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -199,11 +217,20 @@ const AddGioiThieu = () => {
                                                         label="Bãi đỗ xe"
                                                         {...field}
                                                     >
-                                                        {baidoxe.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_baidoxe}>
-                                                                {value.bai_do_xe}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {baidoxe.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_baidoxe} value={value.id_baidoxe}>
+                                                                        {value.bai_do_xe}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -215,39 +242,25 @@ const AddGioiThieu = () => {
                                         </FormControl>
                                     </Grid>
                                 </div>
-
-                                {/* Ăn uống */}
                                 <div className="mb-3">
-                                    <label className="form-label" style={{ fontSize: "16px", fontWeight: "bold" }}>Ăn uống</label>
-                                    <Grid item lg={4} md={6} sm={12}>
-                                        <FormControl fullWidth variant="outlined" sx={{ mt: 2 }}>
-                                            <InputLabel id="service-options-label">Ăn uống</InputLabel>
-                                            <Controller
-                                                name="anuong"
-                                                control={control}
-                                                rules={{ required: 'Vui lòng chọn ăn uống' }}
-                                                render={({ field }) => (
-                                                    <Select
-                                                        labelId="service-options-label"
-                                                        id="service-options"
-                                                        label="Ăn uống"
-                                                        {...field}
-                                                    >
-                                                        {anuong.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_anuong}>
-                                                                {value.an_uong}
-                                                            </MenuItem>
-                                                        ))}
-                                                    </Select>
-                                                )}
-                                            />
-                                            {errors.anuong && (
-                                                <small className="text-danger">
-                                                    {errors.anuong.message}
-                                                </small>
-                                            )}
-                                        </FormControl>
-                                    </Grid>
+                                    <div className="form-floating">
+                                        <textarea className="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{ height: "100px" }}
+                                            {
+                                            ...register("gioithieu", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Nội dung giới thiệu không được bỏ trống"
+                                                }
+                                            })
+                                            }
+                                        ></textarea>
+                                        <label className="form-lable">Nội dung giới thiệu...</label>
+                                    </div>
+                                    {formState?.errors?.gioithieu && (
+                                        <small className="text-danger">
+                                            {formState?.errors?.gioithieu?.message}
+                                        </small>
+                                    )}
                                 </div>
                             </div>
 
@@ -269,11 +282,20 @@ const AddGioiThieu = () => {
                                                         label="Không khí"
                                                         {...field}
                                                     >
-                                                        {khongkhi.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_khongkhi}>
-                                                                {value.khong_khi}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {khongkhi.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_khongkhi} value={value.id_khongkhi}>
+                                                                        {value.khong_khi}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -303,11 +325,20 @@ const AddGioiThieu = () => {
                                                         label="Khách hàng"
                                                         {...field}
                                                     >
-                                                        {khachhang.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_loaikh}>
-                                                                {value.khach_hang}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {khachhang.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_loaikh} value={value.id_loaikh}>
+                                                                        {value.khach_hang}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -337,11 +368,20 @@ const AddGioiThieu = () => {
                                                         label="Kế hoạch"
                                                         {...field}
                                                     >
-                                                        {kehoach.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_kehoach}>
-                                                                {value.ke_hoach}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {kehoach.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_kehoach} value={value.id_kehoach}>
+                                                                        {value.ke_hoach}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -371,11 +411,20 @@ const AddGioiThieu = () => {
                                                         label="Tiện nghi"
                                                         {...field}
                                                     >
-                                                        {tiennghi.map((value, index) => (
-                                                            <MenuItem key={index} value={value.id_tiennghi}>
-                                                                {value.tien_nghi}
-                                                            </MenuItem>
-                                                        ))}
+                                                        {tiennghi.map((value, index) => {
+                                                            if (
+                                                                value?.created_user === account?.id_nguoidung ||
+                                                                value?.updated_user === account?.id_nguoidung ||
+                                                                account?.vai_tro === 0
+                                                            ) {
+                                                                return (
+                                                                    <MenuItem key={value.id_tiennghi} value={value.id_tiennghi}>
+                                                                        {value.tien_nghi}
+                                                                    </MenuItem>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })}
                                                     </Select>
                                                 )}
                                             />
@@ -389,26 +438,7 @@ const AddGioiThieu = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="mb-3">
-                            <div className="form-floating">
-                                <textarea className="form-control" placeholder="Leave a comment here" id="floatingTextarea2" style={{ height: "100px" }}
-                                    {
-                                    ...register("gioithieu", {
-                                        required: {
-                                            value: true,
-                                            message: "Nội dung giới thiệu không được bỏ trống"
-                                        }
-                                    })
-                                    }
-                                ></textarea>
-                                <label className="form-lable">Comments</label>
-                            </div>
-                            {formState?.errors?.gioithieu && (
-                                <small className="text-danger">
-                                    {formState?.errors?.gioithieu?.message}
-                                </small>
-                            )}
-                        </div>
+
                         <div>
                             <Button color="primary" variant="contained" type="submit" style={{ width: "100px" }}>
                                 Thêm

@@ -3,7 +3,7 @@ import request from "../../config/ApiConfig";
 const getQuanan = async () => {
     const res = await request({
         method: "GET",
-        path:"/api/quanans"
+        path: "/api/quanans"
     });
 
     return res
@@ -12,14 +12,13 @@ const getQuanan = async () => {
 const getQuananById = async (id) => {
     const res = await request({
         method: "GET",
-        path:`/api/quanans/${id}`
+        path: `/api/quanans/${id}`
     });
 
     return res
 }
 
-const addQuanan = async ({ten_quan_an, hinh_anh, dia_chi, dien_thoai, 
-    gio_hoat_dong, link_website, link_facebook, id_gioithieu}) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
@@ -28,6 +27,8 @@ const addQuanan = async ({ten_quan_an, hinh_anh, dia_chi, dien_thoai,
     data.append("link_website", link_website);
     data.append("link_facebook", link_facebook);
     data.append("id_gioithieu", id_gioithieu);
+    data.append("created_user", created_user);
+    data.append("so_luong_cho", so_luong_cho);
     // Gửi 1 ảnh
     data.append("hinh_anh", hinh_anh);
     const res = await request({
@@ -39,18 +40,20 @@ const addQuanan = async ({ten_quan_an, hinh_anh, dia_chi, dien_thoai,
     return res
 }
 
-const editQuanan = async (id, {ten_quan_an, hinh_anh, dia_chi, dien_thoai, 
-    gio_hoat_dong, link_website, link_facebook, id_gioithieu}) => {
-        const data = new FormData();
-        data.append("ten_quan_an", ten_quan_an);
-        data.append("dia_chi", dia_chi);
-        data.append("dien_thoai", dien_thoai);
-        data.append("gio_hoat_dong", gio_hoat_dong);
-        data.append("link_website", link_website);
-        data.append("link_facebook", link_facebook);
-        data.append("id_gioithieu", id_gioithieu);
-        // Gửi 1 ảnh
-        data.append("hinh_anh", hinh_anh);
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
+    const data = new FormData();
+    data.append("ten_quan_an", ten_quan_an);
+    data.append("dia_chi", dia_chi);
+    data.append("dien_thoai", dien_thoai);
+    data.append("gio_hoat_dong", gio_hoat_dong);
+    data.append("link_website", link_website);
+    data.append("link_facebook", link_facebook);
+    data.append("id_gioithieu", id_gioithieu);
+    data.append("so_luong_cho", so_luong_cho);
+    data.append("created_user", created_user);
+    data.append("updated_user", updated_user);
+    // Gửi 1 ảnh
+    data.append("hinh_anh", hinh_anh);
     const res = await request({
         method: "PUT",
         path: `api/quanans/${id}`,
@@ -61,7 +64,7 @@ const editQuanan = async (id, {ten_quan_an, hinh_anh, dia_chi, dien_thoai,
 }
 
 const deleteQuanan = async (id) => {
-    
+
     const res = await request({
         method: "DELETE",
         path: `api/quanans/${id}`,
@@ -71,4 +74,4 @@ const deleteQuanan = async (id) => {
     return res
 }
 
-export {getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan}
+export { getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan }

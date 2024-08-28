@@ -1,25 +1,27 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { addtiennghi } from "../../../../services/Tiennghi";
 
 const AddTienNghi = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       const newTienNghi = {
         tien_nghi: value.tien_nghi,
+        created_user: accounts.id_nguoidung
       };
       await addtiennghi(newTienNghi);
       enqueueSnackbar('Thêm tiện nghi thành công!', { variant: 'success' });
-      navigate("/admin/tien-nghi"); 
+      navigate("/admin/tien-nghi");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi thêm tiện nghi!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi thêm tiện nghi!', { variant: 'error' });
       console.error("Lỗi khi thêm Tiện Nghi:", error);
     }
   };

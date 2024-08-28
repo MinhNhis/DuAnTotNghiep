@@ -1,7 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { addkhongkhi } from "../../../../services/Khongkhi";
 
@@ -9,15 +9,17 @@ const AddKhongKhi = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       const newKhongkhi = {
         khong_khi: value.khong_khi,
+        created_user: accounts.id_nguoidung
       };
       await addkhongkhi(newKhongkhi);
       enqueueSnackbar('Thêm không khí thành công!', { variant: 'success' });
-      navigate("/admin/khong-khi"); 
+      navigate("/admin/khong-khi");
     } catch (error) {
       enqueueSnackbar('Có lỗi xảy ra khi thêm không khí!', { variant: 'error' });
       console.error("Lỗi khi thêm Không Khí:", error);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import CheckIcon from '@mui/icons-material/Check';
+import { Link } from "react-router-dom";
+// import CheckIcon from '@mui/icons-material/Check';
 import {
     Typography,
     Box,
@@ -16,7 +16,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
     getGioithieu,
-    getAnuong,
     getBaidoxe,
     getCacDichvu,
     getKehoach,
@@ -29,16 +28,17 @@ import { getDichvu } from "../../../services/Dichvu";
 const GioiThieuTable = () => {
     const [gioithieu, setGioithieu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
-    const [anuong, setAnuong] = useState([]);
     const [khongkhi, setKhongkhi] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [tiennghi, setTiennghi] = useState([]);
     const [khachhang, setKhachhang] = useState([]);
     const [baidoxe, setBaidoxe] = useState([]);
     const [cacdichvu, setCacdichvu] = useState([]);
-    const navigate = useNavigate();
+    const [accounts, setAccounts] = useState(null);
 
     useEffect(() => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        setAccounts(accounts);
         initGioithieu()
         initData()
     }, [])
@@ -52,8 +52,6 @@ const GioiThieuTable = () => {
     const initData = async () => {
         const result = await getDichvu()
         setDichvu(result.data)
-        const resultAnuong = await getAnuong();
-        setAnuong(resultAnuong.data)
         const resultKhongkhi = await getKhongkhi();
         setKhongkhi(resultKhongkhi.data)
         const resultKehoach = await getKehoach();
@@ -66,19 +64,10 @@ const GioiThieuTable = () => {
         setBaidoxe(resultBaidoxe.data)
         const resultCacdichvu = await getCacDichvu();
         setCacdichvu(resultCacdichvu.data);
-
-        console.log(resultCacdichvu.data);
-
     }
 
-
-    const handleEditGioiThieu = () => {
-        navigate('/admin/gioi-thieu/edit');
-    };
-
-
     return (
-        <Table aria-label="simple table" sx={{ mt: 3, }}>
+        <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
             <TableHead>
                 <TableRow>
                     <TableCell>
@@ -103,19 +92,14 @@ const GioiThieuTable = () => {
                     </TableCell>
                     <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Ăn uống
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             Không khí
                         </Typography>
                     </TableCell>
-                    <TableCell>
+                    {/* <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             Khách hàng
                         </Typography>
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             Kế hoạch
@@ -139,17 +123,17 @@ const GioiThieuTable = () => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {gioithieu.map((gt, index) => (
+                {gioithieu.filter(gt => gt?.created_user === accounts?.id_nguoidung || gt?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((gt, index) => (
+
                     <TableRow key={index}>
                         <TableCell>
                             <Typography sx={{ fontSize: "15px", }}>
-                                {Number(index) + 1}
+                                {index + 1}
                             </Typography>
                         </TableCell>
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
                                     {
                                         cacdichvu.map((cdv) => {
                                             if (cdv.id_cacdichvu === gt.id_tuychondichvu) {
@@ -167,7 +151,7 @@ const GioiThieuTable = () => {
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+
                                     {
                                         dichvu.map((dv) => {
                                             if (dv.id_dichvu === gt.id_dichvu) {
@@ -185,7 +169,7 @@ const GioiThieuTable = () => {
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+
                                     {
                                         baidoxe.map((doxe) => {
                                             if (doxe.id_baidoxe === gt.id_baidoxe) {
@@ -203,25 +187,7 @@ const GioiThieuTable = () => {
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
-                                    {
-                                        anuong.map((an_uong) => {
-                                            if (an_uong.id_anuong === gt.id_anuong) {
-                                                return (
-                                                    <Typography key={an_uong.id_anuong} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {an_uong.an_uong}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
-                                </Box>
-                            </Box>
-                        </TableCell>
-                        <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+
                                     {
                                         khongkhi.map((kk) => {
                                             if (kk.id_khongkhi === gt.id_khongkhi) {
@@ -236,10 +202,10 @@ const GioiThieuTable = () => {
                                 </Box>
                             </Box>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+                                    
                                     {
                                         khachhang.map((kh) => {
                                             if (kh.id_loaikh === gt.id_loaikh) {
@@ -253,11 +219,11 @@ const GioiThieuTable = () => {
                                     }
                                 </Box>
                             </Box>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+
                                     {
                                         kehoach.map((ke_hoach) => {
                                             if (ke_hoach.id_kehoach === gt.id_kehoach) {
@@ -275,7 +241,7 @@ const GioiThieuTable = () => {
                         <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    <CheckIcon sx={{ fontSize: "20px" }} />
+
                                     {
                                         tiennghi.map((tn) => {
                                             if (tn.id_tiennghi === gt.id_tiennghi) {
@@ -308,17 +274,16 @@ const GioiThieuTable = () => {
                         <TableCell>
                             <Typography >
                                 <Link to={`/admin/gioi-thieu/edit/${gt.id_gioithieu}`}>
-                                    <IconButton aria-label="edit" color="primary">
+                                    <IconButton aria-label="edit" color="primary" style={{ width: '50px', height: '50px' }}>
                                         <EditIcon />
                                     </IconButton>
                                 </Link>
 
                                 <Link to={`/admin/gioi-thieu/delete/${gt.id_gioithieu}`}>
-                                    <IconButton aria-label="delete" color="danger">
+                                    <IconButton aria-label="delete" color="danger" style={{ width: '50px', height: '50px' }}>
                                         <DeleteIcon />
                                     </IconButton>
                                 </Link>
-
                             </Typography>
                         </TableCell>
                     </TableRow>

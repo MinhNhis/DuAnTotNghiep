@@ -49,7 +49,7 @@ const FullLayout = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up("lg"));
-  return cookies?.token && cookies?.role === 0 ? (
+  return cookies?.token && cookies?.role === 0 || cookies?.role === 2 ? (
     <MainWrapper>
       <Header
         sx={{

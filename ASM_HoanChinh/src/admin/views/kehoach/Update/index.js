@@ -19,7 +19,8 @@ const UpdateKeHoach = () => {
   const params = useParams();
   const id = params?.id_kehoach;
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     fetchKeHoach();
@@ -35,6 +36,8 @@ const UpdateKeHoach = () => {
     try {
       await putKehoach(id, {
         ke_hoach: data?.ke_hoach,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
       enqueueSnackbar('Cập nhật kế hoạch thành công!', { variant: 'success' }); 
       navigate("/admin/ke-hoach");

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -16,9 +16,11 @@ import { kehoach } from "../../../services/Kehoach";
 
 const KeHoachTable = () => {
   const [kehoachs, setKehoach] = useState([]);
-  const navigate = useNavigate();
+  const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     initData();
   }, []);
 
@@ -55,7 +57,7 @@ const KeHoachTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {kehoachs.map((kehoach, index) => (
+        {kehoachs.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((kehoach, index) => (
           <TableRow key={kehoach.id_kehoach}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
@@ -65,7 +67,7 @@ const KeHoachTable = () => {
             <TableCell>
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
-                  <Typography variant="h6" sx={{ fontWeight: "600" }}>
+                  <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                     {kehoach.ke_hoach}
                   </Typography>
                 </Box>
@@ -73,18 +75,18 @@ const KeHoachTable = () => {
             </TableCell>
             <TableCell>
               <Typography sx={{ width: "50px", height: "50px" }}>
-              <Box sx={{ display: "flex", gap: "10px" }}>
-                <Link to={`/admin/ke-hoach/edit/${kehoach.id_kehoach}`}>
-                  <IconButton aria-label="edit" color="primary">
-                    <EditIcon />
-                  </IconButton>
-                </Link>
-                <Link to={`/admin/ke-hoach/delete/${kehoach.id_kehoach}`}>
-                  <IconButton aria-label="delete" color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </Link>
-              </Box>
+                <Box sx={{ display: "flex", gap: "10px" }}>
+                  <Link to={`/admin/ke-hoach/edit/${kehoach.id_kehoach}`}>
+                    <IconButton aria-label="edit" color="primary">
+                      <EditIcon />
+                    </IconButton>
+                  </Link>
+                  <Link to={`/admin/ke-hoach/delete/${kehoach.id_kehoach}`}>
+                    <IconButton aria-label="delete" color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Link>
+                </Box>
               </Typography>
             </TableCell>
           </TableRow>

@@ -3,7 +3,7 @@ import request from "../../config/ApiConfig";
 const getDanhmuc = async () => {
     const res = await request({
         method: "GET",
-        path: "/api/danhmuc", 
+        path: "/api/danhmuc",
     });
 
     return res;
@@ -16,24 +16,28 @@ const getDanhmucById = async (id_danhmuc) => {
     });
     return res;
 }
-const addDanhmuc = async ({danh_muc}) => {
-    
+const addDanhmuc = async ({ danh_muc, created_user }) => {
+
     const res = await request({
         method: "POST",
         path: "api/danhmuc",
         data: {
-            danh_muc: danh_muc
+            danh_muc: danh_muc,
+            created_user: created_user,
+            updated_user: null
         }
     })
     return res;
 }
 
-const updateDanhmuc = async (id_danhmuc,{ danh_muc }) => {
+const updateDanhmuc = async (id_danhmuc, { danh_muc, created_user, updated_user }) => {
     const res = await request({
         method: "PUT",
         path: `api/danhmuc/${id_danhmuc}`,
         data: {
-            danh_muc: danh_muc
+            danh_muc: danh_muc,
+            created_user: created_user,
+            updated_user: updated_user
         }
     })
     return res;
@@ -51,4 +55,4 @@ const deleteDanhmuc = async (id_danhmuc) => {
 
 
 
-export { getDanhmuc,addDanhmuc,updateDanhmuc,deleteDanhmuc,getDanhmucById };
+export { getDanhmuc, addDanhmuc, updateDanhmuc, deleteDanhmuc, getDanhmucById };

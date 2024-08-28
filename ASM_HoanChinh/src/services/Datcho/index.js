@@ -3,7 +3,7 @@ import request from "../../config/ApiConfig";
 const getDatcho = async () => {
     const res = await request({
         method: "GET",
-        path:"/api/dat-cho"
+        path: "/api/dat-cho"
     });
 
     return res
@@ -12,14 +12,14 @@ const getDatcho = async () => {
 const getDatchoById = async (id) => {
     const res = await request({
         method: "GET",
-        path:`/api/dat-cho/${id}`
+        path: `/api/dat-cho/${id}`
     });
 
     return res
 }
 
-const addDatcho = async ({ten_quan,ten_kh,sdt_kh,email_kh,thoi_gian_dat,so_luong_nguoi,trang_thai,yeu_cau_khac,id_nguoidung, id_quanan}) => {
-    
+const addDatcho = async ({ ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+
     const res = await request({
         method: "POST",
         path: "api/dat-cho",
@@ -28,21 +28,22 @@ const addDatcho = async ({ten_quan,ten_kh,sdt_kh,email_kh,thoi_gian_dat,so_luong
             ten_kh: ten_kh,
             sdt_kh: sdt_kh,
             email_kh: email_kh,
-            thoi_gian_dat: thoi_gian_dat,
+            ngay_dat: ngay_dat,
+            thoi_gian: thoi_gian,
             so_luong_nguoi: so_luong_nguoi,
             trang_thai: trang_thai,
             yeu_cau_khac: yeu_cau_khac,
             id_nguoidung: id_nguoidung,
             id_quanan: id_quanan
-            
+
         }
     })
 
     return res
 }
 
-const editDatcho = async (id, {ten_quan,ten_kh,sdt_kh,email_kh,thoi_gian_dat,so_luong_nguoi,trang_thai,yeu_cau_khac,id_nguoidung, id_quanan}) => {
-    
+const editDatcho = async (id, { ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+
     const res = await request({
         method: "PUT",
         path: `api/dat-cho/${id}`,
@@ -51,7 +52,8 @@ const editDatcho = async (id, {ten_quan,ten_kh,sdt_kh,email_kh,thoi_gian_dat,so_
             ten_kh: ten_kh,
             sdt_kh: sdt_kh,
             email_kh: email_kh,
-            thoi_gian_dat: thoi_gian_dat,
+            ngay_dat: ngay_dat,
+            thoi_gian: thoi_gian,
             so_luong_nguoi: so_luong_nguoi,
             trang_thai: trang_thai,
             yeu_cau_khac: yeu_cau_khac,
@@ -64,7 +66,7 @@ const editDatcho = async (id, {ten_quan,ten_kh,sdt_kh,email_kh,thoi_gian_dat,so_
 }
 
 const deleteDatcho = async (id) => {
-    
+
     const res = await request({
         method: "DELETE",
         path: `api/dat-cho/${id}`,
@@ -77,7 +79,7 @@ const deleteDatcho = async (id) => {
 const getQuanan = async () => {
     const res = await request({
         method: "GET",
-        path:"/api/quanans"
+        path: "/api/quanans"
     });
 
     return res
@@ -86,10 +88,10 @@ const getQuanan = async () => {
 const getKhachhang = async () => {
     const res = await request({
         method: "GET",
-        path:"/api/nguoidungs"
+        path: "/api/nguoidungs"
     });
 
     return res
 }
 
-export {getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, getKhachhang}
+export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, getKhachhang }

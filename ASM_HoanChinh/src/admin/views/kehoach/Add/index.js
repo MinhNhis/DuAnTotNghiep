@@ -3,23 +3,25 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { addkehoach } from "../../../../services/Kehoach";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 
 const AddKeHoach = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
       const newKeHoach = {
         ke_hoach: value.ke_hoach,
+        created_user: accounts.id_nguoidung
       };
       await addkehoach(newKeHoach);
-      enqueueSnackbar('Thêm kế hoạch thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Thêm kế hoạch thành công!', { variant: 'success' });
       navigate("/admin/ke-hoach");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi thêm kế hoạch!', { variant: 'error' }); 
+      enqueueSnackbar('Có lỗi xảy ra khi thêm kế hoạch!', { variant: 'error' });
       console.error("Lỗi khi thêm Kế Hoạch:", error);
     }
   };

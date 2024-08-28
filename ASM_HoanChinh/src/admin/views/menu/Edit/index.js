@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./style.css";
 import { useForm, Controller } from "react-hook-form";
-import { Card, CardContent, Divider, Box, Typography } from "@mui/material";
+import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuItem, Button } from "@mui/material";
 import { getMenuById, updateMenu } from "../../../../services/MenuPhu";
 import { BASE_URL } from "../../../../config/ApiConfig";
 import { getDanhmuc } from "../../../../services/Danhmuc";
@@ -15,12 +15,14 @@ const EditMenu = () => {
   const [menu, setMenu] = useState({});
   const [danhmuc, setDanhmuc] = useState([]);
   const [quanan, setQuanan] = useState([]);
+  const [account, setAccounts] = useState(null);
   const params = useParams();
   const id = params.id_menu;
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-
   useEffect(() => {
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
+    setAccounts(accounts);
     inData();
   }, []);
 
@@ -57,6 +59,8 @@ const EditMenu = () => {
         id_danhmuc: data?.danh_muc,
         id_quanan: data?.quan_an,
         hinh_anh: data?.hinh_anh[0],
+        created_user: account.id_nguoidung,
+        updated_user: account.id_nguoidung
       });
       enqueueSnackbar("Cập nhật menu thành công!", { variant: "success" });
       navigate("/admin/menu");
@@ -92,10 +96,11 @@ const EditMenu = () => {
                       defaultValue=""
                       plachoder="Tên Menu"
                       render={({ field }) => (
-                        <input
+                        <TextField
                           {...field}
                           type="text"
-                          className="form-control w-60"
+                          fullWidth
+                          variant="outlined"
                         />
                       )}
                       {...register("ten_menu", {
@@ -118,20 +123,29 @@ const EditMenu = () => {
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
-                        <select
+                        <Select
                           {...field}
-                          className="form-select"
-                          aria-label="Default select example"
+                          fullWidth
+                          variant="outlined"
                         >
-                          <option selected value={"-1"}>
+                          <MenuItem selected value={"-1"}>
                             Danh mục
-                          </option>
-                          {danhmuc.map((value, index) => (
-                            <option key={index} value={value?.id_danhmuc}>
-                              {value?.danh_muc}
-                            </option>
-                          ))}
-                        </select>
+                          </MenuItem>
+                          {danhmuc.map((value, index) => {
+                            if (
+                              value?.created_user === account?.id_nguoidung ||
+                              value?.updated_user === account?.id_nguoidung ||
+                              account?.vai_tro === 0
+                            ) {
+                              return (
+                                <MenuItem key={value.id_danhmuc} value={value.id_danhmuc}>
+                                  {value.danh_muc}
+                                </MenuItem>
+                              );
+                            }
+                            return null;
+                          })}
+                        </Select>
                       )}
                       {...register("danh_muc", {
                         validate: (danh_muc) => {
@@ -157,11 +171,12 @@ const EditMenu = () => {
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
-                        <input
+                        <TextField
                           {...field}
                           type="number"
                           min={0}
-                          className="form-control w-60"
+                          fullWidth
+                          variant="outlined"
                         />
                       )}
                       {...register("gia", {
@@ -188,20 +203,29 @@ const EditMenu = () => {
                       control={control}
                       defaultValue=""
                       render={({ field }) => (
-                        <select
+                        <Select
                           {...field}
-                          className="form-select"
-                          aria-label="Default select example"
+                          variant="outlined"
+                          fullWidth
                         >
-                          <option selected value={"-1"}>
+                          <MenuItem selected value={"-1"}>
                             Quán ăn
-                          </option>
-                          {quanan.map((value, index) => (
-                            <option key={index} value={value?.id_quanan}>
-                              {value?.ten_quan_an}
-                            </option>
-                          ))}
-                        </select>
+                          </MenuItem>
+                          {quanan.map((value, index) => {
+                            if (
+                              value?.created_user === account?.id_nguoidung ||
+                              value?.updated_user === account?.id_nguoidung ||
+                              account?.vai_tro === 0
+                            ) {
+                              return (
+                                <MenuItem key={value.id_quanan} value={value.id_quanan}>
+                                  {value.ten_quan_an}
+                                </MenuItem>
+                              );
+                            }
+                            return null;
+                          })}
+                        </Select>
                       )}
                       {...register("quan_an", {
                         validate: (quan_an) => {
@@ -224,18 +248,19 @@ const EditMenu = () => {
                 <label className="form-label">Hình ảnh</label>
                 <div className="mb-3 mt-3">
                   <img
-                    style={{ width: "50px" }}
+                    style={{ width: "100px" }}
                     src={`${BASE_URL}/uploads/${menu.hinh_anh}`}
                     alt="Preview"
                   />
                 </div>
-                <input
+                <TextField
                   type="file"
-                  className="form-control"
+                  fullWidth
+                  variant="outlined"
                   {...register("hinh_anh", {
                     required: {
                       value: true,
-                      message: "images không được bỏ trống",
+                      message: "Hình ảnh không được bỏ trống",
                     },
                   })}
                 />
@@ -245,10 +270,10 @@ const EditMenu = () => {
                   </small>
                 )}
               </div>
-              <div className="row">
-                <button className="btn btn-primary m-lg-2" type="submit" style={{ width: "100px" }} onClick={handleSubmit(onSubmit)}>{`Sửa`} </button>
-                <Link to={"/admin/menu"} className="btn btn-danger  m-lg-2" type="submit" style={{ width: "100px" }} >{`Hủy`} </Link>               
-            </div>
+              <div className="mb-3">
+                <Button variant="contained" color="primary" sx={{ width: "100px", marginRight: 2 }} onClick={handleSubmit(onSubmit)}>{`Sửa`} </Button>
+                <Link to={"/admin/menu"}><Button variant="contained" color="error" sx={{ width: "100px" }} >{`Hủy`}</Button></Link>
+              </div>
             </div>
           </form>
         </CardContent>

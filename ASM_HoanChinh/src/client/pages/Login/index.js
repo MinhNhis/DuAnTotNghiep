@@ -42,9 +42,8 @@ const Login = () => {
           variant: "error",
         });
       }
-    } catch (error) {
-      enqueueSnackbar("Đã xảy ra lỗi khi đăng nhập!", { variant: "error" });
-      console.error("Lỗi khi đăng nhập:", error);
+    } catch (error) {  
+        enqueueSnackbar('Tài khoản hoặc mật khẩu không chính xác!', { variant: 'error' });
     }
   };
 

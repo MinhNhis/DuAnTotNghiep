@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { Card, CardContent, Divider, Box, Typography } from "@mui/material";
+import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuItem, Button } from "@mui/material";
 import { useSnackbar } from 'notistack';
 import { addMenu } from "../../../../services/MenuPhu";
 import { getDanhmuc } from "../../../../services/Danhmuc";
@@ -11,10 +11,13 @@ const AddMenu = () => {
     const { register, handleSubmit, formState } = useForm();
     const [danhmuc, setDanhmuc] = useState([]);
     const [quanan, setQuanan] = useState([]);
+    const [account, setAccounts] = useState(null);
     const navigate = useNavigate();
-    const { enqueueSnackbar } = useSnackbar(); 
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        setAccounts(accounts);
         initData();
     }, []);
 
@@ -34,11 +37,12 @@ const AddMenu = () => {
                 id_danhmuc: value?.danh_muc,
                 id_quanan: value?.quan_an,
                 hinh_anh: value?.hinh_anh[0],
+                created_user: account.id_nguoidung
             });
-            enqueueSnackbar('Thêm menu thành công!', { variant: 'success' }); 
+            enqueueSnackbar('Thêm menu thành công!', { variant: 'success' });
             navigate("/admin/menu");
         } catch (error) {
-            enqueueSnackbar('Có lỗi xảy ra khi thêm menu!', { variant: 'error' }); 
+            enqueueSnackbar('Có lỗi xảy ra khi thêm menu!', { variant: 'error' });
             console.error('Lỗi khi thêm menu:', error);
         }
     };
@@ -64,9 +68,10 @@ const AddMenu = () => {
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Tên Menu</label>
-                                        <input
+                                        <TextField
                                             type="text"
-                                            className="form-control w-60"
+                                            variant="outlined"
+                                            fullWidth
                                             id="name"
                                             placeholder="Tên Menu"
                                             {...register("ten_menu", {
@@ -84,7 +89,7 @@ const AddMenu = () => {
                                     </div>
                                     <div className="mn-3">
                                         <label className="form-lablr">Danh mục</label>
-                                        <select className="form-select" aria-label="Default select example" {...register("danh_muc", {
+                                        <Select fullWidth defaultValue={"-1"} {...register("danh_muc", {
                                             validate: (danh_muc) => {
                                                 if (danh_muc === "-1") {
                                                     return "Danh mục không được bỏ trống";
@@ -92,11 +97,22 @@ const AddMenu = () => {
                                                 return true;
                                             }
                                         })}>
-                                            <option selected value={"-1"}>Danh mục</option>
-                                            {danhmuc.map((value, index) => (
-                                                <option key={index} value={value?.id_danhmuc}>{value?.danh_muc}</option>
-                                            ))}
-                                        </select>
+                                            <MenuItem selected value={"-1"} disabled>Danh mục</MenuItem>
+                                            {danhmuc.map((value, index) => {
+                                                if (
+                                                    value?.created_user === account?.id_nguoidung ||
+                                                    value?.updated_user === account?.id_nguoidung ||
+                                                    account?.vai_tro === 0
+                                                ) {
+                                                    return (
+                                                        <MenuItem key={value.id_danhmuc} value={value.id_danhmuc}>
+                                                            {value.danh_muc}
+                                                        </MenuItem>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </Select>
                                         {formState?.errors?.danh_muc && (
                                             <small className="text-danger">
                                                 {formState?.errors?.danh_muc?.message}
@@ -107,9 +123,10 @@ const AddMenu = () => {
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Giá</label>
-                                        <input
+                                        <TextField
                                             type="number"
-                                            className="form-control w-60"
+                                            variant="outlined"
+                                            fullWidth
                                             min={0}
                                             name="price"
                                             id="price"
@@ -133,7 +150,7 @@ const AddMenu = () => {
                                     </div>
                                     <div className="mn-3">
                                         <label className="form-lablr">Quán ăn</label>
-                                        <select className="form-select" aria-label="Default select example" {...register("quan_an", {
+                                        <Select fullWidth defaultValue={'-1'} {...register("quan_an", {
                                             validate: (quan_an) => {
                                                 if (quan_an === "-1") {
                                                     return "Quán ăn không được bỏ trống";
@@ -141,11 +158,22 @@ const AddMenu = () => {
                                                 return true;
                                             }
                                         })}>
-                                            <option selected value={"-1"}>Quán ăn</option>
-                                            {quanan.map((value, index) => (
-                                                <option key={index} value={value?.id_quanan}>{value?.ten_quan_an}</option>
-                                            ))}
-                                        </select>
+                                            <MenuItem selected value={"-1"} disabled>Quán ăn</MenuItem>
+                                            {quanan.map((value, index) => {
+                                                if (
+                                                    value?.created_user === account?.id_nguoidung ||
+                                                    value?.updated_user === account?.id_nguoidung ||
+                                                    account?.vai_tro === 0
+                                                ) {
+                                                    return (
+                                                        <MenuItem key={value.id_quanan} value={value.id_quanan}>
+                                                            {value.ten_quan_an}
+                                                        </MenuItem>
+                                                    );
+                                                }
+                                                return null;
+                                            })}
+                                        </Select>
                                         {formState?.errors?.quan_an && (
                                             <small className="text-danger">
                                                 {formState?.errors?.quan_an?.message}
@@ -156,9 +184,10 @@ const AddMenu = () => {
                             </div>
                             <div className="mb-3">
                                 <label className="form-label">Hình ảnh</label>
-                                <input
+                                <TextField
                                     type="file"
-                                    className="form-control"
+                                    cvariant="outlined"
+                                    fullWidth
                                     name="images"
                                     id="images"
                                     {...register("hinh_anh", {
@@ -174,9 +203,8 @@ const AddMenu = () => {
                                     </small>
                                 )}
                             </div>
-                            <div className="row">
-                                <button className="btn btn-primary m-lg-2" type="submit" style={{ width: "100px" }} onClick={handleSubmit(onSubmit)}>{`Thêm`} </button>
-                                
+                            <div className="mb-3">
+                                <Button variant="contained" color="primary" sx={{ width: "100px" }} onClick={handleSubmit(onSubmit)}>{`Thêm`} </Button>
                             </div>
                         </div>
                     </form>

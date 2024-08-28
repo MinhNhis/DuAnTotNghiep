@@ -12,8 +12,10 @@ import {
 
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import Visibility from "@mui/icons-material/Visibility";
 import { getNguoiDung } from "../../../services/Nguoidung";
+import { BASE_URL } from "../../../config/ApiConfig";
+import imgUser from '../../assets/images/user.png'
 
 const DichVuTable = () => {
   const navigate = useNavigate();
@@ -39,6 +41,11 @@ const DichVuTable = () => {
           <TableCell>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Họ và tên
+            </Typography>
+          </TableCell>
+          <TableCell>
+            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+              Hình ảnh
             </Typography>
           </TableCell>
           <TableCell>
@@ -70,7 +77,7 @@ const DichVuTable = () => {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
                   <Typography variant="body1" sx={{ ml: 0.5 }}>
-                    {value.ten_nguoi_dung}
+                    {value?.ten_nguoi_dung}
                   </Typography>
                 </Box>
               </Box>
@@ -79,7 +86,7 @@ const DichVuTable = () => {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
                   <Typography variant="body1" sx={{ ml: 0.5 }}>
-                    {value.email}
+                    <img src={value?.hinh_anh ? `${BASE_URL}/uploads/${value?.hinh_anh}` : imgUser} alt="image" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
                   </Typography>
                 </Box>
               </Box>
@@ -88,23 +95,34 @@ const DichVuTable = () => {
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Box>
                   <Typography variant="body1" sx={{ ml: 0.5 }}>
-                    {value.vai_tro == 0 ? "Admin": "User"} 
+                    {value?.email}
+                  </Typography>
+                </Box>
+              </Box>
+            </TableCell>
+            <TableCell>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <Box>
+                  <Typography variant="body1" sx={{ ml: 0.5 }}>
+                    {value?.vai_tro == 0 ? "Admin": ""} 
+                    {value?.vai_tro == 1 ? "User": ""} 
+                    {value?.vai_tro == 2 ? "Admin quán": ""} 
                   </Typography>
                 </Box>
               </Box>
             </TableCell>
             <TableCell>
               <Typography>
-                <Link to = {`/admin/nguoi-dung/edit/${value.id_nguoidung}`}>
+                <Link to = {`/admin/nguoi-dung/chi-tiet/${value?.id_nguoidung}`}>
                 <IconButton
                   aria-label="edit"
                   color="primary"
                   style={{width: "50px", height: "50px"}}
                 >
-                  <EditIcon />
+                  <Visibility />
                 </IconButton>
                 </Link>
-                <Link to = {`/admin/nguoi-dung/delete/${value.id_nguoidung}`}>
+                <Link to = {`/admin/nguoi-dung/delete/${value?.id_nguoidung}`}>
                 <IconButton aria-label="delete" color="danger"style={{width: "50px", height: "50px"}}>
                   <DeleteIcon />
                 </IconButton>

@@ -11,21 +11,29 @@ import {
 } from "@mui/material";
 
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-
 import { getDatcho } from "../../../services/Datcho";
+import { getQuanan } from "../../../services/Quanan";
 
 const DatchoTable = () => {
     const [datcho, setDatcho] = useState([])
+    const [quanan, setQuanan] = useState([])
+    const [accounts, setAccounts] = useState(null);
 
     useEffect(() => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"));
+        setAccounts(accounts);
         initFata()
     }, [])
     const initFata = async () => {
         const result = await getDatcho()
         setDatcho(result.data)
+
+        const resultQuan = await getQuanan()
+        setQuanan(resultQuan.data)
     }
+    const quan = quanan.find((e) => e.created_user === accounts.id_nguoidung || e.updated_user === accounts.id_nguoidung)
 
     return (
         <Table aria-label="simple table" sx={{ mt: 3 }}>
@@ -58,7 +66,12 @@ const DatchoTable = () => {
                     </TableCell>
                     <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Thời gian
+                            Ngày
+                        </Typography>
+                    </TableCell>
+                    <TableCell>
+                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                            Giờ
                         </Typography>
                     </TableCell>
                     <TableCell>
@@ -84,7 +97,7 @@ const DatchoTable = () => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {datcho.map((dc, index) => (
+                {datcho.filter(fil => fil?.id_quanan === quan?.id_quanan || accounts?.vai_tro === 0).map((dc, index) => (
                     <TableRow key={index}>
                         <TableCell>
                             <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5, }}>
@@ -131,7 +144,16 @@ const DatchoTable = () => {
                             <Box sx={{ display: "flex", alignItems: "center", }}>
                                 <Box>
                                     <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                        {dc.thoi_gian_dat.split('T')[0]}
+                                        {dc.ngay_dat.split('T')[0]}
+                                    </Typography>
+                                </Box>
+                            </Box>
+                        </TableCell>
+                        <TableCell>
+                            <Box sx={{ display: "flex", alignItems: "center", }}>
+                                <Box>
+                                    <Typography variant="body1" sx={{ ml: 0.5, }}>
+                                        {dc.thoi_gian.split('T')[0]}
                                     </Typography>
                                 </Box>
                             </Box>
@@ -168,7 +190,7 @@ const DatchoTable = () => {
                         <TableCell>
                             <Typography >
                                 <Link to={`/admin/dat-cho/edit/${dc.id_datcho}`}>
-                                    <IconButton aria-label="edit" color="primary" style={{width: "50px"}} >
+                                    <IconButton aria-label="edit" color="primary" style={{ width: "50px" }} >
                                         <EditIcon />
                                     </IconButton>
                                 </Link>

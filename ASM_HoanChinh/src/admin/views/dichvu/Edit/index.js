@@ -11,7 +11,8 @@ const EditDichVu = () => {
     const navigate = useNavigate();
     const params = useParams();
     const id = params.id;
-    const { enqueueSnackbar } = useSnackbar(); 
+    const { enqueueSnackbar } = useSnackbar();
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
 
     const handleCancel = () => {
         navigate('/admin/dich-vu');
@@ -34,7 +35,9 @@ const EditDichVu = () => {
     const submit = async (value) => {
         try {
             await editDichvu(id, {
-                dich_vu: value?.dich_vu
+                dich_vu: value?.dich_vu,
+                created_user: accounts.id_nguoidung,
+                updated_user: accounts.id_nguoidung
             });
             enqueueSnackbar('Cập nhật dịch vụ thành công!', { variant: 'success' }); // Show success message
             navigate("/admin/dich-vu");
@@ -78,10 +81,10 @@ const EditDichVu = () => {
                             })}
                         />
                         <div className="mt-3">
-                            <Button style={{width: "100px"}} color="primary" variant="contained" type="submit">
+                            <Button style={{ width: "100px" }} color="primary" variant="contained" type="submit">
                                 Sửa
                             </Button>
-                            <Button style={{width: "100px", marginLeft: "10px", color: "white"}} color="error" variant="contained" onClick={handleCancel}>
+                            <Button style={{ width: "100px", marginLeft: "10px", color: "white" }} color="error" variant="contained" onClick={handleCancel}>
                                 Hủy
                             </Button>
                         </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-import { useSnackbar } from 'notistack'; 
+import { useSnackbar } from 'notistack';
 import { getKhongkhiById, putkhongkhi } from "../../../../services/Khongkhi";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 
@@ -11,7 +11,8 @@ const UpdateKhongKhi = () => {
   const params = useParams();
   const id = params?.id_khongkhi;
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   useEffect(() => {
     fetchKhongkhi();
@@ -30,9 +31,11 @@ const UpdateKhongKhi = () => {
   const onSubmit = async (data) => {
     try {
       await putkhongkhi(id, {
-        khong_khi: data?.khong_khi
+        khong_khi: data?.khong_khi,
+        created_user: accounts.id_nguoidung,
+        updated_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Cập nhật không khí thành công!', { variant: 'success' }); 
+      enqueueSnackbar('Cập nhật không khí thành công!', { variant: 'success' });
       navigate("/admin/khong-khi");
     } catch (error) {
       enqueueSnackbar('Có lỗi xảy ra khi cập nhật không khí!', { variant: 'error' });

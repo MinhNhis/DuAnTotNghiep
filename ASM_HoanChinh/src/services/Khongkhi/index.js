@@ -12,19 +12,23 @@ const khongkhi = async () => {
   }
 };
 const getKhongkhiById = async (id_khongkhi) => {
-  
+
   const res = await request({
-      method: "GET",
-      path: `/api/khongkhis/${id_khongkhi}`,
+    method: "GET",
+    path: `/api/khongkhis/${id_khongkhi}`,
   });
   return res;
 }
-const addkhongkhi = async (newKhongkhi) => {
+const addkhongkhi = async ({ khong_khi, created_user }) => {
   try {
     const res = await request({
       method: "POST",
       path: "/api/khongkhis",
-      data: newKhongkhi,
+      data: {
+        khong_khi: khong_khi,
+        created_user: created_user,
+        updated_user: null
+      },
     });
     return res;
   } catch (error) {
@@ -32,12 +36,16 @@ const addkhongkhi = async (newKhongkhi) => {
     throw error;
   }
 };
-const putkhongkhi = async (id_khongkhi, {khong_khi}) => {
+const putkhongkhi = async (id_khongkhi, { khong_khi, created_user, updated_user }) => {
   try {
     const res = await request({
       method: "PUT",
       path: `api/khongkhis/${id_khongkhi}`,
-      data: { khong_khi: khong_khi },
+      data: {
+        khong_khi: khong_khi,
+        created_user: created_user,
+        updated_user: updated_user
+      },
     });
     return res;
   } catch (error) {
@@ -48,12 +56,12 @@ const putkhongkhi = async (id_khongkhi, {khong_khi}) => {
 
 const deleteKhongkhi = async (id_khongkhi) => {
   const res = await request({
-      method: "DELETE",
-      path: `api/khongkhis/${id_khongkhi}`,
+    method: "DELETE",
+    path: `api/khongkhis/${id_khongkhi}`,
   });
 
   return res;
 };
 
 
-export { addkhongkhi, khongkhi, getKhongkhiById , putkhongkhi, deleteKhongkhi};
+export { addkhongkhi, khongkhi, getKhongkhiById, putkhongkhi, deleteKhongkhi };
