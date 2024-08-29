@@ -11,20 +11,28 @@ const Register = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const submit = async (value) => {
-        console.log(value);
-        await addNguoiDung({
-            ten_nguoi_dung: value?.ten_nguoi_dung,
-            mat_khau: value?.mat_khau,
-            email: value?.email,
-            so_dien_thoai: value?.so_dien_thoai,
-            ngay_sinh: value?.ngay_sinh,
-            gioi_tinh: value?.gioi_tinh,
-            dia_chi: value?.dia_chi,
-            vai_tro: 1,
-        });
-        enqueueSnackbar("Đăng kí tài khoản thành công!", { variant: "success" });
-        navigate("/login");
-    };
+        try{
+            await addNguoiDung({
+                ten_nguoi_dung: value?.ten_nguoi_dung,
+                mat_khau: value?.mat_khau,
+                email: value?.email,
+                so_dien_thoai: value?.so_dien_thoai,
+                ngay_sinh: value?.ngay_sinh,
+                gioi_tinh: value?.gioi_tinh,
+                dia_chi: value?.dia_chi,
+                hinh_anh: value?.hinh_anh[0] || '',
+                vai_tro: 1,
+            });
+            enqueueSnackbar("Đăng kí tài khoản thành công!", { variant: "success" });
+            navigate("/login");
+        }catch(error){
+            if (error.response && error.response.data.message === "Email đã tồn tại") {
+                enqueueSnackbar('Email đã tồn tại, vui lòng thử email khác!', { variant: 'error' });
+            } else {
+                enqueueSnackbar('Có lỗi xảy ra khi thêm người dùng!', { variant: 'error' });
+            }
+        }
+        }
 
     return (
         <div className="modal-content mt-3">
@@ -169,6 +177,17 @@ const Register = () => {
                                 className="form-control"
                                 {...register("ngay_sinh", {
                                     required: "Ngày sinh không được bỏ trống",
+                                    validate: (ngay_sinh) => {
+                                        const selectedDate = new Date(ngay_sinh);
+                                        const today = new Date();
+                                        today.setHours(0, 0, 0, 0);
+
+                                        if (selectedDate > today) {
+                                            return "Ngày sinh không hợp lệ!";
+                                        }
+
+                                        return true;
+                                    }
                                 })}
                             />
                             <label>Ngày Sinh</label>
@@ -198,7 +217,7 @@ const Register = () => {
                                         type="radio"
                                         name="gioi_tinh"
                                         id="gioi_tinh_nam"
-                                        value="nam"
+                                        value="Nam"
                                         {...register("gioi_tinh", {
                                             required: "Vui lòng chọn giới tính",
                                         })}
@@ -213,7 +232,7 @@ const Register = () => {
                                         type="radio"
                                         name="gioi_tinh"
                                         id="gioi_tinh_nu"
-                                        value="nu"
+                                        value="Nữ"
                                         {...register("gioi_tinh", {
                                             required: "Vui lòng chọn giới tính",
                                         })}

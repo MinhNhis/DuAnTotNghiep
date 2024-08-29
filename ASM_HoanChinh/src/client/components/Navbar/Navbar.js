@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Login from "../../pages/Login";
 import Register from "../../pages/Register";
@@ -6,11 +6,22 @@ import { useCookies } from "react-cookie";
 import '../Navbar/nav.css';
 import {BASE_URL} from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
+import {getNguoiDungById} from "../../../services/Nguoidung";
 
 const Navbar = () => {
   const accounts = JSON.parse(localStorage.getItem("accounts"))
   const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
   const navigate = useNavigate();
+  const [nguoidung, setNguoidung] = useState();
+
+  useEffect(()=>{
+    initData();
+  })
+
+  const initData=async () =>{
+    const resultNguoidung = await getNguoiDungById(accounts.id_nguoidung);
+    setNguoidung(resultNguoidung.data);
+  }
   const logOut = () => {
     const date = new Date();
     localStorage.setItem("accounts", JSON.stringify(null));
@@ -59,7 +70,7 @@ const Navbar = () => {
                           data-bs-toggle="dropdown"
                       >
                         <img
-                        src={accounts?.hinh_anh? `${BASE_URL}/uploads/${accounts.hinh_anh}`:ImgUser}
+                            src={nguoidung?.hinh_anh? `${BASE_URL}/uploads/${nguoidung.hinh_anh}`:ImgUser}
                             alt="User"
                             className="rounded-circle me-2 border-black user-icon"
                         />

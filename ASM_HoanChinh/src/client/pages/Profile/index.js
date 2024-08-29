@@ -16,9 +16,11 @@ import {
     FormLabel,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import {editNguoiDung, getNguoiDungById} from "../../../services/Nguoidung";
 import "./profile.css";
-import {BASE_URL} from "../../../config/ApiConfig";
+import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
+import {changPassword} from "../../../services/Auth";
 
 const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
@@ -27,6 +29,7 @@ const Profile = () => {
 
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
+    const [ nguoidung, setnguoidung ] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
 
@@ -35,8 +38,17 @@ const Profile = () => {
     }, []);
 
     const initData = async () => {
-        const resultDon = await getDatcho();
-        setDon(resultDon.data);
+        try {
+            const resultDon = await getDatcho();
+            setDon(resultDon.data);
+            const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
+            setnguoidung(resultNguoiDung.data);
+        } catch (error) {
+            console.error("Lỗi khi tải thông tin đặt chỗ:", error);
+            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin đặt chỗ!", {
+                variant: "error",
+            });
+        }
     };
 
     const handleClickOpen = (id) => {
@@ -50,30 +62,83 @@ const Profile = () => {
     };
 
     const onHuydon = async () => {
-        const datcho = dondatcho.find((e) => e.id_datcho === id);
-        await editDatcho(id, {
-            ten_quan: datcho?.quan_an,
-            ten_kh: datcho?.khach_hang,
-            sdt_kh: datcho?.sdt,
-            email_kh: datcho?.email,
-            thoi_gian_dat: datcho?.thoi_gian,
-            so_luong_nguoi: datcho?.so_luong,
-            trang_thai: 2,
-            yeu_cau_khac: datcho?.yeu_cau,
-            id_nguoidung: datcho?.id_nguoidung,
-        });
-        setOpen(false);
-        setId(null);
-        enqueueSnackbar("Hủy thành công!", { variant: "success" });
-        initData();
+        try {
+            const datcho = dondatcho.find((e) => e.id_datcho === id);
+            await editDatcho(id, {
+                ten_quan: datcho?.quan_an,
+                ten_kh: datcho?.khach_hang,
+                sdt_kh: datcho?.sdt,
+                email_kh: datcho?.email,
+                thoi_gian_dat: datcho?.thoi_gian,
+                so_luong_nguoi: datcho?.so_luong,
+                trang_thai: 2,
+                yeu_cau_khac: datcho?.yeu_cau,
+                id_nguoidung: datcho?.id_nguoidung,
+            });
+            setOpen(false);
+            setId(null);
+            enqueueSnackbar("Hủy thành công!", { variant: "success" });
+            initData();
+        } catch (error) {
+            console.error("Lỗi khi hủy đặt chỗ:", error);
+            enqueueSnackbar("Có lỗi xảy ra khi hủy đặt chỗ!", { variant: "error" });
+        }
     };
 
-    const onUpdateProfile = () => {
-        enqueueSnackbar("Cập nhật hồ sơ thành công!", { variant: "success" });
+    const onUpdateProfile = async (data) => {
+        const id_nguoidung = accounts?.id_nguoidung;
+
+        try {
+            console.log("Cập nhật hồ sơ với dữ liệu:", data);
+            const res = await editNguoiDung(id_nguoidung, {
+                ten_nguoi_dung: data.ten_nguoi_dung,
+                email: data.email,
+                so_dien_thoai: data.so_dien_thoai,
+                dia_chi: data.dia_chi,
+                ngay_sinh: data.ngay_sinh,
+                gioi_tinh: data.gioi_tinh,
+                hinh_anh: data.hinh_anh[0] || "",
+            });
+            if (res) {
+                const updatedAccount = {
+                    ...accounts,
+                    ten_nguoi_dung: data.ten_nguoi_dung,
+                    email: data.email,
+                    so_dien_thoai: data.so_dien_thoai,
+                    dia_chi: data.dia_chi,
+                    ngay_sinh: data.ngay_sinh,
+                    gioi_tinh: data.gioi_tinh,
+                    hinh_anh: data.hinh_anh[0] || accounts.hinh_anh,
+                };
+                localStorage.setItem("accounts", JSON.stringify(updatedAccount));
+                enqueueSnackbar("Cập nhật hồ sơ thành công!", { variant: "success" });
+                initData();
+            } else {
+                enqueueSnackbar("Cập nhật hồ sơ thất bại!", { variant: "error" });
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật hồ sơ:", error);
+            enqueueSnackbar("Có lỗi xảy ra khi cập nhật hồ sơ!", {
+                variant: "error",
+            });
+        }
     };
 
-    const onChangePassword = () => {
-        enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
+    const onChangePassword = async (value) => {
+        try{
+            const res = await changPassword(accounts.id_nguoidung,{
+                mat_khau: value.mat_khau_cu,
+                newMat_khau: value.mat_khau_moi,
+            })
+            enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
+        }catch (error){
+            console.log(error)
+            if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
+                enqueueSnackbar('Mật khẩu hiện tại không chính xác!', { variant: 'error' });
+            } else {
+                enqueueSnackbar('Có lỗi xảy ra !', { variant: 'error' });
+            }
+        }
     };
 
     return (
@@ -81,26 +146,38 @@ const Profile = () => {
             <div className="profile-container">
                 <div className="profile-sidebar">
                     <div className="profile-avatar">
-                        <img src={accounts?.hinh_anh? `${BASE_URL}/uploads/${accounts.hinh_anh}`:ImgUser}
+                        <img
+                            src={
+                                nguoidung?.hinh_anh
+                                    ? `${BASE_URL}/uploads/${nguoidung.hinh_anh}`
+                                    : ImgUser
+                            }
                             alt="User Avatar"
                             className="avatar-img"
                         />
                         <h4 className="profile-name">
-                            {accounts?.ten_nguoi_dung || "N/A"}
+                            {nguoidung?.ten_nguoi_dung || "N/A"}
                         </h4>
                     </div>
                     <ul className="profile-menu">
                         <li className="menu-item">
-                           <strong> Ngày sinh:</strong> {accounts?.ngay_sinh ? accounts.ngay_sinh.split('-').reverse().join('/') : "N/A"}
+                            <strong> Ngày sinh:</strong>{" "}
+                            {nguoidung?.ngay_sinh
+                                ? nguoidung.ngay_sinh.split("-").reverse().join("/")
+                                : "N/A"}
                         </li>
                         <li className="menu-item">
-                            <strong> Giới tính:</strong>  {accounts?.gioi_tinh || "N/A"}
+                            <strong> Giới tính:</strong> {nguoidung?.gioi_tinh || "N/A"}
                         </li>
                         <li className="menu-item">
-                            <strong> Điện thoại:</strong>  {accounts?.so_dien_thoai || "N/A"}
+                            <strong> Điện thoại:</strong> {nguoidung?.so_dien_thoai || "N/A"}
                         </li>
-                        <li className="menu-item"><strong> Email: </strong> {accounts?.email || "N/A"}</li>
-                        <li className="menu-item"><strong> Địa Chỉ:</strong>  {accounts?.dia_chi || "N/A"}</li>
+                        <li className="menu-item">
+                            <strong> Email: </strong> {nguoidung?.email || "N/A"}
+                        </li>
+                        <li className="menu-item">
+                            <strong> Địa Chỉ:</strong> {nguoidung?.dia_chi || "N/A"}
+                        </li>
                         <li className="menu-item-pass">
                             <a href="#">Quên Mật Khẩu</a>
                         </li>
@@ -210,7 +287,7 @@ const Profile = () => {
                                             variant="outlined"
                                             fullWidth
                                             type="file"
-                                            {...profileForm.register("anh_dai_dien")}
+                                            {...profileForm.register("hinh_anh")}
                                         />
                                     </Grid>
                                     <Grid item xs={12}>
@@ -223,7 +300,7 @@ const Profile = () => {
                                         >
                                             <FormControlLabel
                                                 value="Nam"
-                                                control={<Radio/>}
+                                                control={<Radio />}
                                                 label="Nam"
                                                 {...profileForm.register("gioi_tinh", {
                                                     required: "Giới tính không được bỏ trống",
@@ -231,7 +308,7 @@ const Profile = () => {
                                             />
                                             <FormControlLabel
                                                 value="Nữ"
-                                                control={<Radio/>}
+                                                control={<Radio />}
                                                 label="Nữ"
                                                 {...profileForm.register("gioi_tinh", {
                                                     required: "Giới tính không được bỏ trống",
@@ -248,7 +325,7 @@ const Profile = () => {
                                         <Button
                                             variant="contained"
                                             fullWidth
-                                            style={{width: "100px", backgroundColor: "#d4a762"}}
+                                            style={{ width: "100px", backgroundColor: "#d4a762" }}
                                             onClick={profileForm.handleSubmit(onUpdateProfile)}
                                             type="submit"
                                         >
@@ -322,7 +399,7 @@ const Profile = () => {
                                         <Button
                                             variant="contained"
                                             fullWidth
-                                            style={{width: "100px", backgroundColor: "#d4a762"}}
+                                            style={{ width: "100px", backgroundColor: "#d4a762" }}
                                             onClick={passwordForm.handleSubmit(onChangePassword)}
                                             type="submit"
                                         >
@@ -344,18 +421,17 @@ const Profile = () => {
                             <div className="d-flex justify-content-between align-items-center">
                                 <h4 className="booking-title">Quán ăn: {value.ten_quan}</h4>
                                 <span
-                                    className={`badge ${
-                                        value?.trang_thai === 0
-                                            ? "badge-warning"
-                                            : value?.trang_thai === 1
-                                                ? "badge-success"
-                                                : "badge-danger"
+                                    className={`badge ${value?.trang_thai === 0
+                                        ? "badge-warning"
+                                        : value?.trang_thai === 1
+                                            ? "badge-success"
+                                            : "badge-danger"
                                     }`}
                                 >
-                  {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
+                                    {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                     {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
                                     {value?.trang_thai === 2 ? "Đã hủy" : ""}
-                </span>
+                                </span>
                             </div>
                             <div className="booking-details mt-3">
                                 <p>
@@ -377,8 +453,8 @@ const Profile = () => {
                                 color="error"
                                 style={
                                     value?.trang_thai === 2
-                                        ? {display: "none"}
-                                        : {display: "block", width: "100px"}
+                                        ? { display: "none" }
+                                        : { display: "block", width: "100px" }
                                 }
                                 onClick={() => handleClickOpen(value?.id_datcho)}
                             >

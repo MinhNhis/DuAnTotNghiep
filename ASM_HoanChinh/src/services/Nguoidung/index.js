@@ -54,7 +54,6 @@ const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so
     data.append("ngay_sinh", ngay_sinh);
     data.append("gioi_tinh", gioi_tinh);
     data.append("dia_chi", dia_chi);
-    data.append("vai_tro", vai_tro);
     // Gửi 1 ảnh
     data.append("hinh_anh", hinh_anh);
 
