@@ -9,16 +9,18 @@ import ImgUser from "../../../admin/assets/images/user.png";
 import {getNguoiDungById} from "../../../services/Nguoidung";
 
 const Navbar = () => {
-  const accounts = JSON.parse(localStorage.getItem("accounts")) || {}
   const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
   const navigate = useNavigate();
   const [nguoidung, setNguoidung] = useState();
+  const [accounts, setAccounts] = useState({});
 
   useEffect(() => {
-    if (accounts && accounts.id_nguoidung) {
+    const storedAccounts = JSON.parse(localStorage.getItem("accounts")) || {};
+
+      setAccounts(storedAccounts);
       initData();
-    }
-  }, [accounts]);
+
+  }, []);
 
   const initData=async () =>{
     const resultNguoidung = await getNguoiDungById(accounts.id_nguoidung);
