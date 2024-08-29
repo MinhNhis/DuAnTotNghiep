@@ -15,10 +15,16 @@ const Navbar = () => {
   const [nguoidung, setNguoidung] = useState();
 
   useEffect(() => {
+    console.log('Accounts:', accounts);
+    console.log('Nguoidung:', nguoidung);
+
     if (accounts && accounts.id_nguoidung) {
-      initData();
+      // Chỉ gọi initData nếu nguoidung chưa được thiết lập
+      if (!nguoidung || accounts.id_nguoidung !== nguoidung.id_nguoidung) {
+        initData();
+      }
     }
-  }, [accounts]);
+  }, [accounts, nguoidung]);
 
   const initData=async () =>{
     const resultNguoidung = await getNguoiDungById(accounts.id_nguoidung);
@@ -30,6 +36,7 @@ const Navbar = () => {
     removeCookie("token", null, { path: "/", expires: date });
     removeCookie("role", null, { path: "/", expires: date });
   };
+  console.log(nguoidung)
 
   return (
       <div className="container-fluid nav-bar">
@@ -76,7 +83,7 @@ const Navbar = () => {
                             alt="User"
                             className="rounded-circle me-2 border-black user-icon"
                         />
-                        <p className="icon mt-4" >{accounts.ten_nguoi_dung}</p>
+                        <p className="icon mt-4" >{nguoidung?.ten_nguoi_dung}</p>
                       </div>
 
                       <div className="dropdown-menu bg-light dropdown-menu-end">

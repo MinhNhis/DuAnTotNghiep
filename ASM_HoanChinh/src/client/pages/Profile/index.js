@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { editDatcho, getDatcho } from "../../../services/Datcho";
 import { useForm } from "react-hook-form";
 import {
@@ -23,7 +23,7 @@ import ImgUser from "../../../admin/assets/images/user.png";
 import {changPassword} from "../../../services/Auth";
 
 const Profile = () => {
-    const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
     const profileForm = useForm();
     const passwordForm = useForm();
 
@@ -34,10 +34,10 @@ const Profile = () => {
     const [id, setId] = useState(null);
 
     useEffect(() => {
-        if (accounts && accounts.id_nguoidung) {
+        if (accounts && accounts.id_nguoidung && !nguoidung) {
             initData();
         }
-    }, [accounts]);
+    }, [accounts, nguoidung]);
 
     const initData = async () => {
         try {
@@ -243,6 +243,14 @@ const Profile = () => {
                                                     value: /^[0-9\b]+$/,
                                                     message: "Số điện thoại không hợp lệ",
                                                 },
+                                                maxLength:{
+                                                    value: 10,
+                                                    message: "Số điện thoại phải 10 số"
+                                                },
+                                                minLength:{
+                                                    value: 10,
+                                                    message: "Số điện thoại phải 10 số"
+                                                }
                                             })}
                                         />
                                         {profileForm.formState?.errors?.so_dien_thoai && (
