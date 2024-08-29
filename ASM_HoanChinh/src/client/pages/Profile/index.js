@@ -23,31 +23,27 @@ import ImgUser from "../../../admin/assets/images/user.png";
 import {changPassword} from "../../../services/Auth";
 
 const Profile = () => {
-
+    const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
     const profileForm = useForm();
     const passwordForm = useForm();
 
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
-    const [ nguoidung, setnguoidung ] = useState({});
+    const [ nguoidung, setnguoidung ] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
-    const [account, setAccounts] = useState(null);
 
     useEffect(() => {
-        const storedAccounts = JSON.parse(localStorage.getItem("accounts")) || {};
-        if (storedAccounts && storedAccounts.id_nguoidung) {
-            setAccounts(storedAccounts);
+        if (accounts && accounts.id_nguoidung) {
             initData();
         }
-    }, []);
+    }, [accounts]);
 
-    console.log(account)
     const initData = async () => {
         try {
             const resultDon = await getDatcho();
             setDon(resultDon.data);
-            const resultNguoiDung = await getNguoiDungById();
+            const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
             setnguoidung(resultNguoiDung.data);
         } catch (error) {
             enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", {
@@ -55,8 +51,6 @@ const Profile = () => {
             });
         }
     };
-
-    console.log(account)
 
     const handleClickOpen = (id) => {
         setId(id);
@@ -93,7 +87,7 @@ const Profile = () => {
     };
 
     const onUpdateProfile = async (data) => {
-        const id_nguoidung = account?.id_nguoidung;
+        const id_nguoidung = accounts?.id_nguoidung;
 
         try {
             console.log("Cập nhật hồ sơ với dữ liệu:", data);
@@ -108,14 +102,14 @@ const Profile = () => {
             });
             if (res) {
                 const updatedAccount = {
-                    ...account,
+                    ...accounts,
                     ten_nguoi_dung: data.ten_nguoi_dung,
                     email: data.email,
                     so_dien_thoai: data.so_dien_thoai,
                     dia_chi: data.dia_chi,
                     ngay_sinh: data.ngay_sinh,
                     gioi_tinh: data.gioi_tinh,
-                    hinh_anh: data.hinh_anh[0] || account.hinh_anh,
+                    hinh_anh: data.hinh_anh[0] || accounts.hinh_anh,
                 };
                 localStorage.setItem("accounts", JSON.stringify(updatedAccount));
                 enqueueSnackbar("Cập nhật hồ sơ thành công!", { variant: "success" });
@@ -133,7 +127,7 @@ const Profile = () => {
 
     const onChangePassword = async (value) => {
         try{
-            await changPassword(account.id_nguoidung,{
+            await changPassword(accounts.id_nguoidung,{
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
@@ -163,7 +157,7 @@ const Profile = () => {
                             className="avatar-img"
                         />
                         <h4 className="profile-name">
-                            {account?.ten_nguoi_dung || "N/A"}
+                            {nguoidung?.ten_nguoi_dung || "N/A"}
                         </h4>
                     </div>
                     <ul className="profile-menu">
@@ -202,7 +196,7 @@ const Profile = () => {
                                             label="Họ và tên"
                                             variant="outlined"
                                             fullWidth
-                                            defaultValue={account?.ten_nguoi_dung || ""}
+                                            defaultValue={accounts?.ten_nguoi_dung || ""}
                                             {...profileForm.register("ten_nguoi_dung", {
                                                 required: "Tên người dùng không được bỏ trống",
                                                 minLength: {
@@ -222,7 +216,7 @@ const Profile = () => {
                                             label="Email"
                                             variant="outlined"
                                             fullWidth
-                                            defaultValue={account?.email || ""}
+                                            defaultValue={accounts?.email || ""}
                                             {...profileForm.register("email", {
                                                 required: "Email không được bỏ trống",
                                                 pattern: {
@@ -242,7 +236,7 @@ const Profile = () => {
                                             label="Số điện thoại"
                                             variant="outlined"
                                             fullWidth
-                                            defaultValue={account?.so_dien_thoai || ""}
+                                            defaultValue={accounts?.so_dien_thoai || ""}
                                             {...profileForm.register("so_dien_thoai", {
                                                 required: "Số điện thoại không được bỏ trống",
                                                 pattern: {
@@ -262,7 +256,7 @@ const Profile = () => {
                                             label="Địa chỉ"
                                             variant="outlined"
                                             fullWidth
-                                            defaultValue={account?.dia_chi || ""}
+                                            defaultValue={accounts?.dia_chi || ""}
                                             {...profileForm.register("dia_chi", {
                                                 required: "Địa chỉ không được bỏ trống",
                                             })}
@@ -278,7 +272,7 @@ const Profile = () => {
                                             variant="outlined"
                                             fullWidth
                                             type="date"
-                                            defaultValue={account?.ngay_sinh || ""}
+                                            defaultValue={accounts?.ngay_sinh || ""}
                                             {...profileForm.register("ngay_sinh", {
                                                 required: "Ngày sinh không được bỏ trống",
                                             })}
@@ -423,7 +417,7 @@ const Profile = () => {
             <div className="profile-bookings">
                 <h3 className="mb-4">Thông Tin Đặt Chỗ</h3>
                 {dondatcho.map((value, index) => {
-                    return value?.id_nguoidung === account?.id_nguoidung ? (
+                    return value?.id_nguoidung === accounts?.id_nguoidung ? (
                         <div className="booking-card" key={index}>
                             <div className="d-flex justify-content-between align-items-center">
                                 <h4 className="booking-title">Quán ăn: {value.ten_quan}</h4>
