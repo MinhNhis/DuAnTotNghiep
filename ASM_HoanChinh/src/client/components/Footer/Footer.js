@@ -32,9 +32,9 @@ const Footer = () => {
                         <div className="footer-item">
                             <h4 className="mb-4">Liên Hệ</h4>
                             <div className="d-flex flex-column align-items-start">
-                                <p><i className="fa fa-map-marker-alt text-primary me-2"></i> 123 Đường, New York, Mỹ</p>
-                                <p><i className="fa fa-phone-alt text-primary me-2"></i> (+012) 3456 7890 123</p>
-                                <p><i className="fas fa-envelope text-primary me-2"></i> info@example.com</p>
+                                <p><i className="fa fa-map-marker-alt text-primary me-2"></i>Nguyễn Văn Cừ, Phường An Khánh, Quận Ninh Kiều, Cần Thơ</p>
+                                <p><i className="fa fa-phone-alt text-primary me-2"></i>032998822</p>
+                                <p><i className="fas fa-envelope text-primary me-2"></i>Foodseeker@gmail.com</p>
                                 <p><i className="fa fa-clock text-primary me-2"></i> Dịch Vụ 24/7</p>
                             </div>
                         </div>
@@ -44,7 +44,8 @@ const Footer = () => {
                             <h4 className="mb-4">Thư Viện Mạng Xã Hội</h4>
                             <div className="row g-2">
                                 <div className="col-4">
-                                    <img src="img/menu-01.jpg" className="img-fluid rounded-circle border border-primary p-2" alt="" />
+                                    <img src="img/menu-01.jpg"
+                                         className="img-fluid rounded-circle border border-primary p-2" alt="" />
                                 </div>
                                 <div className="col-4">
                                     <img src="img/menu-02.jpg" className="img-fluid rounded-circle border border-primary p-2" alt="" />

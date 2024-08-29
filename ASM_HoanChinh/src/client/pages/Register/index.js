@@ -1,56 +1,73 @@
-import React from 'react';
-import './style2.css';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { addNguoiDung } from '../../../services/Nguoidung';
+import React from "react";
+import "./style2.css";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { addNguoiDung } from "../../../services/Nguoidung";
 import { useSnackbar } from "notistack";
 
 const Register = () => {
-    const { register, handleSubmit, getValues, formState } = useForm()
-    const navigate = useNavigate()
+    const { register, handleSubmit, getValues, formState } = useForm();
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
+
     const submit = async (value) => {
         console.log(value);
         await addNguoiDung({
             ten_nguoi_dung: value?.ten_nguoi_dung,
             mat_khau: value?.mat_khau,
             email: value?.email,
+            so_dien_thoai: value?.so_dien_thoai,
+            ngay_sinh: value?.ngay_sinh,
+            gioi_tinh: value?.gioi_tinh,
+            dia_chi: value?.dia_chi,
             vai_tro: 1,
-        })
+        });
         enqueueSnackbar("Đăng kí tài khoản thành công!", { variant: "success" });
-        navigate("/login")
-    }
+        navigate("/login");
+    };
+
     return (
-        <div className="modal-content mt-5">
+        <div className="modal-content mt-3">
             <div className="modal-header">
-                <Link to={"/"} type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></Link>
+                <Link
+                    to={"/"}
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></Link>
             </div>
             <div className="modal-body">
                 <div className="form-content">
                     <h2>ĐĂNG KÝ</h2>
-                    <form action="#">
+                    <form className="text-dark" action="#">
                         <div className="input-field mb-3">
-                            <input type="text" required className="form-control"
+                            <input
+                                type="text"
+                                required
+                                className="form-control"
                                 {...register("ten_nguoi_dung", {
-                                    required: {
-                                        value: true,
-                                        message: "Tên người dùng không được bỏ trống"
-                                    },
+                                    required: "Tên người dùng không được bỏ trống",
                                     minLength: {
                                         value: 3,
-                                        message: "Tên người dùng phải nhiều hơn 3 ký tự"
-                                    }
+                                        message: "Tên người dùng phải nhiều hơn 3 ký tự",
+                                    },
                                 })}
                             />
-                            <label>Tên</label>
+                            <label>Họ và tên</label>
                         </div>
                         {formState?.errors?.ten_nguoi_dung && (
                             <small className="text-danger">
                                 {formState?.errors?.ten_nguoi_dung?.message}
                             </small>
                         )}
-                        <div className="input-field mb-3 mt-5">
-                            <input type="text" required className="form-control"
+
+                        {/* Email */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="text"
+                                required
+                                className="form-control"
                                 {...register("email", {
                                     required: "Email không được bỏ trống",
                                     pattern: {
@@ -66,17 +83,19 @@ const Register = () => {
                                 {formState?.errors?.email?.message}
                             </small>
                         )}
-                        <div className="input-field mb-3 mt-5">
-                            <input type="password" required className="form-control"
+
+                        {/* mật khẩu*/}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="password"
+                                required
+                                className="form-control"
                                 {...register("mat_khau", {
-                                    required: {
-                                        value: true,
-                                        message: "Mật khẩu không được bỏ trống"
-                                    },
+                                    required: "Mật khẩu không được bỏ trống",
                                     minLength: {
                                         value: 6,
-                                        message: "Mật khẩu phải ít nhất 6 ký tự"
-                                    }
+                                        message: "Mật khẩu phải ít nhất 6 ký tự",
+                                    },
                                 })}
                             />
                             <label>Mật Khẩu</label>
@@ -86,13 +105,15 @@ const Register = () => {
                                 {formState?.errors?.mat_khau?.message}
                             </small>
                         )}
-                        <div className="input-field mb-3 mt-5">
-                            <input type="password" required className="form-control"
+
+                        {/* nhập lại mật  khẩu */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="password"
+                                required
+                                className="form-control"
                                 {...register("xac_nhan_mat_khau", {
-                                    required: {
-                                        value: true,
-                                        message: "Xác nhận mật khẩu không được bỏ trống",
-                                    },
+                                    required: "Xác nhận mật khẩu không được bỏ trống",
                                     minLength: {
                                         value: 6,
                                         message: "Xác nhận mật khẩu ít nhất có 6 ký tự",
@@ -102,7 +123,6 @@ const Register = () => {
                                         if (xac_nhan_mat_khau === mat_khau) {
                                             return true;
                                         }
-
                                         return "Mật khẩu và xác nhận không trùng nhau";
                                     },
                                 })}
@@ -114,16 +134,141 @@ const Register = () => {
                                 {formState?.errors?.xac_nhan_mat_khau?.message}
                             </small>
                         )}
-                        <button type="submit" className="btn btn-primary w-100 mt-3" onClick={handleSubmit(submit)}>Đăng Ký</button>
+
+                        {/* điện thoại */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="text"
+                                required
+                                className="form-control"
+                                {...register("so_dien_thoai", {
+                                    required: "Số điện thoại không được bỏ trống",
+                                    pattern: {
+                                        value: /^[0-9]+$/,
+                                        message: "Số điện thoại không hợp lệ",
+                                    },
+                                    minLength: {
+                                        value: 10,
+                                        message: "Số điện thoại phải có ít nhất 10 chữ số",
+                                    },
+                                })}
+                            />
+                            <label>Số Điện Thoại</label>
+                        </div>
+                        {formState?.errors?.so_dien_thoai && (
+                            <small className="text-danger">
+                                {formState?.errors?.so_dien_thoai?.message}
+                            </small>
+                        )}
+
+                        {/* ngày sinh */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="date"
+                                required
+                                className="form-control"
+                                {...register("ngay_sinh", {
+                                    required: "Ngày sinh không được bỏ trống",
+                                })}
+                            />
+                            <label>Ngày Sinh</label>
+                        </div>
+                        {formState?.errors?.ngay_sinh && (
+                            <small className="text-danger">
+                                {formState?.errors?.ngay_sinh?.message}
+                            </small>
+                        )}
+
+                        {/* img */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="file"
+                                className="form-control"
+                                {...register("hinh_anh")}
+                            />
+                            <label>Hình ảnh</label>
+                        </div>
+                        {/* Giới tính */}
+                        <div className="mb-3 mt-3">
+                            <label>Giới tính</label>
+                            <div className="d-flex align-items-center">
+                                <div className="form-check me-4">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="gioi_tinh"
+                                        id="gioi_tinh_nam"
+                                        value="nam"
+                                        {...register("gioi_tinh", {
+                                            required: "Vui lòng chọn giới tính",
+                                        })}
+                                    />
+                                    <label className="form-check-label" htmlFor="gioi_tinh_nam">
+                                        Nam
+                                    </label>
+                                </div>
+                                <div className="form-check">
+                                    <input
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="gioi_tinh"
+                                        id="gioi_tinh_nu"
+                                        value="nu"
+                                        {...register("gioi_tinh", {
+                                            required: "Vui lòng chọn giới tính",
+                                        })}
+                                    />
+                                    <label className="form-check-label" htmlFor="gioi_tinh_nu">
+                                        Nữ
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {formState?.errors?.gioi_tinh && (
+                            <small className="text-danger">
+                                {formState?.errors?.gioi_tinh?.message}
+                            </small>
+                        )}
+
+                        {/* địa chỉ */}
+                        <div className="input-field mb-3 mt-3">
+                            <input
+                                type="text"
+                                required
+                                className="form-control"
+                                {...register("dia_chi", {
+                                    required: "Địa chỉ không được bỏ trống",
+                                    minLength: {
+                                        value: 5,
+                                        message: "Địa chỉ phải có ít nhất 5 ký tự",
+                                    },
+                                })}
+                            />
+                            <label>Địa Chỉ</label>
+                        </div>
+                        {formState?.errors?.dia_chi && (
+                            <small className="text-danger">
+                                {formState?.errors?.dia_chi?.message}
+                            </small>
+                        )}
+                        <button
+                            type="submit"
+                            className="btn btn-primary w-100 mt-3"
+                            onClick={handleSubmit(submit)}
+                        >
+                            Đăng Ký
+                        </button>
                     </form>
                     <div className="bottom-link mt-3">
                         Bạn đã có tài khoản?
-                        <Link to={"/login"} id="login-link" >Đăng nhập</Link>
+                        <Link to={"/login"} id="login-link">
+                            Đăng nhập
+                        </Link>
                     </div>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Register;
