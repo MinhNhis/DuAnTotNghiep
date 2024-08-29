@@ -34,8 +34,10 @@ const Profile = () => {
     const [id, setId] = useState(null);
 
     useEffect(() => {
-        initData();
-    }, []);
+        if (accounts && accounts.id_nguoidung) {
+            initData();
+        }
+    }, [accounts]);
 
     const initData = async () => {
         try {
@@ -126,7 +128,7 @@ const Profile = () => {
 
     const onChangePassword = async (value) => {
         try{
-            const res = await changPassword(accounts.id_nguoidung,{
+            await changPassword(accounts.id_nguoidung,{
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
