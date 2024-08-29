@@ -46,8 +46,7 @@ const Profile = () => {
             const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
             setnguoidung(resultNguoiDung.data);
         } catch (error) {
-            console.error("Lỗi khi tải thông tin đặt chỗ:", error);
-            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin đặt chỗ!", {
+            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", {
                 variant: "error",
             });
         }
