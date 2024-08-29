@@ -345,9 +345,14 @@ const Profile = () => {
                                         <TextField
                                             label="Mật khẩu hiện tại"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             {...passwordForm.register("mat_khau_cu", {
                                                 required: "Mật khẩu cũ không được bỏ trống",
+                                                minLength: {
+                                                    value: 6,
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                },
                                             })}
                                         />
                                         {passwordForm.formState?.errors?.mat_khau_cu && (
@@ -360,12 +365,13 @@ const Profile = () => {
                                         <TextField
                                             label="Mật khẩu mới"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             {...passwordForm.register("mat_khau_moi", {
                                                 required: "Mật khẩu mới không được bỏ trống",
                                                 minLength: {
                                                     value: 6,
-                                                    message: "Mật khẩu mới phải có ít nhất 6 ký tự",
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
                                                 },
                                             })}
                                         />
@@ -379,9 +385,14 @@ const Profile = () => {
                                         <TextField
                                             label="Xác nhận mật khẩu mới"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             {...passwordForm.register("xac_nhan_mat_khau", {
                                                 required: "Xác nhận mật khẩu không được bỏ trống",
+                                                minLength: {
+                                                    value: 6,
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                },
                                                 validate: (value) =>
                                                     value === passwordForm.watch("mat_khau_moi") ||
                                                     "Mật khẩu xác nhận không khớp",
