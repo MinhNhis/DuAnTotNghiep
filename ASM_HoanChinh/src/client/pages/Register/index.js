@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import "./style2.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -8,7 +8,12 @@ import { useSnackbar } from "notistack";
 const Register = () => {
     const { register, handleSubmit, getValues, formState } = useForm();
     const navigate = useNavigate();
+    const [check, setCheck] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
+
+    const handleCheckboxChange = (event) => {
+        setCheck(event.target.checked);
+    };
 
     const submit = async (value) => {
         try{
@@ -21,7 +26,7 @@ const Register = () => {
                 gioi_tinh: value?.gioi_tinh,
                 dia_chi: value?.dia_chi,
                 hinh_anh: value?.hinh_anh[0] || '',
-                vai_tro: 1,
+                vai_tro: check ? 2 : 1,
             });
             enqueueSnackbar("Đăng kí tài khoản thành công!", { variant: "success" });
             navigate("/login");
@@ -270,6 +275,19 @@ const Register = () => {
                                 {formState?.errors?.dia_chi?.message}
                             </small>
                         )}
+
+                        <div className="mb-3 form-check">
+                            <input
+                                type="checkbox"
+                                className="form-check-input"
+                                id="exampleCheck1"
+                                checked={check}
+                                onChange={handleCheckboxChange}
+                            />
+                            <label className="form-check-label" htmlFor="exampleCheck1">
+                                Đăng kí quán ăn?
+                            </label>
+                        </div>
                         <button
                             type="submit"
                             className="btn btn-primary w-100 mt-3"

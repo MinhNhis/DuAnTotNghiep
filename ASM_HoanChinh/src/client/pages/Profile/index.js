@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import { editDatcho, getDatcho } from "../../../services/Datcho";
 import { useForm } from "react-hook-form";
 import {
@@ -23,7 +23,7 @@ import ImgUser from "../../../admin/assets/images/user.png";
 import {changPassword} from "../../../services/Auth";
 
 const Profile = () => {
-    const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+    const accounts = JSON.parse(localStorage.getItem("accounts"));
     const profileForm = useForm();
     const passwordForm = useForm();
 
@@ -34,8 +34,10 @@ const Profile = () => {
     const [id, setId] = useState(null);
 
     useEffect(() => {
-        initData();
-    }, []);
+        if (accounts && accounts.id_nguoidung && !nguoidung) {
+            initData();
+        }
+    }, [accounts, nguoidung]);
 
     const initData = async () => {
         try {
@@ -44,8 +46,7 @@ const Profile = () => {
             const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
             setnguoidung(resultNguoiDung.data);
         } catch (error) {
-            console.error("Lỗi khi tải thông tin đặt chỗ:", error);
-            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin đặt chỗ!", {
+            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", {
                 variant: "error",
             });
         }
@@ -243,6 +244,14 @@ const Profile = () => {
                                                     value: /^[0-9\b]+$/,
                                                     message: "Số điện thoại không hợp lệ",
                                                 },
+                                                maxLength:{
+                                                    value: 10,
+                                                    message: "Số điện thoại phải 10 số"
+                                                },
+                                                minLength:{
+                                                    value: 10,
+                                                    message: "Số điện thoại phải 10 số"
+                                                }
                                             })}
                                         />
                                         {profileForm.formState?.errors?.so_dien_thoai && (
@@ -345,10 +354,15 @@ const Profile = () => {
                                         <TextField
                                             label="Mật khẩu hiện tại"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             type="password"
                                             {...passwordForm.register("mat_khau_cu", {
                                                 required: "Mật khẩu cũ không được bỏ trống",
+                                                minLength: {
+                                                    value: 6,
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                },
                                             })}
                                         />
                                         {passwordForm.formState?.errors?.mat_khau_cu && (
@@ -361,13 +375,14 @@ const Profile = () => {
                                         <TextField
                                             label="Mật khẩu mới"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             type="password"
                                             {...passwordForm.register("mat_khau_moi", {
                                                 required: "Mật khẩu mới không được bỏ trống",
                                                 minLength: {
                                                     value: 6,
-                                                    message: "Mật khẩu mới phải có ít nhất 6 ký tự",
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
                                                 },
                                             })}
                                         />
@@ -381,10 +396,15 @@ const Profile = () => {
                                         <TextField
                                             label="Xác nhận mật khẩu mới"
                                             variant="outlined"
+                                            type={"password"}
                                             fullWidth
                                             type="password"
                                             {...passwordForm.register("xac_nhan_mat_khau", {
                                                 required: "Xác nhận mật khẩu không được bỏ trống",
+                                                minLength: {
+                                                    value: 6,
+                                                    message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                },
                                                 validate: (value) =>
                                                     value === passwordForm.watch("mat_khau_moi") ||
                                                     "Mật khẩu xác nhận không khớp",
