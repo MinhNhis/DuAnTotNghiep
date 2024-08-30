@@ -1,18 +1,31 @@
 import React, { useEffect, useState } from "react";
-
-
+import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
+import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
-import { getBaidoxe, getCacDichvu, getGioithieu, getKehoach, getKhongkhi, getTiennghi } from "../../../services/Gioithieu";
+
+
+import {
+    getAnuong,
+    getBaidoxe,
+    getCacDichvu,
+    getGioithieu,
+    getKehoach,
+    getKhongkhi,
+    getTiennghi,
+} from "../../../services/Gioithieu";
 import { getDichvu } from "../../../services/Dichvu";
 import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
+import { CANCEL } from "redux-saga";
 
 const Gioithieu = () => {
-    const params = useParams()
+    const { register, handleSubmit, formState } = useForm()
+
+    const params = useParams();
     const id = params.id;
 
     const [quanan, setQuanan] = useState({});
@@ -23,6 +36,7 @@ const Gioithieu = () => {
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
+    const [anuong, setAnuong] = useState([]);
     const [baidoxe, setBaidoxe] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [loaikhachhang, setLoaikhachhang] = useState([]);
@@ -30,129 +44,395 @@ const Gioithieu = () => {
     const [khongkhi, setKhongkhi] = useState([]);
 
     useEffect(() => {
-        initData()
-    }, [])
+        initData();
+    }, []);
 
     const initData = async () => {
-        const resultQa = await getQuananById(id)
-        setQuanan(resultQa.data)
+        const resultQa = await getQuananById(id);
+        setQuanan(resultQa.data);
 
-        const resultGt = await getGioithieu()
-        setGioithieu(resultGt.data)
+        const resultGt = await getGioithieu();
+        setGioithieu(resultGt.data);
 
-        const resultDg = await getDanhgia()
-        setDanhgia(resultDg.data)
+        const resultDg = await getDanhgia();
+        setDanhgia(resultDg.data);
 
-        const resultNdg = await getNguoiDung()
-        setNguoidanhgia(resultNdg.data)
+        const resultNdg = await getNguoiDung();
+        setNguoidanhgia(resultNdg.data);
 
-        const resultMenu = await getMenus()
+        const resultMenu = await getMenus();
         setMenu(resultMenu.data);
 
-        const resultCacdv = await getCacDichvu()
-        setCacdichvu(resultCacdv.data)
+        const resultCacdv = await getCacDichvu();
+        setCacdichvu(resultCacdv.data);
 
-        const resultDv = await getDichvu()
-        setDichvu(resultDv.data)
+        const resultDv = await getDichvu();
+        setDichvu(resultDv.data);
 
-        const resultBdx = await getBaidoxe()
-        setBaidoxe(resultBdx.data)
+        const resultAu = await getAnuong();
+        setAnuong(resultAu.data);
 
-        const resultKh = await getKehoach()
-        setKehoach(resultKh.data)
+        const resultBdx = await getBaidoxe();
+        setBaidoxe(resultBdx.data);
 
-        const resultLoaikh = await getLKH()
-        setLoaikhachhang(resultLoaikh.data)
+        const resultKh = await getKehoach();
+        setKehoach(resultKh.data);
 
-        const resultTn = await getTiennghi()
-        setTiennghi(resultTn.data)
+        const resultLoaikh = await getLKH();
+        setLoaikhachhang(resultLoaikh.data);
 
-        const resultKk = await getKhongkhi()
-        setKhongkhi(resultKk.data)
-    }
+        const resultTn = await getTiennghi();
+        setTiennghi(resultTn.data);
+
+        const resultKk = await getKhongkhi();
+        setKhongkhi(resultKk.data);
+    };
 
     const renderStars = (stars) => {
-        return [...Array(5)].map((_, i) => (
-            i < stars
-                ? <i key={i} className="fas fa-star text-primary me-2"></i>
-                : <i key={i} className="far fa-star text-primary me-2"></i>
-        ));
+        return [...Array(5)].map((_, i) =>
+            i < stars ? (
+                <i key={i} className="fas fa-star text-primary me-2"></i>
+            ) : (
+                <i key={i} className="far fa-star text-primary me-2"></i>
+            )
+        );
     };
 
     return (
         <>
             {/* <Navbar /> */}
-            <div className="container-fluid bg-light py-0 my-6 mt-0">
-                <div className="container text-center animated bounceInDown">
-
+            <div class="row mb-2" style={{ height: "600px" }}>
+                <div class="col-12 ">
+                    <img
+                        src={`${BASE_URL}/uploads/${quanan.hinh_anh}`}
+                        className=""
+                        alt=""
+                        style={{ width: "100%", height: "600px" }}
+                    />
                 </div>
             </div>
+
             <div className="container-fluid py-1">
                 <div className="container">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 className="display-5 mb-3" style={{ fontSize: '20px', fontWeight: 'bold' }}>{quanan.ten_quan_an}</h5>
-                        <Link to={`/danh-gia/${quanan.id_quanan}`} className="d-flex align-items-center" style={{ fontSize: '20px', fontWeight: 'bold' }}>
+                    <div class="d-flex align-items-center justify-content-between ">
+                        <h2
+                            className="display-5 mb-3"
+                            style={{ fontSize: "40px", fontWeight: "bold" }}
+                        >
+                            {quanan.ten_quan_an}
+                        </h2>
+                        <Link
+                            to={`/danh-gia/${quanan.id_quanan}`}
+                            className="d-flex align-items-center"
+                            style={{ fontSize: "20px", fontWeight: "bold" }}
+                        >
                             <i class="bi bi-pencil-square me-2"></i>
                             Đánh giá
                         </Link>
                     </div>
                     <p className="mb-4">
-                        <i className="fas fa-star text-primary me-2"></i>
-                        <i className="fas fa-star text-primary me-2"></i>
-                        <i className="fas fa-star text-primary me-2"></i>
-                        <i className="fas fa-star text-primary me-2"></i>
-                        {
-                            gioithieu.map((value) => {
-                                return (
-                                    value.id_gioithieu === quanan.id_gioithieu ? <div className="text-dark">{value.gioi_thieu}</div> : ''
-                                )
-                            })
-                        }
+                        {gioithieu.map((value) => {
+                            return value.id_gioithieu === quanan.id_gioithieu ? (
+                                <div className="text-dark">{value.gioi_thieu}</div>
+                            ) : (
+                                ""
+                            );
+                        })}
                     </p>
-                    <div class="row mb-3" style={{ height: "400px" }}>
-                        <div class="col-8 ">
-                            <img src={`${BASE_URL}/uploads/${quanan.hinh_anh}`} className="" alt="" style={{ width: '870px', height: '400px' }} />
-                        </div>
-                        <div className="col-lg-3" >
-                            <div className="row" >
-                                {
-                                    menu.map((value) => {
-                                        return (
-                                            value.id_quanan === quanan.id_quanan ?
-                                                <div className="col-lg-6">
-                                                    <img src={`${BASE_URL}/uploads/${value.hinh_anh}`} className="" alt="" style={{ width: '164px', height: '100px', paddingBottom: "1px" }} />
-                                                </div>
-                                                : ''
-                                        )
-                                    })
-                                }
+                    <div className="row m-3" style={{backgroundColor:'#fffcf8'}} >
+                        <div className="col-lg-6 mb-3">
+                            <Card>
+                                <CardContent>
+                                    <h1 className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
+                                    <div className="col-lg-12 mb-4">
+                                        <Box component="form" noValidate autoComplete="off">
+                                            <Grid container spacing={0.5}>
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="name"
+                                                        label="Tên của bạn"
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("ten_kh", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Tên của bạn không được để trống"
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.ten_kh && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.ten_kh?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
 
-                            </div>
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        type="number"
+                                                        fullWidth
+                                                        id="phone"
+                                                        label="Số điện thoại"
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("sdt", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Số điện thoai không được bỏ trống"
+                                                            },
+                                                            maxLength: {
+                                                                value: 10,
+                                                                message: "Sô điện thoại phải 10 số"
+                                                            },
+                                                            minLength: {
+                                                                value: 10,
+                                                                message: "Sô điện thoại phải 10 số"
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.sdt && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.sdt?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="date"
+                                                        label="Ngày"
+                                                        type="date"
+                                                        InputLabelProps={{ shrink: true }}
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("ngay", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Ngày không được bỏ trống"
+                                                            },
+                                                            validate: (ngay) => {
+                                                                const selectedDate = new Date(ngay);
+                                                                const today = new Date();
+                                                                today.setHours(0, 0, 0, 0);
+
+                                                                if (selectedDate < today) {
+                                                                    return "Thời gian không được nhỏ hơn ngày hiện tại";
+                                                                }
+
+                                                                return true;
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.ngay && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.ngay?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="date"
+                                                        label="Thời Gian"
+                                                        type="time"
+                                                        InputLabelProps={{ shrink: true }}
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 3 }}
+                                                        {...register("thoi_gian", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Thời gian không được bỏ trống"
+                                                            },
+                                                            validate: (thoi_gian) => {
+                                                                const selectedDate = new Date(thoi_gian);
+                                                                const today = new Date();
+                                                                today.setHours(0, 0, 0, 0);
+
+                                                                if (selectedDate < today) {
+                                                                    return "Thời gian không được nhỏ hơn ngày hiện tại";
+                                                                }
+
+                                                                return true;
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.thoi_gian && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.thoi_gian?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="guests"
+                                                        label="Số lượng khách"
+                                                        type="number"
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("so_luong", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Số lượng không được bỏ trống"
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.so_luong && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.so_luong?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="guests"
+                                                        label="Email"
+                                                        type="email"
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("email", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Email không được bỏ trống"
+                                                            },
+                                                            pattern: {
+                                                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,4}$/,
+                                                                message: "Email không đúng định dạng"
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.email && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.email?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <TextField
+                                                        fullWidth
+                                                        id="guests"
+                                                        label="Yêu cầu khác"
+                                                        type="text"
+                                                        variant="outlined"
+                                                        required
+                                                        sx={{ mb: 2 }}
+                                                        {...register("yeu_cau", {
+                                                            required: {
+                                                                value: true,
+                                                                message: "Yêu cầu không được bỏ trống"
+                                                            }
+                                                        })}
+                                                    />
+                                                    {formState?.errors?.yeu_cau && (
+                                                        <small className="text-danger">
+                                                            {formState?.errors?.yeu_cau?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+
+                                                <Grid item xs={12} >
+                                                    <Box display="flex" alignItems="center" className="mb-0">
+                                                        <Button
+                                                            style={{ width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
+                                                            className="mt-0"
+                                                            onClick={handleSubmit()}
+                                                        >
+                                                            Đặt chỗ
+                                                        </Button>
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                    </div>
+                                </CardContent>
+                            </Card>
+
                         </div>
+
+                        <div className="col-lg-6 mb-3">
+                            <Card>
+                                <h1 className="text-dark text-center">MENU</h1>
+                                <CardContent>
+                                    <div className="row">
+                                        {menu.map((value) => {
+                                            return value.id_quanan === quanan.id_quanan ? (
+                                                <div className="col-4">
+
+                                                    <img
+                                                        src={`${BASE_URL}/uploads/${value.hinh_anh}`}
+                                                        className=""
+                                                        alt=""
+                                                        style={{
+                                                            width: "100%",
+                                                            height: "100px",
+                                                            paddingBottom: "1px",
+                                                            borderRadius: "5px"
+                                                        }}
+                                                    />
+                                                    <h5 className="text-dark mt-1">{value.ten_menu}</h5>
+                                                    <h6 className="text-secondary mt-1 ">{value.gia}đ</h6>
+
+                                                    <div class="form-check mb-4">
+                                                        <input class="form-check-input" type="checkbox" value="" id="dat_mon" />
+                                                        <label class="form-check-label" id="dat_mon" for=""> Chọn món </label>
+                                                    </div>
+                                                </div>
+                                            ) : ""
+                                        })}
+
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+
                     </div>
-                    <div className="mb-3">
-                        <Link to={`/dat-cho/${quanan.id_quanan}`} className=" btn btnDatcho" style={{ width: "100px", color: "white" }}>Đặt chỗ</Link>
-                    </div>
+
+
+
                     <div className="row mb-3">
                         <div className="col-4 col-md-4">
-                            <div className="card" style={{ height: '400px' }}>
+                            <div className="card" style={{ height: "400px" }}>
                                 <div className="card-body">
-                                    <h4 className="mb-1" style={{ fontWeight: 'bold' }}>Xếp hạng và đánh giá</h4>
+                                    <h4 className="mb-1" style={{ fontWeight: "bold" }}>
+                                        Xếp hạng và đánh giá
+                                    </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            <h3>4.0
+                                            <h3>
+                                                4.0
                                                 <i className="fas fa-star text-primary me-2"></i>
                                                 <i className="fas fa-star text-primary me-2"></i>
                                                 <i className="fas fa-star text-primary me-2"></i>
                                                 <i className="fas fa-star text-primary me-2"></i>
                                             </h3>
                                             <hr />
-                                            <h5 className="mb-3" style={{ fontWeight: 'bold' }}>Xếp hạng</h5>
+                                            <h5 className="mb-3" style={{ fontWeight: "bold" }}>
+                                                Xếp hạng
+                                            </h5>
                                             <div className="row">
                                                 <div className="col-6">
-                                                    <p><i className="bi bi-cup-straw me-2"></i>Đồ ăn</p>
-                                                    <p><i className="bi bi-shop me-2"></i>Dịch vụ</p>
-                                                    <p><i className="bi bi-wind me-2"></i>Không khí</p>
+                                                    <p>
+                                                        <i className="bi bi-cup-straw me-2"></i>Đồ ăn
+                                                    </p>
+                                                    <p>
+                                                        <i className="bi bi-shop me-2"></i>Dịch vụ
+                                                    </p>
+                                                    <p>
+                                                        <i className="bi bi-wind me-2"></i>Không khí
+                                                    </p>
                                                 </div>
                                                 <div className="col-6">
                                                     <p>
@@ -181,119 +461,210 @@ const Gioithieu = () => {
                             </div>
                         </div>
                         <div className="col-4 col-md-4">
-                            <div className="card" style={{ height: '400px' }}>
+                            <div className="card" style={{ height: "400px" }}>
                                 <div className="card-body">
-                                    <h4 className="mb-3" style={{ fontWeight: 'bold' }}>Giới thiệu</h4>
-                                    {
-                                        gioithieu.map((value) => {
-                                            return (
-                                                value.id_gioithieu === quanan.id_gioithieu ?
-
-                                                    <div className="row">
-                                                        <div className="col-6">
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Các tùy chọn dịch vụ</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-
-                                                                    {cacdichvu.map((cdv, index) => {
-                                                                        return (
-                                                                            cdv.id_cacdichvu === value.id_tuychondichvu ? <div key={index} >{cdv.tuy_chon_dv}</div> : ''
-                                                                        )
-
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Không khí</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {khongkhi.map((kk, index) => {
-                                                                        return (
-                                                                            kk.id_khongkhi === value.id_khongkhi ? <div key={index} >{kk.khong_khi}</div> : ''
-                                                                        )
-
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Dịch vụ</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {dichvu.map((dv, index) => {
-                                                                        return (
-                                                                            dv.id_dichvu === value.id_dichvu ? <div key={index} >{dv.dich_vu}</div> : ''
-                                                                        )
-
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Tiện nghi</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {tiennghi.map((tn, index) => {
-                                                                        return (
-                                                                            tn.id_tiennghi === value.id_tiennghi ? <div key={index} >{tn.tien_nghi}</div> : ''
-                                                                        )
-
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-6">
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Kế hoạch</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {kehoach.map((kh, index) => {
-                                                                        return (
-                                                                            kh.id_kehoach === value.id_kehoach ? <div key={index} >{kh.ke_hoach}</div> : ''
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Bãi đỗ xe</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {baidoxe.map((bdx, index) => {
-                                                                        return (
-                                                                            bdx.id_baidoxe === value.id_baidoxe ? <div key={index} >{bdx.bai_do_xe}</div> : ''
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            </div>
-                                                            <p className="mb-2 text-dark" style={{ fontWeight: 'bold' }}>Loại khách hàng</p>
-                                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
-                                                                <div className="col-sm-4">
-                                                                    {loaikhachhang.map((loaikh, index) => {
-                                                                        return (
-                                                                            loaikh.id_loaikh === value.id_loaikh ? <div key={index} >{loaikh.khach_hang}</div> : ''
-                                                                        )
-                                                                    })}
-                                                                </div>
-                                                            </div>
+                                    <h4 className="mb-3" style={{ fontWeight: "bold" }}>
+                                        Giới thiệu
+                                    </h4>
+                                    {gioithieu.map((value) => {
+                                        return value.id_gioithieu === quanan.id_gioithieu ? (
+                                            <div className="row">
+                                                <div className="col-6">
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Các tùy chọn dịch vụ
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {cacdichvu.map((cdv, index) => {
+                                                                return cdv.id_cacdichvu ===
+                                                                    value.id_tuychondichvu ? (
+                                                                    <div key={index}>{cdv.tuy_chon_dv}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
                                                         </div>
                                                     </div>
-                                                    : ''
-                                            )
-                                        })
-                                    }
-
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Không khí
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {khongkhi.map((kk, index) => {
+                                                                return kk.id_khongkhi === value.id_khongkhi ? (
+                                                                    <div key={index}>{kk.khong_khi}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Dịch vụ
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {dichvu.map((dv, index) => {
+                                                                return dv.id_dichvu === value.id_dichvu ? (
+                                                                    <div key={index}>{dv.dich_vu}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Tiện nghi
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {tiennghi.map((tn, index) => {
+                                                                return tn.id_tiennghi === value.id_tiennghi ? (
+                                                                    <div key={index}>{tn.tien_nghi}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="col-6">
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Ăn uống
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {anuong.map((au, index) => {
+                                                                return au.id_anuong === value.id_anuong ? (
+                                                                    <div key={index}>{au.an_uong}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Kế hoạch
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {kehoach.map((kh, index) => {
+                                                                return kh.id_kehoach === value.id_kehoach ? (
+                                                                    <div key={index}>{kh.ke_hoach}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Bãi đỗ xe
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {baidoxe.map((bdx, index) => {
+                                                                return bdx.id_baidoxe === value.id_baidoxe ? (
+                                                                    <div key={index}>{bdx.bai_do_xe}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                    <p
+                                                        className="mb-2 text-dark"
+                                                        style={{ fontWeight: "bold" }}
+                                                    >
+                                                        Loại khách hàng
+                                                    </p>
+                                                    <div
+                                                        className="row g-4 text-dark"
+                                                        style={{ whiteSpace: "nowrap" }}
+                                                    >
+                                                        <div className="col-sm-4">
+                                                            {loaikhachhang.map((loaikh, index) => {
+                                                                return loaikh.id_loaikh === value.id_loaikh ? (
+                                                                    <div key={index}>{loaikh.khach_hang}</div>
+                                                                ) : (
+                                                                    ""
+                                                                );
+                                                            })}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            ""
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
                         <div className="col-4 col-md-4">
-                            <div className="card" style={{ height: '400px' }}>
+                            <div className="card" style={{ height: "400px" }}>
                                 <div className="card-body">
-                                    <h4 className="mb-1" style={{ fontWeight: 'bold' }}>Thông tin liên hệ</h4>
+                                    <h4 className="mb-1" style={{ fontWeight: "bold" }}>
+                                        Thông tin liên hệ
+                                    </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
                                             <div className="card">
-                                                <iframe title="lienhe" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22272.472046340183!2d105.72227868079713!3d10.04125830150886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0629f6de3edb7%3A0x527f09dbfb20b659!2zQ2FuIFRobywgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1721505909169!5m2!1sen!2s" style={{ border: 0, width: '600', height: '150px' }} />
+                                                <iframe
+                                                    title="lienhe"
+                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22272.472046340183!2d105.72227868079713!3d10.04125830150886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0629f6de3edb7%3A0x527f09dbfb20b659!2zQ2FuIFRobywgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1721505909169!5m2!1sen!2s"
+                                                    style={{ border: 0, width: "600", height: "150px" }}
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-sm-12">
-                                            <i class="fas fa-map-marker-alt me-2"></i>{quanan.dia_chi}
+                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                            {quanan.dia_chi}
                                         </div>
                                         <div className="col-sm-6">
                                             <i className="bi bi-phone me-2"></i>SĐT:
-                                            <p>{quanan.dien_thoai}</p>
+                                            {quanan.dien_thoai}
                                         </div>
                                     </div>
                                 </div>
@@ -303,18 +674,25 @@ const Gioithieu = () => {
 
                     <div className="row mb-3">
                         <div className="col-12">
-                            <div className="card" style={{ height: '500px' }}>
+                            <div className="card" style={{ height: "auto" }}>
                                 <div className="card-body">
                                     <div className="row">
                                         <div className="col-4">
-                                            <h4 className="mb-1" style={{ fontWeight: 'bold' }}>Đánh giá</h4>
+                                            <h4 className="mb-1" style={{ fontWeight: "bold" }}>
+                                                Đánh giá
+                                            </h4>
                                         </div>
-                                        <div className="col-8" >
-                                            <h4 className="mb-1" style={{ fontWeight: 'bold' }}>Bài đánh giá</h4>
+                                        <div className="col-8">
+                                            <h4 className="mb-1" style={{ fontWeight: "bold" }}>
+                                                Bài đánh giá
+                                            </h4>
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <div className="col-4" style={{ borderRight: '1px solid #000' }}>
+                                        <div
+                                            className="col-4"
+                                            style={{ borderRight: "1px solid #000" }}
+                                        >
                                             <div className="row">
                                                 <div className="col-6 text-dark">
                                                     <p> Tuyệt vời</p>
@@ -351,44 +729,65 @@ const Gioithieu = () => {
                                                     </p>
                                                 </div>
                                             </div>
-
                                         </div>
-                                        <div className="col-8" >
-                                            <div className="row" style={{ maxHeight: '400px', overflowY: 'scroll' }}>
-                                                {
-                                                    danhgia.map((dg, index) => {
-                                                        return (
-                                                            dg.id_quanan === quanan.id_quanan ?
-                                                                <div className="mb-1" key={index}>
-                                                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                                        {nguoidg.map((ndg) => {
-                                                                            return (
-                                                                                dg.id_nguoidung === ndg.id_nguoidung ? <h5>{ndg.ten_nguoi_dung}</h5> : ''
-                                                                            )
-                                                                        })}
-                                                                        <p style={{ marginLeft: '600px', paddingTop: '10px' }}>{dg.created_at.split('T')[0]}</p>
-                                                                    </div>
-                                                                    <div>
-                                                                        {renderStars(dg.sao)}
-                                                                    </div>
-                                                                    <div className="mb-1">
-                                                                        <img src={`${BASE_URL}/uploads/${dg.hinh_anh}`} alt="image" style={{ width: "150px",  borderRadius: "10px" }} />
-                                                                    </div>
-                                                                    <div className="text-dark">
-                                                                        {dg.binh_luan}
-                                                                    </div>
-                                                                    <hr/>
-                                                                </div>
-                                                                : <div className="text-dark"></div>
-                                                        )
-                                                    })
-                                                }
-                                            </div>
+                                        <div className="col-lg-8">
+                                            <Box component="form" noValidate autoComplete="off">
+                                                <Grid container spacing={2}>
+                                                    {/* Your other form fields here */}
 
+                                                    <Grid item xs={12}>
+                                                       
+
+                                                        <Grid container spacing={2}>
+                                                            {danhgia.map((dg, index) => {
+                                                                return dg.id_quanan === quanan.id_quanan ? (
+                                                                    <Grid item xs={12} key={index}>
+                                                                        <Card sx={{ mb: 2 }}>  {/* Use Card component for styling */}
+                                                                            <CardContent>
+                                                                                <Grid container spacing={2}>
+                                                                                    <Grid item xs={6}>
+                                                                                        <Typography variant="body2" component="div">
+                                                                                            {nguoidg.map((ndg) => (
+                                                                                                dg.id_nguoidung === ndg.id_nguoidung ? (
+                                                                                                    <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
+                                                                                                ) : (
+                                                                                                    ''
+                                                                                                )
+                                                                                            ))}
+                                                                                        </Typography>
+                                                                                        <Typography variant="caption" display="block">
+                                                                                            {dg.created_at.split("T")[0]}
+                                                                                        </Typography>
+                                                                                    </Grid>
+                                                                                    <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
+                                                                                        {renderStars(dg.sao)}
+                                                                                    </Grid>
+                                                                                    <Grid item xs={12}>
+                                                                                        <img
+                                                                                            src={`${BASE_URL}/uploads/${dg.hinh_anh}`}
+                                                                                            alt="image"
+                                                                                            style={{ width: "150px", borderRadius: "10px" }}
+                                                                                        />
+                                                                                    </Grid>
+                                                                                    <Grid item xs={12}>
+                                                                                        <Typography variant="body2" component="div">
+                                                                                            {dg.binh_luan}
+                                                                                        </Typography>
+                                                                                    </Grid>
+                                                                                </Grid>
+                                                                            </CardContent>
+                                                                        </Card>
+                                                                    </Grid>
+                                                                ) : (
+                                                                    ''
+                                                                );
+                                                            })}
+                                                        </Grid>
+                                                    </Grid>
+                                                </Grid>
+                                            </Box>
                                         </div>
-
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -397,7 +796,7 @@ const Gioithieu = () => {
             </div>
             {/* <Footer /> */}
         </>
-    )
-}
+    );
+};
 
-export default Gioithieu
+export default Gioithieu;
