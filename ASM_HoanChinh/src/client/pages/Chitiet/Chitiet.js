@@ -21,6 +21,9 @@ import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
 import { CANCEL } from "redux-saga";
+import { addDatcho } from "../../../services/Datcho";
+import { useSnackbar } from "notistack";
+import FacebookIcon from '@mui/icons-material/Facebook';
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -36,7 +39,8 @@ const Gioithieu = () => {
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
-    const [anuong, setAnuong] = useState([]);
+    const accounts = JSON.parse(localStorage.getItem("accounts"))
+    const { enqueueSnackbar } = useSnackbar();
     const [baidoxe, setBaidoxe] = useState([]);
     const [kehoach, setKehoach] = useState([]);
     const [loaikhachhang, setLoaikhachhang] = useState([]);
@@ -69,9 +73,6 @@ const Gioithieu = () => {
         const resultDv = await getDichvu();
         setDichvu(resultDv.data);
 
-        const resultAu = await getAnuong();
-        setAnuong(resultAu.data);
-
         const resultBdx = await getBaidoxe();
         setBaidoxe(resultBdx.data);
 
@@ -87,6 +88,24 @@ const Gioithieu = () => {
         const resultKk = await getKhongkhi();
         setKhongkhi(resultKk.data);
     };
+
+
+    const submit = async (value) => {
+        await addDatcho({
+            ten_quan: quanan.ten_quan_an,
+            ten_kh: value?.ten_kh,
+            sdt_kh: value?.sdt,
+            email_kh: value?.email,
+            ngay_dat: value?.ngay,
+            thoi_gian: value?.thoi_gian,
+            so_luong_nguoi: value?.so_luong,
+            trang_thai: 0,
+            yeu_cau_khac: value?.yeu_cau,
+            id_nguoidung: accounts.id_nguoidung,
+            id_quanan: id
+        })
+        enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+    }
 
     const renderStars = (stars) => {
         return [...Array(5)].map((_, i) =>
@@ -117,18 +136,11 @@ const Gioithieu = () => {
                     <div class="d-flex align-items-center justify-content-between ">
                         <h2
                             className="display-5 mb-3"
-                            style={{ fontSize: "40px", fontWeight: "bold" }}
+                            style={{ fontSize: "60px", fontWeight: "bold" }}
                         >
                             {quanan.ten_quan_an}
                         </h2>
-                        <Link
-                            to={`/danh-gia/${quanan.id_quanan}`}
-                            className="d-flex align-items-center"
-                            style={{ fontSize: "20px", fontWeight: "bold" }}
-                        >
-                            <i class="bi bi-pencil-square me-2"></i>
-                            Đánh giá
-                        </Link>
+
                     </div>
                     <p className="mb-4">
                         {gioithieu.map((value) => {
@@ -139,7 +151,7 @@ const Gioithieu = () => {
                             );
                         })}
                     </p>
-                    <div className="row m-3" style={{backgroundColor:'#fffcf8'}} >
+                    <div className="row mt-3 mb-3" style={{borderRadius:"10px", backgroundColor: '#fffcf8' }} >
                         <div className="col-lg-6 mb-3">
                             <Card>
                                 <CardContent>
@@ -153,7 +165,8 @@ const Gioithieu = () => {
                                                         id="name"
                                                         label="Tên của bạn"
                                                         variant="outlined"
-                                                        required
+                                                        defaultValue={accounts?.ten_nguoi_dung || ""}
+
                                                         sx={{ mb: 2 }}
                                                         {...register("ten_kh", {
                                                             required: {
@@ -176,7 +189,7 @@ const Gioithieu = () => {
                                                         id="phone"
                                                         label="Số điện thoại"
                                                         variant="outlined"
-                                                        required
+                                                        defaultValue={accounts?.so_dien_thoai || ""}
                                                         sx={{ mb: 2 }}
                                                         {...register("sdt", {
                                                             required: {
@@ -300,7 +313,7 @@ const Gioithieu = () => {
                                                         label="Email"
                                                         type="email"
                                                         variant="outlined"
-                                                        required
+                                                        defaultValue={accounts?.email || ""}
                                                         sx={{ mb: 2 }}
                                                         {...register("email", {
                                                             required: {
@@ -348,7 +361,7 @@ const Gioithieu = () => {
                                                         <Button
                                                             style={{ width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
                                                             className="mt-0"
-                                                            onClick={handleSubmit()}
+                                                            onClick={handleSubmit(submit)}
                                                         >
                                                             Đặt chỗ
                                                         </Button>
@@ -417,6 +430,7 @@ const Gioithieu = () => {
                                                 <i className="fas fa-star text-primary me-2"></i>
                                                 <i className="fas fa-star text-primary me-2"></i>
                                                 <i className="fas fa-star text-primary me-2"></i>
+                                                
                                             </h3>
                                             <hr />
                                             <h5 className="mb-3" style={{ fontWeight: "bold" }}>
@@ -553,26 +567,8 @@ const Gioithieu = () => {
                                                     </div>
                                                 </div>
                                                 <div className="col-6">
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Ăn uống
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {anuong.map((au, index) => {
-                                                                return au.id_anuong === value.id_anuong ? (
-                                                                    <div key={index}>{au.an_uong}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
+
+
                                                     <p
                                                         className="mb-2 text-dark"
                                                         style={{ fontWeight: "bold" }}
@@ -658,13 +654,18 @@ const Gioithieu = () => {
                                                 />
                                             </div>
                                         </div>
+
                                         <div className="col-sm-12">
                                             <i class="fas fa-map-marker-alt me-2"></i>
                                             {quanan.dia_chi}
                                         </div>
-                                        <div className="col-sm-6">
+                                        <div className="col-sm-12">
                                             <i className="bi bi-phone me-2"></i>SĐT:
                                             {quanan.dien_thoai}
+                                        </div>
+                                        <div className="col-sm-12" >
+                                            <Link to="/" ><FacebookIcon style={{ color: "black" }} /></Link>
+
                                         </div>
                                     </div>
                                 </div>
@@ -674,6 +675,19 @@ const Gioithieu = () => {
 
                     <div className="row mb-3">
                         <div className="col-12">
+                            <Link
+                                to={`/danh-gia/${quanan.id_quanan}`}
+                                className="d-flex align-items-center mb-2"
+                                style={{ fontSize: "20px", fontWeight: "bold" }}
+                            >
+                                <Button
+                                    style={{ fontSize: "15px", width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
+                                    className="mt-0"
+                                >
+                                    Đánh giá
+                                </Button>
+
+                            </Link>
                             <div className="card" style={{ height: "auto" }}>
                                 <div className="card-body">
                                     <div className="row">
@@ -736,7 +750,7 @@ const Gioithieu = () => {
                                                     {/* Your other form fields here */}
 
                                                     <Grid item xs={12}>
-                                                       
+
 
                                                         <Grid container spacing={2}>
                                                             {danhgia.map((dg, index) => {
