@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
 
@@ -26,7 +26,7 @@ import {useCookies} from "react-cookie";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
-
+    const navigate = useNavigate()
     const params = useParams();
     const id = params.id;
 
@@ -116,6 +116,7 @@ const Gioithieu = () => {
             id_quanan: id
         })
         enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+        navigate("/profile")
     }
 
     const renderStars = (stars) => {
@@ -686,8 +687,7 @@ const Gioithieu = () => {
                                             {quanan.dien_thoai}
                                         </div>
                                         <div className="col-sm-12" >
-                                            <Link to="/" ><FacebookIcon style={{ color: "black" }} /></Link>
-
+                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
                                         </div>
                                     </div>
                                 </div>
@@ -703,10 +703,10 @@ const Gioithieu = () => {
                                 style={{ fontSize: "20px", fontWeight: "bold" }}
                             >
                                 <Button
-                                    style={{ fontSize: "15px", width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
+                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }}
                                     className="mt-0"
                                 >
-                                    Đánh giá
+                                    Viết đánh giá
                                 </Button>
 
                             </Link>

@@ -455,7 +455,7 @@ const Profile = () => {
                             </div>
                             <div className="booking-details mt-3">
                                 <p>
-                                    <strong>Thời gian:</strong>1 giờ
+                                    <strong>Thời gian:</strong> {value?.thoi_gian}
                                 </p>
                                 <p>
                                     <strong>Số lượng khách:</strong> {value?.so_luong_nguoi}
@@ -464,8 +464,7 @@ const Profile = () => {
                                     <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
                                 </p>
                                 <p>
-                                    <strong>Ngày:</strong>
-                                    {value?.thoi_gian_dat.split("T")[0]}
+                                    <strong>Ngày:</strong> {value?.ngay_dat.split("T")[0]}
                                 </p>
                             </div>
                             <Button
