@@ -126,11 +126,12 @@ const Profile = () => {
 
     const onChangePassword = async (value) => {
         try{
-            const res = await changPassword(accounts.id_nguoidung,{
+            await changPassword(accounts.id_nguoidung,{
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
             enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
+            passwordForm.reset();
         }catch (error){
             console.log(error)
             if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
@@ -345,6 +346,7 @@ const Profile = () => {
                                             label="Mật khẩu hiện tại"
                                             variant="outlined"
                                             fullWidth
+                                            type="password"
                                             {...passwordForm.register("mat_khau_cu", {
                                                 required: "Mật khẩu cũ không được bỏ trống",
                                             })}
@@ -360,6 +362,7 @@ const Profile = () => {
                                             label="Mật khẩu mới"
                                             variant="outlined"
                                             fullWidth
+                                            type="password"
                                             {...passwordForm.register("mat_khau_moi", {
                                                 required: "Mật khẩu mới không được bỏ trống",
                                                 minLength: {
@@ -379,6 +382,7 @@ const Profile = () => {
                                             label="Xác nhận mật khẩu mới"
                                             variant="outlined"
                                             fullWidth
+                                            type="password"
                                             {...passwordForm.register("xac_nhan_mat_khau", {
                                                 required: "Xác nhận mật khẩu không được bỏ trống",
                                                 validate: (value) =>
