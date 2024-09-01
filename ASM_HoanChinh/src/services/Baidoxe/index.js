@@ -64,4 +64,5 @@ const deleteBaidoxe = async (id_baidoxe) => {
   return res;
 };
 
+
 export { baidoxe, addbaidoxe, putbaidoxe, getBaidoxeById, deleteBaidoxe };

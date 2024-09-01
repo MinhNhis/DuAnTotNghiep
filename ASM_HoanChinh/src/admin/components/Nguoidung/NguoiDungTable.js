@@ -13,21 +13,43 @@ import {
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Visibility from "@mui/icons-material/Visibility";
-import { getNguoiDung } from "../../../services/Nguoidung";
+import { getNguoiDung,paginator } from "../../../services/Nguoidung";
 import { BASE_URL } from "../../../config/ApiConfig";
-import imgUser from '../../assets/images/user.png'
+import imgUser from '../../assets/images/user.png';
+
+import PaginationRounded from "../Paginator";
+import { useCookies } from "react-cookie";
 
 const DichVuTable = () => {
   const navigate = useNavigate();
-
   const [nguoidung, setNguoidung] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
-    initData();
+    initNguoidung();
   }, []);
-  const initData = async () => {
-    const result = await getNguoiDung();
-    setNguoidung(result.data);
+
+  const [cookies] = useCookies(["token", "role"]);
+
+  const initData = async (data) => {
+    if (cookies.role === 0) {
+      setNguoidung(data.data)
+      setCurrentPage(data.pagination.currentPage)
+    }
+    else {
+      const result = await getNguoiDung()
+      setNguoidung(result.data)
+    }
   };
+
+  const initNguoidung = async () => {
+    if (cookies.role !== 0) {
+      const result = await getNguoiDung()
+      setNguoidung(result.data)
+    } else return null
+  }
 
   return (
     <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -70,7 +92,8 @@ const DichVuTable = () => {
           <TableRow key={index}>
             <TableCell>
               <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5 }}>
-                {Number(index) + 1}
+              {(currentPage - 1) * itemsPerPage + index + 1}
+
               </Typography>
             </TableCell>
             <TableCell>
@@ -131,6 +154,11 @@ const DichVuTable = () => {
             </TableCell>
           </TableRow>
         ))}
+         {cookies.role !== 2 && (
+          <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <PaginationRounded onDataChange={cookies.role === 0 ? initData : initNguoidung} paginator={paginator} />
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

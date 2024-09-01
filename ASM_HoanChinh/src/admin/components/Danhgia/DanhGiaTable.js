@@ -10,14 +10,13 @@ import {
   Box,
 } from "@mui/material";
 
-// import { Link } from "react-router-dom";
 
-// import IconButton from '@mui/material/IconButton';
-// import DeleteIcon from '@mui/icons-material/Delete';
-// import EditIcon from '@mui/icons-material/Edit';
 
-import { getDanhgia } from "../../../services/Danhgia";
+import { getDanhgia, paginator } from "../../../services/Danhgia";
 import { getQuanan } from "../../../services/Quanan";
+
+import PaginationRounded from "../Paginator";
+import { useCookies } from "react-cookie";
 
 
 const ExDanhGia = () => {
@@ -25,17 +24,38 @@ const ExDanhGia = () => {
   const [quanan, setQuanan] = useState([])
   const [accounts, setAccounts] = useState(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     setAccounts(accounts);
-    initFata()
+    initDanhgia()
   }, [])
-  const initFata = async () => {
-    const result = await getDanhgia()
-    setDanhGia(result.data)
-
+  
+  const [cookies] = useCookies(["token", "role"]);
+  const initData = async (data) => {
+    if (cookies.role === 0) {
+      setDanhGia(data.data)
+      setCurrentPage(data.pagination.currentPage)
+    }
+    else {
+      const result = await getDanhgia()
+      setDanhGia(result.data)
+    }
     const resultQuan = await getQuanan()
     setQuanan(resultQuan.data)
+  }
+
+  const initDanhgia = async () => {
+    if (cookies.role !== 0) {
+      const result = await getDanhgia()
+      setDanhGia(result.data)
+
+      const resultQuan = await getQuanan()
+      setQuanan(resultQuan.data)
+
+    } else return null
   }
   const quan = quanan.find((e) => e.created_user === accounts.id_nguoidung || e.updated_user === accounts.id_nguoidung)
 
@@ -98,7 +118,7 @@ const ExDanhGia = () => {
           <TableRow key={items.id_danhgia}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {index + 1}
+                {(currentPage - 1) * itemsPerPage + index + 1}
               </Typography>
             </TableCell>
             <TableCell>
@@ -163,6 +183,11 @@ const ExDanhGia = () => {
             </TableCell>
           </TableRow>
         ))}
+        {cookies.role !== 2 && (
+          <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <PaginationRounded onDataChange={cookies.role === 0 ? initData : initDanhgia} paginator={paginator} />
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

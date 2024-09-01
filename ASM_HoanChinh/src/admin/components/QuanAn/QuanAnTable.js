@@ -13,20 +13,41 @@ import {
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { getQuanan } from "../../../services/Quanan";
+import { getQuanan, paginator } from "../../../services/Quanan";
+
+import PaginationRounded from "../Paginator";
+import { useCookies } from "react-cookie";
+
 
 const ExQuanAn = () => {
   const [quanan, setQuanan] = useState([])
   const [accounts, setAccounts] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     setAccounts(accounts);
-    initFata()
+    initQuanan()
   }, [])
-  const initFata = async () => {
-    const result = await getQuanan()
-    setQuanan(result.data)
+
+  const [cookies] = useCookies(["token", "role"]);
+  const initData = async (data) => {
+    if (cookies.role === 0) {
+      setQuanan(data.data)
+      setCurrentPage(data.pagination.currentPage)
+    }
+    else {
+      const result = await getQuanan()
+      setQuanan(result.data)
+    }
+  }
+
+  const initQuanan = async () => {
+    if (cookies.role !== 0) {
+      const result = await getQuanan()
+      setQuanan(result.data)
+    } else return null
   }
 
 
@@ -87,7 +108,8 @@ const ExQuanAn = () => {
           <TableRow key={items.id_quanan}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {index + 1}
+                {(currentPage - 1) * itemsPerPage + index + 1}
+
               </Typography>
             </TableCell>
             <TableCell>
@@ -143,6 +165,12 @@ const ExQuanAn = () => {
             </TableCell>
           </TableRow>
         ))}
+
+        {cookies.role !== 2 && (
+          <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <PaginationRounded onDataChange={cookies.role === 0 ? initData : initQuanan} paginator={paginator} />
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );

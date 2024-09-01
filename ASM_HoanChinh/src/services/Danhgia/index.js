@@ -71,4 +71,13 @@ const deleteDanhgia = async (id) => {
     return res
 }
 
-export {getDanhgia, getDanhgiaById, addDanhgia, editDanhgia, deleteDanhgia}
+const paginator = async (page) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/paginator-danhgia?page=${page}&limit=10`
+    })
+
+    return res
+}
+
+export {getDanhgia, getDanhgiaById, addDanhgia, editDanhgia, deleteDanhgia,paginator}

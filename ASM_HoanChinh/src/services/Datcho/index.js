@@ -94,4 +94,13 @@ const getKhachhang = async () => {
     return res
 }
 
-export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, getKhachhang }
+const paginator = async (page) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/paginator-datcho?page=${page}&limit=10`
+    })
+
+    return res
+}
+
+export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, getKhachhang,paginator }
