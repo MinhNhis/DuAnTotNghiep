@@ -9,10 +9,15 @@ const Register = () => {
     const { register, handleSubmit, getValues, formState } = useForm();
     const navigate = useNavigate();
     const [check, setCheck] = useState(false);
+    const [checkLuuY, setCheckLuuY] = useState(false);
     const { enqueueSnackbar } = useSnackbar();
 
     const handleCheckboxChange = (event) => {
         setCheck(event.target.checked);
+    };
+
+    const handleCheckLuuY = (event) => {
+        setCheckLuuY(event.target.checked);
     };
 
     const submit = async (value) => {
@@ -67,7 +72,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Họ và tên</label>
+                            <label><span style={{color: "red"}}>*</span>Họ và tên</label>
                         </div>
                         {formState?.errors?.ten_nguoi_dung && (
                             <small className="text-danger">
@@ -89,7 +94,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Email</label>
+                            <label><span style={{color: "red"}}>*</span>Email</label>
                         </div>
                         {formState?.errors?.email && (
                             <small className="text-danger">
@@ -111,7 +116,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Mật Khẩu</label>
+                            <label><span style={{color: "red"}}>*</span>Mật Khẩu</label>
                         </div>
                         {formState?.errors?.mat_khau && (
                             <small className="text-danger">
@@ -140,7 +145,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Xác Nhận Mật Khẩu</label>
+                            <label><span style={{color: "red"}}>*</span>Xác Nhận Mật Khẩu</label>
                         </div>
                         {formState?.errors?.xac_nhan_mat_khau && (
                             <small className="text-danger">
@@ -166,7 +171,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Số Điện Thoại</label>
+                            <label><span style={{color: "red"}}>*</span>Số Điện Thoại</label>
                         </div>
                         {formState?.errors?.so_dien_thoai && (
                             <small className="text-danger">
@@ -195,7 +200,7 @@ const Register = () => {
                                     }
                                 })}
                             />
-                            <label>Ngày Sinh</label>
+                            <label><span style={{color: "red"}}>*</span>Ngày Sinh</label>
                         </div>
                         {formState?.errors?.ngay_sinh && (
                             <small className="text-danger">
@@ -214,7 +219,7 @@ const Register = () => {
                         </div>
                         {/* Giới tính */}
                         <div className="mb-3 mt-3">
-                            <label>Giới tính</label>
+                            <label><span style={{color: "red"}}>*</span>Giới tính</label>
                             <div className="d-flex align-items-center">
                                 <div className="form-check me-4">
                                     <input
@@ -268,7 +273,7 @@ const Register = () => {
                                     },
                                 })}
                             />
-                            <label>Địa Chỉ</label>
+                            <label><span style={{color: "red"}}>*</span>Địa Chỉ</label>
                         </div>
                         {formState?.errors?.dia_chi && (
                             <small className="text-danger">
@@ -288,12 +293,30 @@ const Register = () => {
                                 Đăng kí quán ăn?
                             </label>
                         </div>
+
+                        {check ?
+                            <div className="mb-3 form-check">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    id="exampleCheck1"
+                                    checked={checkLuuY}
+                                    onChange={handleCheckLuuY}
+                                />
+                                <label className="form-check-label" htmlFor="exampleCheck1" style={{ fontSize: "13px", fontStyle: "italic" }}>
+                                    <span style={{color: "red"}}>*</span>Lưu ý: Nếu đăng quán bạn sẽ cần phải trả phí. Bạn có đồng ý không?
+                                </label>
+                            </div>
+                            : null
+                        }
+
                         <button
+                            disabled={check && !checkLuuY}
                             type="submit"
                             className="btn btn-primary w-100 mt-3"
                             onClick={handleSubmit(submit)}
                         >
-                            Đăng Ký
+                            Đăng kí
                         </button>
                     </form>
                     <div className="bottom-link mt-3">

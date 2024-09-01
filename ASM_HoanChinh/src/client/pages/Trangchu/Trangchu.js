@@ -6,7 +6,6 @@ import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
 
-
 const Trangchu = () => {
     const [quanan, setQuanan] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
@@ -21,7 +20,6 @@ const Trangchu = () => {
         const resultGt = await getGioithieu()
         setGioithieu(resultGt.data)
     }
-    console.log(gioithieu);
 
     return (
         <>
@@ -143,7 +141,7 @@ const Trangchu = () => {
                             {
                                 quanan.map((value, index) => {
                                     return (
-                                        <div className='col-lg-3' key={index} style={{height: "400px"}}>
+                                        <div className='col-lg-3 mb-3' key={index} style={{height: "300px"}}>
                                             <div className='card'>
                                                 <div className='row g-5'>
                                                     <div className="col-lg-12 wow " data-wow-delay="0.1s">

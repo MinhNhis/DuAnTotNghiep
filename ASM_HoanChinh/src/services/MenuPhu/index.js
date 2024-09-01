@@ -68,6 +68,15 @@ const deleteMenu = async (id_menu) => {
     return res;
 };
 
+const paginator = async (page) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/paginator-menu?page=${page}&limit=10`
+    })
+
+    return res
+}
 
 
-export { getMenus, addMenu, updateMenu, deleteMenu, getMenuById };
+
+export { getMenus, addMenu, updateMenu, deleteMenu, getMenuById, paginator };

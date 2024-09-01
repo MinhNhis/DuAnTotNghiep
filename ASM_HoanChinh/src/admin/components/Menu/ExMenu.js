@@ -12,12 +12,16 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { getMenus } from "../../../services/MenuPhu";
+import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
+import PaginationRounded from "../Paginator";
+import { useCookies } from "react-cookie";
 
 const ExMenu = () => {
   const [Menu, setMenus] = useState([]);
   const [accounts, setAccounts] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
   };
@@ -25,20 +29,26 @@ const ExMenu = () => {
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     setAccounts(accounts);
-    initData();
+    initMenu()
   }, []);
 
-  const initData = () => {
-    getMenus().then((result) => {
-      console.log(result);
-      if (result && Array.isArray(result.data)) {
-        setMenus(result.data);
-      } else {
-        setMenus([]);
-      }
-    });
+  const [cookies] = useCookies(["token", "role"]);
+  const initMenu = async () => {
+    if (cookies.role !== 0) {
+      const result = await getMenus()
+      setMenus(result.data)
+    } else return null
+  }
+  const initData = async (data) => {
+    if (cookies.role === 0) {
+      setMenus(data.data)
+      setCurrentPage(data.pagination.currentPage)
+    }
+    else {
+      const result = await getMenus()
+      setMenus(result.data)
+    }
   };
-
 
   return (
     <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -76,7 +86,7 @@ const ExMenu = () => {
           <TableRow key={menu.id_menu}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                {Number(index) + 1}
+                {(currentPage - 1) * itemsPerPage + Number(index) + 1}
               </Typography>
             </TableCell>
             <TableCell>
@@ -121,6 +131,11 @@ const ExMenu = () => {
             </TableCell>
           </TableRow>
         ))}
+        {cookies.role !== 2 && (
+          <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <PaginationRounded onDataChange={cookies.role === 0 ? initData : initMenu} paginator={paginator} />
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   );
