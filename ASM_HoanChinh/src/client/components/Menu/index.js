@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { getMenus } from "../../../services/MenuPhu";
+import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhmuc } from "../../../services/Danhmuc";
 import { getQuanan } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
+import PaginationRounded from "../../../admin/components/Paginator";
+
 
 
 const Menu = () => {
@@ -15,7 +17,7 @@ const Menu = () => {
 
     useEffect(() => {
         initDanhmuc();
-        initData();
+        //initData();
         initQuanan();
     }, []);
 
@@ -35,18 +37,23 @@ const Menu = () => {
         setDanhmuc(res.data);
     };
 
-    const initData = async () => {
+    const initData = async (data) => {
         const result = await getMenus();
         if (selectedCategory) {
             setMenu(result.data.filter(item => item.id_danhmuc === selectedCategory));
         } else {
-            setMenu(result.data);
+            setMenu(data.data);
         }
     };
 
     const handleCategoryClick = (categoryId) => {
-        setSelectedCategory(categoryId);
+        if (selectedCategory === categoryId) {
+            setSelectedCategory(null);
+        } else {
+            setSelectedCategory(categoryId);
+        }
     };
+    
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
@@ -82,7 +89,7 @@ const Menu = () => {
                                                         src={`${BASE_URL}/uploads/${menuItem.hinh_anh}`}
                                                         className=" rounded w-80 h-80 me-3"
                                                         alt=""
-                                                        style={{width: "150px", height: "100px"}}
+                                                        style={{ width: "150px", height: "100px" }}
                                                     />
                                                 )}
                                             </Link>
@@ -94,7 +101,7 @@ const Menu = () => {
                                                     width: '150px'
                                                 }}>{menuItem.ten_menu}</h5>
                                                 <p className="mb-0 ">Giá: {formatPrice(menuItem.gia)}</p>
-                                                <p className="mb-0 text-dark">Quán: 
+                                                <p className="mb-0 text-dark">Quán:
                                                     {
                                                         quanan.map(value => {
                                                             return (value.id_quanan === menuItem.id_quanan ? <> {value.ten_quan_an}</> : "")
@@ -106,6 +113,10 @@ const Menu = () => {
                                         </div>
                                     </div>
                                 ))}
+                                <div className="mt-5 mb-3" style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                                    <PaginationRounded onDataChange={initData} paginator={paginator} />
+
+                                </div>
                             </div>
                         </div>
                     </div>

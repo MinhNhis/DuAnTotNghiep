@@ -32,7 +32,7 @@ const ExDanhGia = () => {
     setAccounts(accounts);
     initDanhgia()
   }, [])
-  
+
   const [cookies] = useCookies(["token", "role"]);
   const initData = async (data) => {
     if (cookies.role === 0) {
@@ -68,107 +68,108 @@ const ExDanhGia = () => {
   };
 
   return (
-    <Table aria-label="simple table" sx={{ mt: 3, }}>
-      <TableHead>
-        <TableRow>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              STT
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Hình Ảnh
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Bình Luận
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Thức ăn
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Dịch vụ
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Không Khí
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Số Sao
-            </Typography>
-          </TableCell>
-          {/* <TableCell>
+    <>
+      <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                STT
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Hình Ảnh
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Bình Luận
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Thức ăn
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Dịch vụ
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Không Khí
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Số Sao
+              </Typography>
+            </TableCell>
+            {/* <TableCell>
             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
               Hành động
             </Typography>
           </TableCell> */}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {danhgia.filter(fil => fil?.id_quanan === quan?.id_quanan || accounts?.vai_tro === 0).map((items, index) => (
-          <TableRow key={items.id_danhgia}>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {(currentPage - 1) * itemsPerPage + index + 1}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {items.hinh_anh && (
-                  <img style={{ height: '5rem', width: '6rem' }} src={`${BASE_URL}/uploads/${items.hinh_anh}`} alt=""></img>
-                )}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    ml: 0.5,
-                    fontSize: "15px",
-                    display: '-webkit-box',
-                    WebkitLineClamp: 3,
-                    WebkitBoxOrient: 'vertical',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'normal'
-                  }}
-                >
-                  {items.binh_luan}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {danhgia.filter(fil => fil?.id_quanan === quan?.id_quanan || accounts?.vai_tro === 0).map((items, index) => (
+            <TableRow key={items.id_danhgia}>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
                 </Typography>
-              </Box>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {items.danh_gia_do_an}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {items.danh_gia_dich_vu}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {items.danh_gia_khong_khi}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                {renderStars(items.sao)}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              {/* <Typography >
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {items.hinh_anh && (
+                    <img style={{ height: '5rem', width: '6rem' }} src={`${BASE_URL}/uploads/${items.hinh_anh}`} alt=""></img>
+                  )}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      ml: 0.5,
+                      fontSize: "15px",
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2, // Chỉ hiển thị 2 dòng
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'normal'
+                    }}
+                  >
+                    {items.binh_luan}
+                  </Typography>
+                </Box>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {items.danh_gia_do_an}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {items.danh_gia_dich_vu}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {items.danh_gia_khong_khi}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
+                  {renderStars(items.sao)}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                {/* <Typography >
                 <Link to={`/admin/danhgia/edit/${items.id_danhgia}`}>
                   <IconButton aria-label="edit" color="primary" style={{ width: "50px", heighte: "50px" }}>
                     <EditIcon />
@@ -180,16 +181,17 @@ const ExDanhGia = () => {
                   </IconButton>
                 </Link>
               </Typography> */}
-            </TableCell>
-          </TableRow>
-        ))}
-        {cookies.role !== 2 && (
-          <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-            <PaginationRounded onDataChange={cookies.role === 0 ? initData : initDanhgia} paginator={paginator} />
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {cookies.role !== 2 && (
+        <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+          <PaginationRounded onDataChange={cookies.role === 0 ? initData : initDanhgia} paginator={paginator} />
+        </TableRow>
+      )}
+    </>
   );
 };
 

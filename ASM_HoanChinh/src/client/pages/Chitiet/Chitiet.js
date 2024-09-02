@@ -19,7 +19,7 @@ import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
-import { addDatcho } from "../../../services/Datcho";
+import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
@@ -35,6 +35,7 @@ const Gioithieu = () => {
     const [danhgia, setDanhgia] = useState([]);
     const [nguoidg, setNguoidanhgia] = useState([]);
     const [menu, setMenu] = useState([]);
+    const [datcho, setDatcho] = useState([]);
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
@@ -67,6 +68,10 @@ const Gioithieu = () => {
         const resultMenu = await getMenus();
         setMenu(resultMenu.data);
 
+        const resultDatcho = await getDatcho();
+        const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
+        setDatcho(filteredDatcho);
+
         const resultCacdv = await getCacDichvu();
         setCacdichvu(resultCacdv.data);
 
@@ -88,6 +93,8 @@ const Gioithieu = () => {
         const resultKk = await getKhongkhi();
         setKhongkhi(resultKk.data);
     };
+
+
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
     useEffect(() => {
         getUserInfo();
@@ -100,8 +107,7 @@ const Gioithieu = () => {
             setCookie("role", accounts?.vai_tro);
         }
     };
-
-
+    
     const submit = async (value) => {
         await addDatcho({
             ten_quan: quanan.ten_quan_an,
@@ -131,7 +137,7 @@ const Gioithieu = () => {
             }
         });
     };
-    
+
 
     useEffect(() => {
         let totalStars = 0;
