@@ -21,6 +21,7 @@ import "./profile.css";
 import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
 import {changPassword} from "../../../services/Auth";
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -32,6 +33,7 @@ const Profile = () => {
     const [ nguoidung, setnguoidung ] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (accounts && accounts.id_nguoidung && !nguoidung) {
@@ -132,7 +134,8 @@ const Profile = () => {
                 newMat_khau: value.mat_khau_moi,
             })
             enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
-            passwordForm.reset();
+            localStorage.removeItem("accounts");
+            navigate("/login");
         }catch (error){
             console.log(error)
             if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
@@ -356,7 +359,6 @@ const Profile = () => {
                                             variant="outlined"
                                             type={"password"}
                                             fullWidth
-                                            type="password"
                                             {...passwordForm.register("mat_khau_cu", {
                                                 required: "Mật khẩu cũ không được bỏ trống",
                                                 minLength: {
@@ -377,7 +379,6 @@ const Profile = () => {
                                             variant="outlined"
                                             type={"password"}
                                             fullWidth
-                                            type="password"
                                             {...passwordForm.register("mat_khau_moi", {
                                                 required: "Mật khẩu mới không được bỏ trống",
                                                 minLength: {
@@ -398,7 +399,6 @@ const Profile = () => {
                                             variant="outlined"
                                             type={"password"}
                                             fullWidth
-                                            type="password"
                                             {...passwordForm.register("xac_nhan_mat_khau", {
                                                 required: "Xác nhận mật khẩu không được bỏ trống",
                                                 minLength: {

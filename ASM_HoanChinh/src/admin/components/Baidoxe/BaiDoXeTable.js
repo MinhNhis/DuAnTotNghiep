@@ -14,7 +14,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { baidoxe } from "../../../services/Baidoxe";
 
-
 const BaiDoXeTable = () => {
   const [baidoxes, setBaidoxe] = useState([]);
   const [accounts, setAccounts] = useState(null);

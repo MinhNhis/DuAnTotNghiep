@@ -77,4 +77,13 @@ const deleteNguoiDung = async (id) => {
     return res
 }
 
-export { getNguoiDung, getNguoiDungById, addNguoiDung, editNguoiDung, deleteNguoiDung }
+const paginator = async (page) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/paginator-nguoidung?page=${page}&limit=8`
+    })
+
+    return res
+}
+
+export {paginator, getNguoiDung, getNguoiDungById, addNguoiDung, editNguoiDung, deleteNguoiDung }

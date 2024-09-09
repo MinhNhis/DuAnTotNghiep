@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { getQuanan } from '../../../services/Quanan';
+import { getQuanan, paginator } from '../../../services/Quanan';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
-
+import PaginationRounded from "../../../admin/components/Paginator";
 
 const Trangchu = () => {
     const [quanan, setQuanan] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
     useEffect(() => {
-        initData()
+        //initData()
     }, [])
 
-    const initData = async () => {
-        const result = await getQuanan()
-        setQuanan(result.data)
+    const initData = async (data) => {
+        setQuanan(data.data)
 
         const resultGt = await getGioithieu()
         setGioithieu(resultGt.data)
     }
-    console.log(gioithieu);
 
     return (
         <>
@@ -57,74 +55,6 @@ const Trangchu = () => {
                         </div>
                     </div>
                 </div>
-                {/* <div className="container-fluid service py-3">
-                    <div className="container">
-                        <div class="hr-with-icon-centered">
-                            <hr />
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
-                            <hr />
-                        </div>
-                        <div id="serviceCarousel" class="carousel slide" data-ride="carousel" >
-                            <div class="carousel-inner">
-                                <div class="carousel-item active" >
-                                    <div class="row g-4">
-                                        <div class="col-lg-3 col-md-6 col-sm-12 wow " data-wow-delay="0.1s">
-                                            <div class="bg-light rounded service-item">
-                                                <div class="service-content d-flex align-items-center justify-content-center p-4">
-                                                    <div class="service-content-icon text-center">
-                                                        <i class="fas fa-cheese fa-7x text-primary"></i>
-                                                        <h4 class="mb-3">Dịch Vụ Tiệc Cưới</h4>
-                                                        <p class="mb-4">Chúng tôi cung cấp dịch vụ tiệc cưới với thực đơn đa dạng và phong phú.</p>
-                                                        <a href="/" class="btn btn-primary px-4 py-2 rounded-pill">Đọc Thêm</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 col-sm-12 wow " data-wow-delay="0.3s">
-                                            <div class="bg-light rounded service-item">
-                                                <div class="service-content d-flex align-items-center justify-content-center p-4">
-                                                    <div class="service-content-icon text-center">
-                                                        <i class="fas fa-pizza-slice fa-7x text-primary"></i>
-                                                        <h4 class="mb-3">Catering Công Ty</h4>
-                                                        <p class="mb-4">Dịch vụ catering cho công ty với thực đơn phong phú, phục vụ chuyên nghiệp.</p>
-                                                        <a href="/" class="btn btn-primary px-4 py-2 rounded-pill">Đọc Thêm</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 col-sm-12 wow " data-wow-delay="0.5s">
-                                            <div class="bg-light rounded service-item">
-                                                <div class="service-content d-flex align-items-center justify-content-center p-4">
-                                                    <div class="service-content-icon text-center">
-                                                        <i class="fas fa-hotdog fa-7x text-primary"></i>
-                                                        <h4 class="mb-3">Tiệc Cocktail</h4>
-                                                        <p class="mb-4">Tổ chức tiệc cocktail với các món ăn nhẹ và thức uống đa dạng.</p>
-                                                        <a href="/" class="btn btn-primary px-4 py-2 rounded-pill">Đọc Thêm</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-md-6 col-sm-12 wow " data-wow-delay="0.7s">
-                                            <div class="bg-light rounded service-item">
-                                                <div class="service-content d-flex align-items-center justify-content-center p-4">
-                                                    <div class="service-content-icon text-center">
-                                                        <i class="fas fa-hamburger fa-7x text-primary"></i>
-                                                        <h4 class="mb-3">Dịch Vụ Bento</h4>
-                                                        <p class="mb-4">Chúng tôi cung cấp các suất ăn Bento tiện lợi và ngon miệng.</p>
-                                                        <a href="/" class="btn btn-primary px-4 py-2 rounded-pill">Đọc Thêm</a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div> */}
 
                 <div className="container-fluid py-3">
                     <div className="container">
@@ -138,63 +68,67 @@ const Trangchu = () => {
                             </div>
                             <h1 className="display-5 mb-5">Có thể bạn sẽ thích</h1>
                         </div>
-                    
+
                         <div className="row g-5 align-items-center">
-                            {
-                                quanan.map((value, index) => {
-                                    return (
-                                        <div className='col-lg-3' key={index} style={{height: "400px"}}>
-                                            <div className='card'>
+                            <>
+                                {
+                                    quanan.map((value, index) => {
+                                        return (
+
+                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "300px" }}>
+                                                <div className='card'>
+                                                    <div className='row g-5'>
+                                                        <div className="col-lg-12 wow " data-wow-delay="0.1s">
+                                                            <Link to={`/chi-tiet/${value.id_quanan}`}><img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "400px", height: "200px" }} /></Link>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 <div className='row g-5'>
-                                                    <div className="col-lg-12 wow " data-wow-delay="0.1s">
-                                                        <Link to={`/chi-tiet/${value.id_quanan}`}><img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "400px", height: "200px" }} /></Link>
+                                                    <div className="col-lg-12 wow " data-wow-delay="0.3s">
+                                                        <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
+                                                        <div className='mb-2'>
+                                                            Giờ hoạt động: {value.gio_hoat_dong}
+                                                        </div>
+
+                                                        <div className='mb-2'>
+                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                        </div>
+                                                        <div className="row g-4 text-dark mb-5">
+                                                            {
+                                                                gioithieu.map((gt) => {
+                                                                    return (
+                                                                        gt.id_gioithieu === value.id_gioithieu ? <div
+                                                                            style={{
+                                                                                display: '-webkit-box',
+                                                                                WebkitLineClamp: 2,
+                                                                                WebkitBoxOrient: 'vertical',
+                                                                                overflow: 'hidden',
+                                                                                textOverflow: 'ellipsis',
+                                                                                whiteSpace: 'normal'
+                                                                            }}
+                                                                            key={gt.id_gioithieu}>
+                                                                            {gt.gioi_thieu}
+                                                                        </div> : ''
+                                                                    )
+
+                                                                })
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className='row g-5'>
-                                                <div className="col-lg-12 wow " data-wow-delay="0.3s">
-                                                    <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
-                                                    <div className='mb-2'>
-                                                        Giờ hoạt động: {value.gio_hoat_dong}
-                                                    </div>
 
-                                                    <div className='mb-2'>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                    </div>
-                                                    <div className="row g-4 text-dark mb-5">
-                                                        {
-                                                            gioithieu.map((gt) => {
-                                                                return (
-                                                                    gt.id_gioithieu === value.id_gioithieu ? <div
-                                                                        style={{
-                                                                            display: '-webkit-box',
-                                                                            WebkitLineClamp: 2,
-                                                                            WebkitBoxOrient: 'vertical',
-                                                                            overflow: 'hidden',
-                                                                            textOverflow: 'ellipsis',
-                                                                            whiteSpace: 'normal'
-                                                                        }}
-                                                                        key={gt.id_gioithieu}>
-                                                                        {gt.gioi_thieu}
-                                                                    </div> : ''
-                                                                )
-
-                                                            })
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                       
-                                    )
-                                })
-                            }
+                                        )
+                                    })
+                                }
+                                <div className='mt-5 mb-3' style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                                    <PaginationRounded onDataChange={initData} paginator={paginator} />
+                                </div>
+                            </>
                         </div>
-
-
                     </div>
                 </div>
                 <div className="container-fluid event py-3">

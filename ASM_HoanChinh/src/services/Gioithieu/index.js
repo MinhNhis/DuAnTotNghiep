@@ -129,6 +129,15 @@ const getCacDichvu = async () => {
     return res
 }
 
+const paginator = async (page) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/paginator-gioithieu?page=${page}&limit=8`
+    })
+
+    return res
+}
 
 
-export { getGioithieu, addGioithieu, getGioithieuById, editGioithieu, deleteGioithieu, getBaidoxe, getCacDichvu, getKehoach, getKhachhang, getKhongkhi, getTiennghi }
+
+export { getGioithieu, addGioithieu, getGioithieuById, editGioithieu, deleteGioithieu, getBaidoxe, getCacDichvu, getKehoach, getKhachhang, getKhongkhi, getTiennghi,paginator }
