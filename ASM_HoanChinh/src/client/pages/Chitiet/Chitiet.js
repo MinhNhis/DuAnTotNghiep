@@ -23,6 +23,7 @@ import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
+import MapComponent from "../../components/Map";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -107,7 +108,7 @@ const Gioithieu = () => {
             setCookie("role", accounts?.vai_tro);
         }
     };
-    
+
     const submit = async (value) => {
         await addDatcho({
             ten_quan: quanan.ten_quan_an,
@@ -692,26 +693,20 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            <div className="card">
-                                                <iframe
-                                                    title="lienhe"
-                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22272.472046340183!2d105.72227868079713!3d10.04125830150886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0629f6de3edb7%3A0x527f09dbfb20b659!2zQ2FuIFRobywgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1721505909169!5m2!1sen!2s"
-                                                    style={{ border: 0, width: "600", height: "150px" }}
-                                                />
-                                            </div>
+                                            <MapComponent />
                                         </div>
-
-                                        <div className="col-sm-12">
+                                        <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
                                             {quanan.dia_chi}
+                                        </div>
+                                        <div className="col-sm-6" >
+                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
                                         </div>
                                         <div className="col-sm-12">
                                             <i className="bi bi-phone me-2"></i>SĐT:
                                             {quanan.dien_thoai}
                                         </div>
-                                        <div className="col-sm-12" >
-                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>

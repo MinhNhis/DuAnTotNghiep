@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { getQuanan, paginator } from '../../../services/Quanan';
+import { paginator } from '../../../services/Quanan';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
