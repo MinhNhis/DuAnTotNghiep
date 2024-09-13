@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
 
@@ -19,14 +19,15 @@ import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
-import { CANCEL } from "redux-saga";
-import { addDatcho } from "../../../services/Datcho";
+import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
+import { useCookies } from "react-cookie";
+import MapComponent from "../../components/Map";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
-
+    const navigate = useNavigate()
     const params = useParams();
     const id = params.id;
 
@@ -35,6 +36,7 @@ const Gioithieu = () => {
     const [danhgia, setDanhgia] = useState([]);
     const [nguoidg, setNguoidanhgia] = useState([]);
     const [menu, setMenu] = useState([]);
+    const [datcho, setDatcho] = useState([]);
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
@@ -45,8 +47,7 @@ const Gioithieu = () => {
     const [loaikhachhang, setLoaikhachhang] = useState([]);
     const [tiennghi, setTiennghi] = useState([]);
     const [khongkhi, setKhongkhi] = useState([]);
-
-    //loadmore
+    const [stars, setStar] = useState(0);
     const [visibleCount, setVisibleCount] = useState(2);
 
     useEffect(() => {
@@ -68,6 +69,10 @@ const Gioithieu = () => {
 
         const resultMenu = await getMenus();
         setMenu(resultMenu.data);
+
+        const resultDatcho = await getDatcho();
+        const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
+        setDatcho(filteredDatcho);
 
         const resultCacdv = await getCacDichvu();
         setCacdichvu(resultCacdv.data);
@@ -92,6 +97,19 @@ const Gioithieu = () => {
     };
 
 
+    const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
+    useEffect(() => {
+        getUserInfo();
+    }, [cookies]);
+
+    const getUserInfo = async () => {
+        const accounts = JSON.parse(localStorage.getItem("accounts"))
+
+        if (accounts?.vai_tro !== cookies.vai_tro) {
+            setCookie("role", accounts?.vai_tro);
+        }
+    };
+
     const submit = async (value) => {
         await addDatcho({
             ten_quan: quanan.ten_quan_an,
@@ -107,23 +125,43 @@ const Gioithieu = () => {
             id_quanan: id
         })
         enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+        navigate("/profile")
     }
 
     const renderStars = (stars) => {
-        return [...Array(5)].map((_, i) =>
-            i < stars ? (
-                <i key={i} className="fas fa-star text-primary me-2"></i>
-            ) : (
-                <i key={i} className="far fa-star text-primary me-2"></i>
-            )
-        );
+        return [...Array(5)].map((_, i) => {
+            if (i < Math.floor(stars)) {
+                return <i key={i} className="fas fa-star text-primary me-2"></i>;
+            } else if (i < stars) {
+                return <i key={i} className="fas fa-star-half-alt text-primary me-2"></i>;
+            } else {
+                return <i key={i} className="far fa-star text-primary me-2"></i>;
+            }
+        });
     };
+
+
+    useEffect(() => {
+        let totalStars = 0;
+        let count = 0;
+
+        danhgia.forEach(e => {
+            if (e.id_quanan === quanan.id_quanan) {
+                totalStars += e.sao;
+                count++;
+            }
+        });
+
+        if (count > 0) {
+            setStar(totalStars / count);
+        } else {
+            setStar(0);
+        }
+    }, [danhgia, quanan]);
 
     const handleLoadMore = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
-
-
     return (
         <>
             {/* <Navbar /> */}
@@ -163,220 +201,229 @@ const Gioithieu = () => {
                             <Card>
                                 <CardContent>
                                     <h1 className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
-                                    <div className="col-lg-12 mb-4">
-                                        <Box component="form" noValidate autoComplete="off">
-                                            <Grid container spacing={0.5}>
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="name"
-                                                        label="Tên của bạn"
-                                                        variant="outlined"
-                                                        defaultValue={accounts?.ten_nguoi_dung || ""}
+                                    {cookies?.token && cookies?.role === 1 ?
+                                        <>
+                                            <div className="col-lg-12 mb-4">
+                                                <Box component="form" noValidate autoComplete="off">
+                                                    <Grid container spacing={0.5}>
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="name"
+                                                                label="Tên của bạn*"
+                                                                variant="outlined"
+                                                                defaultValue={accounts?.ten_nguoi_dung || ""}
 
-                                                        sx={{ mb: 2 }}
-                                                        {...register("ten_kh", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Tên của bạn không được để trống"
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.ten_kh && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.ten_kh?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                                sx={{ mb: 2 }}
+                                                                {...register("ten_kh", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Tên của bạn không được để trống"
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.ten_kh && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.ten_kh?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        type="number"
-                                                        fullWidth
-                                                        id="phone"
-                                                        label="Số điện thoại"
-                                                        variant="outlined"
-                                                        defaultValue={accounts?.so_dien_thoai || ""}
-                                                        sx={{ mb: 2 }}
-                                                        {...register("sdt", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Số điện thoai không được bỏ trống"
-                                                            },
-                                                            maxLength: {
-                                                                value: 10,
-                                                                message: "Sô điện thoại phải 10 số"
-                                                            },
-                                                            minLength: {
-                                                                value: 10,
-                                                                message: "Sô điện thoại phải 10 số"
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.sdt && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.sdt?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                type="number"
+                                                                fullWidth
+                                                                id="phone"
+                                                                label="Số điện thoại*"
+                                                                variant="outlined"
+                                                                defaultValue={accounts?.so_dien_thoai || ""}
+                                                                sx={{ mb: 2 }}
+                                                                {...register("sdt", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Số điện thoai không được bỏ trống"
+                                                                    },
+                                                                    maxLength: {
+                                                                        value: 10,
+                                                                        message: "Sô điện thoại phải 10 số"
+                                                                    },
+                                                                    minLength: {
+                                                                        value: 10,
+                                                                        message: "Sô điện thoại phải 10 số"
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.sdt && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.sdt?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="date"
-                                                        label="Ngày"
-                                                        type="date"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        variant="outlined"
-                                                        required
-                                                        sx={{ mb: 2 }}
-                                                        {...register("ngay", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Ngày không được bỏ trống"
-                                                            },
-                                                            validate: (ngay) => {
-                                                                const selectedDate = new Date(ngay);
-                                                                const today = new Date();
-                                                                today.setHours(0, 0, 0, 0);
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="date"
+                                                                label="Ngày"
+                                                                type="date"
+                                                                InputLabelProps={{ shrink: true }}
+                                                                variant="outlined"
+                                                                required
+                                                                sx={{ mb: 2 }}
+                                                                {...register("ngay", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Ngày không được bỏ trống"
+                                                                    },
+                                                                    validate: (ngay) => {
+                                                                        const selectedDate = new Date(ngay);
+                                                                        const today = new Date();
+                                                                        today.setHours(0, 0, 0, 0);
 
-                                                                if (selectedDate < today) {
-                                                                    return "Thời gian không được nhỏ hơn ngày hiện tại";
-                                                                }
+                                                                        if (selectedDate < today) {
+                                                                            return "Thời gian không được nhỏ hơn ngày hiện tại";
+                                                                        }
 
-                                                                return true;
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.ngay && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.ngay?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                                        return true;
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.ngay && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.ngay?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="date"
-                                                        label="Thời Gian"
-                                                        type="time"
-                                                        InputLabelProps={{ shrink: true }}
-                                                        variant="outlined"
-                                                        required
-                                                        sx={{ mb: 3 }}
-                                                        {...register("thoi_gian", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Thời gian không được bỏ trống"
-                                                            },
-                                                            validate: (thoi_gian) => {
-                                                                const selectedDate = new Date(thoi_gian);
-                                                                const today = new Date();
-                                                                today.setHours(0, 0, 0, 0);
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="date"
+                                                                label="Thời Gian"
+                                                                type="time"
+                                                                InputLabelProps={{ shrink: true }}
+                                                                variant="outlined"
+                                                                required
+                                                                sx={{ mb: 3 }}
+                                                                {...register("thoi_gian", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Thời gian không được bỏ trống"
+                                                                    },
+                                                                    validate: (thoi_gian) => {
+                                                                        const selectedDate = new Date(thoi_gian);
+                                                                        const today = new Date();
+                                                                        today.setHours(0, 0, 0, 0);
 
-                                                                if (selectedDate < today) {
-                                                                    return "Thời gian không được nhỏ hơn ngày hiện tại";
-                                                                }
+                                                                        if (selectedDate < today) {
+                                                                            return "Thời gian không được nhỏ hơn ngày hiện tại";
+                                                                        }
 
-                                                                return true;
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.thoi_gian && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.thoi_gian?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                                        return true;
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.thoi_gian && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.thoi_gian?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="guests"
-                                                        label="Số lượng khách"
-                                                        type="number"
-                                                        variant="outlined"
-                                                        required
-                                                        sx={{ mb: 2 }}
-                                                        {...register("so_luong", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Số lượng không được bỏ trống"
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.so_luong && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.so_luong?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="guests"
+                                                                label="Số lượng khách"
+                                                                type="number"
+                                                                variant="outlined"
+                                                                required
+                                                                sx={{ mb: 2 }}
+                                                                {...register("so_luong", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Số lượng không được bỏ trống"
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.so_luong && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.so_luong?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="guests"
-                                                        label="Email"
-                                                        type="email"
-                                                        variant="outlined"
-                                                        defaultValue={accounts?.email || ""}
-                                                        sx={{ mb: 2 }}
-                                                        {...register("email", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Email không được bỏ trống"
-                                                            },
-                                                            pattern: {
-                                                                value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,4}$/,
-                                                                message: "Email không đúng định dạng"
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.email && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.email?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="guests"
+                                                                label="Email*"
+                                                                type="email"
+                                                                variant="outlined"
+                                                                defaultValue={accounts?.email || ""}
+                                                                sx={{ mb: 2 }}
+                                                                {...register("email", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Email không được bỏ trống"
+                                                                    },
+                                                                    pattern: {
+                                                                        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,4}$/,
+                                                                        message: "Email không đúng định dạng"
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.email && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.email?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <TextField
-                                                        fullWidth
-                                                        id="guests"
-                                                        label="Yêu cầu khác"
-                                                        type="text"
-                                                        variant="outlined"
-                                                        required
-                                                        sx={{ mb: 2 }}
-                                                        {...register("yeu_cau", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Yêu cầu không được bỏ trống"
-                                                            }
-                                                        })}
-                                                    />
-                                                    {formState?.errors?.yeu_cau && (
-                                                        <small className="text-danger">
-                                                            {formState?.errors?.yeu_cau?.message}
-                                                        </small>
-                                                    )}
-                                                </Grid>
+                                                        <Grid item xs={12}>
+                                                            <TextField
+                                                                fullWidth
+                                                                id="guests"
+                                                                label="Yêu cầu khác"
+                                                                type="text"
+                                                                variant="outlined"
+                                                                sx={{ mb: 2 }}
+                                                                {...register("yeu_cau", {
+                                                                    required: {
+                                                                        value: true,
+                                                                        message: "Yêu cầu không được bỏ trống"
+                                                                    }
+                                                                })}
+                                                            />
+                                                            {formState?.errors?.yeu_cau && (
+                                                                <small className="text-danger">
+                                                                    {formState?.errors?.yeu_cau?.message}
+                                                                </small>
+                                                            )}
+                                                        </Grid>
 
-                                                <Grid item xs={12} >
-                                                    <Box display="flex" alignItems="center" className="mb-0">
-                                                        <Button
-                                                            style={{ width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
-                                                            className="mt-0"
-                                                            onClick={handleSubmit(submit)}
-                                                        >
-                                                            Đặt chỗ
-                                                        </Button>
-                                                    </Box>
-                                                </Grid>
-                                            </Grid>
-                                        </Box>
-                                    </div>
+                                                        <Grid item xs={12}>
+                                                            <Box display="flex" alignItems="center" className="mb-0">
+                                                                <Button
+                                                                    style={{
+                                                                        width: "100px",
+                                                                        backgroundColor: "#d4a762",
+                                                                        color: "white",
+                                                                        marginRight: "-10px"
+                                                                    }}
+                                                                    className="mt-0"
+                                                                    onClick={handleSubmit(submit)}
+                                                                >
+                                                                    Đặt chỗ
+                                                                </Button>
+                                                            </Box>
+                                                        </Grid>
+                                                    </Grid>
+                                                </Box>
+                                            </div>
+                                        </> : <h5 className="text-center mt-5"> Bạn cần đăng nhập để có thể đặt chỗ !</h5>
+                                    }
+
                                 </CardContent>
                             </Card>
 
@@ -406,8 +453,10 @@ const Gioithieu = () => {
                                                     <h6 className="text-secondary mt-1 ">{value.gia}đ</h6>
 
                                                     <div class="form-check mb-4">
-                                                        <input class="form-check-input" type="checkbox" value="" id="dat_mon" />
-                                                        <label class="form-check-label" id="dat_mon" for=""> Chọn món </label>
+                                                        <input class="form-check-input" type="checkbox" value=""
+                                                               id="dat_mon" />
+                                                        <label class="form-check-label" id="dat_mon" for=""> Chọn
+                                                            món </label>
                                                     </div>
                                                 </div>
                                             ) : ""
@@ -421,7 +470,6 @@ const Gioithieu = () => {
                     </div>
 
 
-
                     <div className="row mb-3">
                         <div className="col-4 col-md-4">
                             <div className="card" style={{ height: "400px" }}>
@@ -432,12 +480,7 @@ const Gioithieu = () => {
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
                                             <h3>
-                                                4.0
-                                                <i className="fas fa-star text-primary me-2"></i>
-                                                <i className="fas fa-star text-primary me-2"></i>
-                                                <i className="fas fa-star text-primary me-2"></i>
-                                                <i className="fas fa-star text-primary me-2"></i>
-
+                                                {stars} {renderStars(stars)}
                                             </h3>
                                             <hr />
                                             <h5 className="mb-3" style={{ fontWeight: "bold" }}>
@@ -504,7 +547,7 @@ const Gioithieu = () => {
                                                         <div className="col-sm-4">
                                                             {cacdichvu.map((cdv, index) => {
                                                                 return cdv.id_cacdichvu ===
-                                                                    value.id_tuychondichvu ? (
+                                                                value.id_tuychondichvu ? (
                                                                     <div key={index}>{cdv.tuy_chon_dv}</div>
                                                                 ) : (
                                                                     ""
@@ -653,27 +696,20 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            <div className="card">
-                                                <iframe
-                                                    title="lienhe"
-                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22272.472046340183!2d105.72227868079713!3d10.04125830150886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0629f6de3edb7%3A0x527f09dbfb20b659!2zQ2FuIFRobywgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1721505909169!5m2!1sen!2s"
-                                                    style={{ border: 0, width: "600", height: "150px" }}
-                                                />
-                                            </div>
+                                            <MapComponent />
                                         </div>
-
-                                        <div className="col-sm-12">
+                                        <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
                                             {quanan.dia_chi}
+                                        </div>
+                                        <div className="col-sm-6" >
+                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
                                         </div>
                                         <div className="col-sm-12">
                                             <i className="bi bi-phone me-2"></i>SĐT:
                                             {quanan.dien_thoai}
                                         </div>
-                                        <div className="col-sm-12" >
-                                            <Link to="/" ><FacebookIcon style={{ color: "black" }} /></Link>
 
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -688,10 +724,10 @@ const Gioithieu = () => {
                                 style={{ fontSize: "20px", fontWeight: "bold" }}
                             >
                                 <Button
-                                    style={{ fontSize: "15px", width: "100px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }} // Màu vàng đất
+                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }}
                                     className="mt-0"
                                 >
-                                    Đánh giá
+                                    Viết đánh giá
                                 </Button>
 
                             </Link>
@@ -710,21 +746,48 @@ const Gioithieu = () => {
                                         </div>
                                     </div>
                                     <div className="row">
-                                        <div className="col-4" style={{ borderRight: "1px solid #000" }}>
+                                        <div
+                                            className="col-4"
+                                            style={{ borderRight: "1px solid #000" }}
+                                        >
                                             <div className="row">
                                                 <div className="col-6 text-dark">
-                                                    <p>Tuyệt vời</p>
-                                                    <p>Rất tốt</p>
-                                                    <p>Trung Bình</p>
-                                                    <p>Tệ</p>
-                                                    <p>Kinh khủng</p>
+                                                    <p> Tuyệt vời</p>
+                                                    <p> Rất tốt</p>
+                                                    <p> Trung Bình</p>
+                                                    <p> Tệ</p>
+                                                    <p> Kinh khủng</p>
                                                 </div>
                                                 <div className="col-6">
-                                                    {/* Star ratings here */}
+                                                    <p>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                    </p>
+                                                    <p>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                    </p>
+                                                    <p>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                    </p>
+                                                    <p>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                    </p>
+                                                    <p>
+                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-8">
+                                        <div className="col-lg-8">
                                             <Box component="form" noValidate autoComplete="off">
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={12}>
@@ -773,7 +836,7 @@ const Gioithieu = () => {
                                                     </Grid>
                                                     {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (
                                                         <Grid item xs={12} display="center" justifyContent="center">
-                                                            <Button variant="outlined" style={{color: 'black',borderColor: 'black', borderWidth: '2px' }}  onClick={handleLoadMore}>
+                                                            <Button variant="outlined" style={{color: 'black',borderColor: 'black', borderWidth: '2px', borderRadius: "50px" }}  onClick={handleLoadMore}>
                                                                 Xem thêm
                                                             </Button>
                                                         </Grid>
