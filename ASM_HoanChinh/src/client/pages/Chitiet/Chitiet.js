@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
-
 
 import {
     getBaidoxe,
@@ -30,6 +29,7 @@ const Gioithieu = () => {
     const navigate = useNavigate()
     const params = useParams();
     const id = params.id;
+    const mapRef = useRef(null)
 
     const [quanan, setQuanan] = useState({});
     const [gioithieu, setGioithieu] = useState([]);
@@ -454,7 +454,7 @@ const Gioithieu = () => {
 
                                                     <div class="form-check mb-4">
                                                         <input class="form-check-input" type="checkbox" value=""
-                                                               id="dat_mon" />
+                                                            id="dat_mon" />
                                                         <label class="form-check-label" id="dat_mon" for=""> Chọn
                                                             món </label>
                                                     </div>
@@ -547,7 +547,7 @@ const Gioithieu = () => {
                                                         <div className="col-sm-4">
                                                             {cacdichvu.map((cdv, index) => {
                                                                 return cdv.id_cacdichvu ===
-                                                                value.id_tuychondichvu ? (
+                                                                    value.id_tuychondichvu ? (
                                                                     <div key={index}>{cdv.tuy_chon_dv}</div>
                                                                 ) : (
                                                                     ""
@@ -696,7 +696,7 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            <MapComponent />
+                                            {!mapRef.current ? <MapComponent />: null} 
                                         </div>
                                         <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
@@ -836,7 +836,7 @@ const Gioithieu = () => {
                                                     </Grid>
                                                     {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (
                                                         <Grid item xs={12} display="center" justifyContent="center">
-                                                            <Button variant="outlined" style={{color: 'black',borderColor: 'black', borderWidth: '2px', borderRadius: "50px" }}  onClick={handleLoadMore}>
+                                                            <Button variant="outlined" style={{ color: 'black', borderColor: 'black', borderWidth: '2px', borderRadius: "50px" }} onClick={handleLoadMore}>
                                                                 Xem thêm
                                                             </Button>
                                                         </Grid>
