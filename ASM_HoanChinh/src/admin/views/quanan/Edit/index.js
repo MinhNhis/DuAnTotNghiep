@@ -46,6 +46,26 @@ const AddQuanAn = () => {
 
     const onSubmit = async (value) => {
         try {
+            const checkAddressExists = async (address) => {
+                if (!address) return false;
+                try {
+                  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+                  const response = await fetch(url);
+                  if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                  }
+                  const data = await response.json();
+                  return data.length > 0;
+                } catch (error) {
+                  console.error("Error checking address:", error);
+                  return false;
+                }
+              };
+              const addressExists = await checkAddressExists(value?.dia_chi);
+              if (!addressExists) {
+                enqueueSnackbar('Địa chỉ không tồn tại trên bản đồ!', { variant: 'error' });
+                return;
+              }
             await editQuanan(id, {
                 ten_quan_an: value?.ten_quan_an,
                 dia_chi: value?.dia_chi,
