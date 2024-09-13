@@ -153,7 +153,7 @@ const Gioithieu = () => {
         });
 
         if (count > 0) {
-            setStar(totalStars / count);
+            setStar((totalStars / count).toFixed(1));
         } else {
             setStar(0);
         }
