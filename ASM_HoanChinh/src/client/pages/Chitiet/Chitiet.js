@@ -813,7 +813,7 @@ const Gioithieu = () => {
                                                                                         </Typography>
                                                                                     </Grid>
                                                                                     <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
-                                                                                        {/* Render star ratings */}
+                                                                                        {renderStars(dg.sao)}
                                                                                     </Grid>
                                                                                     <Grid item xs={12}>
                                                                                         <img
