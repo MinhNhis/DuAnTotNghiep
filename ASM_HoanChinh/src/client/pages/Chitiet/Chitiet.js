@@ -162,6 +162,8 @@ const Gioithieu = () => {
     const handleLoadMore = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
+
+    // an bot
     return (
         <>
             {/* <Navbar /> */}

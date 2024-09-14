@@ -6,6 +6,7 @@ import axios from "axios";
 import osm from "./osm-providers";
 import "leaflet/dist/leaflet.css";
 import { getQuanan } from "../../../../services/Quanan";
+import { BASE_URL } from "../../../../config/ApiConfig";
 
 const makerIcon = new L.Icon({
     iconUrl: require('../../../assets/images/waker.png'),
@@ -90,7 +91,10 @@ const MapComponent = () => {
             {locations.map((element, index) => (
                 <Marker key={index} position={[element.coords.lat, element.coords.lng]} icon={makerIcon}>
                     <Popup>
-                        <b>{element.ten_quan_an}</b><br />{element.dia_chi}
+                        <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{width: "100%"}}/><br/>
+                        <b>{element.ten_quan_an}</b><br/>
+                        {element.gio_hoat_dong} <br/>
+                        {element.dia_chi}
                     </Popup>
                 </Marker>
             ))}

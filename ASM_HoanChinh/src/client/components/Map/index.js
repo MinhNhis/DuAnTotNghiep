@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogActions } from '@mui/material';
 import geocodeAddress from "../GeoLocation";
 import osm from "./osm-providers";
 import Routing from "../RoutingMap";
+import { BASE_URL } from "../../../config/ApiConfig";
 import "leaflet/dist/leaflet.css";
 import { getQuanan } from "../../../services/Quanan";
 import { useParams } from "react-router-dom";
@@ -91,9 +92,9 @@ const MapComponent = () => {
     };
 
     const handleClose = () => {
-        if (!mapRef.current) {
-            setOpen(false);
-        }
+
+        setOpen(false);
+
 
     };
 
@@ -156,7 +157,10 @@ const MapComponent = () => {
                         {locations.map((element, index) => (
                             <Marker key={index} position={[element.coords.lat, element.coords.lng]} icon={makerIcon}>
                                 <Popup>
-                                    <b>{element.ten_quan_an}</b><br />{element.dia_chi}
+                                    <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{ width: "100%" }} /><br />
+                                    <b>{element.ten_quan_an}</b><br />
+                                    {element.gio_hoat_dong} <br />
+                                    {element.dia_chi}
                                 </Popup>
                             </Marker>
                         ))}
