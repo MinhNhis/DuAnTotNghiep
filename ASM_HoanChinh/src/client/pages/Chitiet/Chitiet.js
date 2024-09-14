@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
-
 
 import {
     getBaidoxe,
@@ -19,22 +18,25 @@ import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
-import { addDatcho } from "../../../services/Datcho";
+import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
+import MapComponent from "../../components/Map";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
     const navigate = useNavigate()
     const params = useParams();
     const id = params.id;
+    const mapRef = useRef(null)
 
     const [quanan, setQuanan] = useState({});
     const [gioithieu, setGioithieu] = useState([]);
     const [danhgia, setDanhgia] = useState([]);
     const [nguoidg, setNguoidanhgia] = useState([]);
     const [menu, setMenu] = useState([]);
+    const [datcho, setDatcho] = useState([]);
 
     const [cacdichvu, setCacdichvu] = useState([]);
     const [dichvu, setDichvu] = useState([]);
@@ -46,6 +48,7 @@ const Gioithieu = () => {
     const [tiennghi, setTiennghi] = useState([]);
     const [khongkhi, setKhongkhi] = useState([]);
     const [stars, setStar] = useState(0);
+    const [visibleCount, setVisibleCount] = useState(2);
 
     useEffect(() => {
         initData();
@@ -66,6 +69,10 @@ const Gioithieu = () => {
 
         const resultMenu = await getMenus();
         setMenu(resultMenu.data);
+
+        const resultDatcho = await getDatcho();
+        const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
+        setDatcho(filteredDatcho);
 
         const resultCacdv = await getCacDichvu();
         setCacdichvu(resultCacdv.data);
@@ -88,6 +95,8 @@ const Gioithieu = () => {
         const resultKk = await getKhongkhi();
         setKhongkhi(resultKk.data);
     };
+
+
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
     useEffect(() => {
         getUserInfo();
@@ -100,7 +109,6 @@ const Gioithieu = () => {
             setCookie("role", accounts?.vai_tro);
         }
     };
-
 
     const submit = async (value) => {
         await addDatcho({
@@ -131,7 +139,7 @@ const Gioithieu = () => {
             }
         });
     };
-    
+
 
     useEffect(() => {
         let totalStars = 0;
@@ -145,13 +153,15 @@ const Gioithieu = () => {
         });
 
         if (count > 0) {
-            setStar(totalStars / count);
+            setStar((totalStars / count).toFixed(1));
         } else {
             setStar(0);
         }
     }, [danhgia, quanan]);
 
-
+    const handleLoadMore = () => {
+        setVisibleCount((prevCount) => prevCount + 2);
+    };
     return (
         <>
             {/* <Navbar /> */}
@@ -686,26 +696,20 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            <div className="card">
-                                                <iframe
-                                                    title="lienhe"
-                                                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d22272.472046340183!2d105.72227868079713!3d10.04125830150886!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31a0629f6de3edb7%3A0x527f09dbfb20b659!2zQ2FuIFRobywgTmluaCBLaeG7gXUsIEPhuqduIFRoxqEsIFZpZXRuYW0!5e0!3m2!1sen!2s!4v1721505909169!5m2!1sen!2s"
-                                                    style={{ border: 0, width: "600", height: "150px" }}
-                                                />
-                                            </div>
+                                            {!mapRef.current ? <MapComponent />: null} 
                                         </div>
-
-                                        <div className="col-sm-12">
+                                        <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
                                             {quanan.dia_chi}
+                                        </div>
+                                        <div className="col-sm-6" >
+                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
                                         </div>
                                         <div className="col-sm-12">
                                             <i className="bi bi-phone me-2"></i>SĐT:
                                             {quanan.dien_thoai}
                                         </div>
-                                        <div className="col-sm-12" >
-                                            <Link to="/" target="_blank" rel="noopener noreferrer"><FacebookIcon style={{ color: "black" }} /></Link>
-                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -788,21 +792,21 @@ const Gioithieu = () => {
                                                 <Grid container spacing={2}>
                                                     <Grid item xs={12}>
                                                         <Grid container spacing={2}>
-                                                            {danhgia.map((dg, index) => {
-                                                                return dg.id_quanan === quanan.id_quanan ? (
+                                                            {danhgia
+                                                                .filter(dg => dg.id_quanan === quanan.id_quanan)
+                                                                .slice(0, visibleCount)
+                                                                .map((dg, index) => (
                                                                     <Grid item xs={12} key={index}>
                                                                         <Card sx={{ mb: 2 }}>
                                                                             <CardContent>
                                                                                 <Grid container spacing={2}>
                                                                                     <Grid item xs={6}>
                                                                                         <Typography variant="body2" component="div">
-                                                                                            {nguoidg.map((ndg) => (
+                                                                                            {nguoidg.map((ndg) =>
                                                                                                 dg.id_nguoidung === ndg.id_nguoidung ? (
-                                                                                                    <span key={ndg.id_nguoidung}><strong>{ndg.ten_nguoi_dung}</strong></span>
-                                                                                                ) : (
-                                                                                                    ''
-                                                                                                )
-                                                                                            ))}
+                                                                                                    <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
+                                                                                                ) : null
+                                                                                            )}
                                                                                         </Typography>
                                                                                         <Typography variant="caption" display="block">
                                                                                             {dg.created_at.split("T")[0]}
@@ -827,12 +831,16 @@ const Gioithieu = () => {
                                                                             </CardContent>
                                                                         </Card>
                                                                     </Grid>
-                                                                ) : (
-                                                                    ''
-                                                                );
-                                                            })}
+                                                                ))}
                                                         </Grid>
                                                     </Grid>
+                                                    {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (
+                                                        <Grid item xs={12} display="center" justifyContent="center">
+                                                            <Button variant="outlined" style={{ color: 'black', borderColor: 'black', borderWidth: '2px', borderRadius: "50px" }} onClick={handleLoadMore}>
+                                                                Xem thêm
+                                                            </Button>
+                                                        </Grid>
+                                                    )}
                                                 </Grid>
                                             </Box>
                                         </div>

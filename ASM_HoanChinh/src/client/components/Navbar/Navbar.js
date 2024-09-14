@@ -36,7 +36,6 @@ const Navbar = () => {
     removeCookie("token", null, { path: "/", expires: date });
     removeCookie("role", null, { path: "/", expires: date });
   };
-  console.log(nguoidung)
 
   return (
       <div className="container-fluid nav-bar">

@@ -132,7 +132,7 @@ const getCacDichvu = async () => {
 const paginator = async (page) => {
     const res = await request({
         method: "GET",
-        path: `/api/paginator-gioithieu?page=${page}&limit=10`
+        path: `/api/paginator-gioithieu?page=${page}&limit=8`
     })
 
     return res

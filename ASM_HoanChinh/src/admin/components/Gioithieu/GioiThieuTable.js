@@ -21,9 +21,12 @@ import {
     getKehoach,
     getKhachhang,
     getKhongkhi,
-    getTiennghi
+    getTiennghi,
+    paginator
 } from "../../../services/Gioithieu";
-import { getDichvu } from "../../../services/Dichvu";
+import { getDichvu, } from "../../../services/Dichvu";
+import PaginationRounded from "../Paginator";
+import { useCookies } from "react-cookie";
 
 const GioiThieuTable = () => {
     const [gioithieu, setGioithieu] = useState([]);
@@ -35,21 +38,47 @@ const GioiThieuTable = () => {
     const [baidoxe, setBaidoxe] = useState([]);
     const [cacdichvu, setCacdichvu] = useState([]);
     const [accounts, setAccounts] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     useEffect(() => {
         const accounts = JSON.parse(localStorage.getItem("accounts"));
         setAccounts(accounts);
-        initGioithieu()
+        //initGioithieu()
         initData()
     }, [])
 
-    const initGioithieu = async () => {
-        const result = await getGioithieu();
-        setGioithieu(result.data)
-        console.log(result.data);
+    const [cookies] = useCookies(["token", "role"]);
+    const initGioithieu = async (data) => {
+        if (cookies.role === 0) {
+            setGioithieu(data.data)
+            setCurrentPage(data.pagination.currentPage)
+        }
+        else {
+            const result = await getGioithieu()
+            setGioithieu(result.data)
+        }
+        const result = await getDichvu()
+        setDichvu(result.data)
+        const resultKhongkhi = await getKhongkhi();
+        setKhongkhi(resultKhongkhi.data)
+        const resultKehoach = await getKehoach();
+        setKehoach(resultKehoach.data)
+        const resultTiennghi = await getTiennghi();
+        setTiennghi(resultTiennghi.data)
+        const resultKhachhang = await getKhachhang();
+        setKhachhang(resultKhachhang.data)
+        const resultBaidoxe = await getBaidoxe();
+        setBaidoxe(resultBaidoxe.data)
+        const resultCacdichvu = await getCacDichvu();
+        setCacdichvu(resultCacdichvu.data);
     }
 
     const initData = async () => {
+        if (cookies.role !== 0) {
+            const result = await getGioithieu()
+            setGioithieu(result.data)
+        } else return null
         const result = await getDichvu()
         setDichvu(result.data)
         const resultKhongkhi = await getKhongkhi();
@@ -67,142 +96,143 @@ const GioiThieuTable = () => {
     }
 
     return (
-        <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
-            <TableHead>
-                <TableRow>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            STT
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Tùy chọn DV
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Dịch vụ
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Bãi đổ xe
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Không khí
-                        </Typography>
-                    </TableCell>
-                    {/* <TableCell>
+        <>
+            <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                STT
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Tùy chọn DV
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Dịch vụ
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Bãi đổ xe
+                            </Typography>
+                        </TableCell>
+                        <TableCell>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Không khí
+                            </Typography>
+                        </TableCell>
+                        {/* <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             Khách hàng
                         </Typography>
                     </TableCell> */}
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Kế hoạch
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Tiện nghi
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Nội dung
-                        </Typography>
-                    </TableCell>
-                    <TableCell>
-                        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                            Hành động
-                        </Typography>
-                    </TableCell>
-                </TableRow>
-            </TableHead>
-            <TableBody>
-                {gioithieu.filter(gt => gt?.created_user === accounts?.id_nguoidung || gt?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((gt, index) => (
-
-                    <TableRow key={index}>
                         <TableCell>
-                            <Typography sx={{ fontSize: "15px", }}>
-                                {index + 1}
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Kế hoạch
                             </Typography>
                         </TableCell>
                         <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-                                    {
-                                        cacdichvu.map((cdv) => {
-                                            if (cdv.id_cacdichvu === gt.id_tuychondichvu) {
-                                                return (
-                                                    <Typography key={cdv.id_cacdichvu} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {cdv.tuy_chon_dv}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
-                                </Box>
-                            </Box>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Tiện nghi
+                            </Typography>
                         </TableCell>
                         <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-
-                                    {
-                                        dichvu.map((dv) => {
-                                            if (dv.id_dichvu === gt.id_dichvu) {
-                                                return (
-                                                    <Typography key={dv.id_dichvu} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {dv.dich_vu}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
-                                </Box>
-                            </Box>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Nội dung
+                            </Typography>
                         </TableCell>
                         <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
-
-                                    {
-                                        baidoxe.map((doxe) => {
-                                            if (doxe.id_baidoxe === gt.id_baidoxe) {
-                                                return (
-                                                    <Typography key={doxe.id_baidoxe} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {doxe.bai_do_xe}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
-                                </Box>
-                            </Box>
+                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                                Hành động
+                            </Typography>
                         </TableCell>
-                        <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {gioithieu.filter(gt => gt?.created_user === accounts?.id_nguoidung || gt?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((gt, index) => (
 
-                                    {
-                                        khongkhi.map((kk) => {
-                                            if (kk.id_khongkhi === gt.id_khongkhi) {
-                                                return (
-                                                    <Typography key={kk.id_khongkhi} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {kk.khong_khi}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
+                        <TableRow key={index}>
+                            <TableCell>
+                                <Typography sx={{ fontSize: "15px", }}>
+                                    {(currentPage - 1) * itemsPerPage + index + 1}
+                                </Typography>
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+                                        {
+                                            cacdichvu.map((cdv) => {
+                                                if (cdv.id_cacdichvu === gt.id_tuychondichvu) {
+                                                    return (
+                                                        <Typography key={cdv.id_cacdichvu} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {cdv.tuy_chon_dv}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
                                 </Box>
-                            </Box>
-                        </TableCell>
-                        {/* <TableCell>
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+
+                                        {
+                                            dichvu.map((dv) => {
+                                                if (dv.id_dichvu === gt.id_dichvu) {
+                                                    return (
+                                                        <Typography key={dv.id_dichvu} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {dv.dich_vu}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+
+                                        {
+                                            baidoxe.map((doxe) => {
+                                                if (doxe.id_baidoxe === gt.id_baidoxe) {
+                                                    return (
+                                                        <Typography key={doxe.id_baidoxe} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {doxe.bai_do_xe}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+
+                                        {
+                                            khongkhi.map((kk) => {
+                                                if (kk.id_khongkhi === gt.id_khongkhi) {
+                                                    return (
+                                                        <Typography key={kk.id_khongkhi} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {kk.khong_khi}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
+                                </Box>
+                            </TableCell>
+                            {/* <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
                                     
@@ -220,76 +250,82 @@ const GioiThieuTable = () => {
                                 </Box>
                             </Box>
                         </TableCell> */}
-                        <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
 
-                                    {
-                                        kehoach.map((ke_hoach) => {
-                                            if (ke_hoach.id_kehoach === gt.id_kehoach) {
-                                                return (
-                                                    <Typography key={ke_hoach.id_kehoach} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {ke_hoach.ke_hoach}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
+                                        {
+                                            kehoach.map((ke_hoach) => {
+                                                if (ke_hoach.id_kehoach === gt.id_kehoach) {
+                                                    return (
+                                                        <Typography key={ke_hoach.id_kehoach} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {ke_hoach.ke_hoach}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
                                 </Box>
-                            </Box>
-                        </TableCell>
-                        <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
 
-                                    {
-                                        tiennghi.map((tn) => {
-                                            if (tn.id_tiennghi === gt.id_tiennghi) {
-                                                return (
-                                                    <Typography key={tn.id_tiennghi} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
-                                                        {tn.tien_nghi}
-                                                    </Typography>
-                                                )
-                                            }
-                                        })
-                                    }
+                                        {
+                                            tiennghi.map((tn) => {
+                                                if (tn.id_tiennghi === gt.id_tiennghi) {
+                                                    return (
+                                                        <Typography key={tn.id_tiennghi} variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}>
+                                                            {tn.tien_nghi}
+                                                        </Typography>
+                                                    )
+                                                }
+                                            })
+                                        }
+                                    </Box>
                                 </Box>
-                            </Box>
-                        </TableCell>
-                        <TableCell>
-                            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
-                                <Typography variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}
-                                    style={{
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 3,
-                                        WebkitBoxOrient: 'vertical',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'normal'
-                                    }}>
-                                    {gt.gioi_thieu}
+                            </TableCell>
+                            <TableCell>
+                                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
+                                    <Typography variant="body1" sx={{ ml: 0.5, fontSize: "14px" }}
+                                        style={{
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 3,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'normal'
+                                        }}>
+                                        {gt.gioi_thieu}
+                                    </Typography>
+                                </Box>
+                            </TableCell>
+                            <TableCell>
+                                <Typography >
+                                    <Link to={`/admin/gioi-thieu/edit/${gt.id_gioithieu}`}>
+                                        <IconButton aria-label="edit" color="primary" style={{ width: '50px', height: '50px' }}>
+                                            <EditIcon />
+                                        </IconButton>
+                                    </Link>
+
+                                    <Link to={`/admin/gioi-thieu/delete/${gt.id_gioithieu}`}>
+                                        <IconButton aria-label="delete" color="danger" style={{ width: '50px', height: '50px' }}>
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </Link>
                                 </Typography>
-                            </Box>
-                        </TableCell>
-                        <TableCell>
-                            <Typography >
-                                <Link to={`/admin/gioi-thieu/edit/${gt.id_gioithieu}`}>
-                                    <IconButton aria-label="edit" color="primary" style={{ width: '50px', height: '50px' }}>
-                                        <EditIcon />
-                                    </IconButton>
-                                </Link>
-
-                                <Link to={`/admin/gioi-thieu/delete/${gt.id_gioithieu}`}>
-                                    <IconButton aria-label="delete" color="danger" style={{ width: '50px', height: '50px' }}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Link>
-                            </Typography>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
+            {cookies.role !== 2 && (
+                <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                    <PaginationRounded onDataChange={cookies.role === 0 ? initGioithieu : initData} paginator={paginator} />
+                </TableRow>
+            )}
+        </>
     );
 };
 

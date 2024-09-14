@@ -80,7 +80,7 @@ const deleteNguoiDung = async (id) => {
 const paginator = async (page) => {
     const res = await request({
         method: "GET",
-        path: `/api/paginator-nguoidung?page=${page}&limit=10`
+        path: `/api/paginator-nguoidung?page=${page}&limit=8`
     })
 
     return res

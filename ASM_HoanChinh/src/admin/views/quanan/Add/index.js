@@ -28,6 +28,26 @@ const AddQuanAn = () => {
 
   const onSubmit = async (value) => {
     try {
+      const checkAddressExists = async (address) => {
+        if (!address) return false;
+        try {
+          const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          const data = await response.json();
+          return data.length > 0;
+        } catch (error) {
+          console.error("Error checking address:", error);
+          return false;
+        }
+      };
+      const addressExists = await checkAddressExists(value?.dia_chi);
+      if (!addressExists) {
+        enqueueSnackbar('Địa chỉ không tồn tại trên bản đồ!', { variant: 'error' });
+        return;
+      }
       await addQuanan({
         ten_quan_an: value?.ten_quan_an,
         dia_chi: value?.dia_chi,
@@ -40,12 +60,16 @@ const AddQuanAn = () => {
         id_gioithieu: value?.id_gioithieu,
         created_user: account?.id_nguoidung
       });
+
       enqueueSnackbar('Thêm quán ăn thành công!', { variant: 'success' });
       navigate("/admin/QuanAn");
     } catch (error) {
+      console.error("Có lỗi xảy ra khi thêm quán ăn:", error);
       enqueueSnackbar('Có lỗi xảy ra khi thêm quán ăn!', { variant: 'error' });
     }
   };
+
+
 
   const handleCancle = () => {
     navigate("/admin/QuanAn");
