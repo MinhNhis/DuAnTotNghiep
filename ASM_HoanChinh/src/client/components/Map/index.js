@@ -12,7 +12,7 @@ import "leaflet/dist/leaflet.css";
 import { getQuanan } from "../../../services/Quanan";
 import { useParams } from "react-router-dom";
 
-const makerIcon = new L.Icon({
+export const makerIcon = new L.Icon({
     iconUrl: require('../../../admin/assets/images/waker.png'),
     iconSize: [35, 45],
     iconAnchor: [17, 45],

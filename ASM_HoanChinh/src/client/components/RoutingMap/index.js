@@ -4,14 +4,9 @@ import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
 
-const makerIcon = new L.Icon({
-    iconUrl: require('../../../admin/assets/images/waker.png'),
-    iconSize: [35, 45],
-    iconAnchor: [17, 45],
-    popupAnchor: [0, -45]
-});
+import { makerIcon } from "../Map";
 
-const Routing = ({ waypoints }) => {
+const Routing = ({ waypoints }, open) => {
     const map = useMap();
 
     useEffect(() => {
@@ -30,6 +25,7 @@ const Routing = ({ waypoints }) => {
                     }
                 }
             }).addTo(map);
+            
         }
     }, [waypoints, map]);
 
