@@ -5,6 +5,7 @@ import axios from "axios";
 
 import osm from "./osm-providers";
 import "leaflet/dist/leaflet.css";
+import'./style.css'
 import { getQuanan } from "../../../../services/Quanan";
 import { BASE_URL } from "../../../../config/ApiConfig";
 

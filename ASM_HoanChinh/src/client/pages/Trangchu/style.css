@@ -1,0 +1,13 @@
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.267); /* Đặt nền trắng với độ trong suốt 70% */
+    z-index: 1000; /* Đảm bảo overlay nằm trên bản đồ */
+}
+.leaflet-control-attribution {
+    display: none !important;
+}
+

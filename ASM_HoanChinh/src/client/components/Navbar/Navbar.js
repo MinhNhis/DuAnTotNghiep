@@ -15,9 +15,6 @@ const Navbar = () => {
   const [nguoidung, setNguoidung] = useState();
 
   useEffect(() => {
-    console.log('Accounts:', accounts);
-    console.log('Nguoidung:', nguoidung);
-
     if (accounts && accounts.id_nguoidung) {
       // Chỉ gọi initData nếu nguoidung chưa được thiết lập
       if (!nguoidung || accounts.id_nguoidung !== nguoidung.id_nguoidung) {

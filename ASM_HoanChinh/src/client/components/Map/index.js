@@ -9,6 +9,7 @@ import osm from "./osm-providers";
 import Routing from "../RoutingMap";
 import { BASE_URL } from "../../../config/ApiConfig";
 import "leaflet/dist/leaflet.css";
+import './style.css'
 import { getQuanan } from "../../../services/Quanan";
 import { useParams } from "react-router-dom";
 
