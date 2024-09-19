@@ -3,6 +3,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
+import './style.css'
 
 import { makerIcon } from "../Map";
 
@@ -25,7 +26,7 @@ const Routing = ({ waypoints }, open) => {
                     }
                 }
             }).addTo(map);
-            
+
         }
     }, [waypoints, map]);
 
