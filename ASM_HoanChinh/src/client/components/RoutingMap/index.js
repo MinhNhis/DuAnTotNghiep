@@ -1,18 +1,42 @@
-import React, { useEffect } from "react";
-import { useMap } from "react-leaflet";
+import React, { useEffect, useRef } from "react";
+import {useMapEvents} from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
-import './style.css'
+import './style.css';
 
 import { makerIcon } from "../Map";
 
-const Routing = ({ waypoints }, open) => {
-    const map = useMap();
+const Routing = ({ waypoints }) => {
+    const map = useMapEvents({
+        click() {
+            map.locate();
+        },
+        locationfound(e) {
+            console.log("Location found:", e.latlng);
+        },
+    });
+    const routingControlRef = useRef(null);
 
     useEffect(() => {
+        // Bảo đảm map đã được mount trước khi thực hiện bất kỳ hành động nào
+        if (!map) {
+            return;
+        }
+
+        // Loại bỏ control hiện tại nếu đã tồn tại
+        if (routingControlRef.current) {
+            try {
+                routingControlRef.current.getPlan().setWaypoints([]); // Xóa các waypoint trước khi remove
+                map.removeControl(routingControlRef.current); // Remove control
+            } catch (error) {
+                console.error("Error removing control:", error);
+            }
+        }
+
+        // Chỉ thêm routing control nếu có nhiều hơn một waypoint
         if (waypoints.length > 1) {
-            L.Routing.control({
+            const routingControl = L.Routing.control({
                 waypoints: waypoints.map(wp => L.latLng(wp.lat, wp.lng)),
                 routeWhileDragging: true,
                 lineOptions: {
@@ -27,7 +51,20 @@ const Routing = ({ waypoints }, open) => {
                 }
             }).addTo(map);
 
+            routingControlRef.current = routingControl;
         }
+
+        return () => {
+            if (routingControlRef.current && map) {
+                try {
+                    routingControlRef.current.getPlan().setWaypoints([]);
+                    map.removeControl(routingControlRef.current);
+                    routingControlRef.current = null;
+                } catch (error) {
+                    console.error("Error during cleanup:", error);
+                }
+            }
+        };
     }, [waypoints, map]);
 
     return null;

@@ -93,10 +93,7 @@ const MapComponent = () => {
     };
 
     const handleClose = () => {
-
         setOpen(false);
-
-
     };
 
     const MapClick = () => {
@@ -139,7 +136,7 @@ const MapComponent = () => {
                 <DialogActions>
                     <CloseIcon onClick={handleClose} />
                 </DialogActions>
-                <DialogContent style={{ width: "100%" }}>
+                <DialogContent style={{ display: open ? 'block' : 'none' , width: "100%"}}>
                     <MapContainer
                         center={center}
                         zoom={ZOOM_LEVEL}

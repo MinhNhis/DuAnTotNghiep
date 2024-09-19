@@ -114,9 +114,6 @@ const Trangchu = () => {
             setIsLoading(false);
         }
     };
-
-    console.log(quanan20Km);
-
     return (
         <>
             <div>
