@@ -1,17 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { paginator } from '../../../services/Quanan';
+import { getQuanan, paginator } from '../../../services/Quanan';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
 import PaginationRounded from "../../../admin/components/Paginator";
+import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import geocodeAddress from '../../components/GeoLocation';
+import osm from "../../components/Map/osm-providers";
+import { makerIcon } from '../../components/Map';
+
 
 const Trangchu = () => {
+    const [center, setCenter] = useState({ lat: 10.0452, lng: 105.7469 });
+    const ZOOM_LEVEL = 10;
+    const mapRef = useRef(null);
+    const [locations, setLocations] = useState([]);
     const [quanan, setQuanan] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
     useEffect(() => {
-        //initData()
+        loadMap();
     }, [])
 
     const initData = async (data) => {
@@ -19,6 +28,18 @@ const Trangchu = () => {
 
         const resultGt = await getGioithieu()
         setGioithieu(resultGt.data)
+    }
+
+    const loadMap = async () => {
+        const res = await getQuanan();
+        const quans = res.data;
+        const geocodePromises = quans.map(async (item) => {
+            const coords = await geocodeAddress(item.dia_chi);
+            return { ...item, coords };
+        });
+
+        const results = await Promise.all(geocodePromises);
+        setLocations(results.filter(item => item.coords));
     }
 
     return (
@@ -42,8 +63,8 @@ const Trangchu = () => {
                 </div>
 
                 <div className="container-fluid bg-light py-3 my-6 mt-0">
-                    <div className="container">
-                        <div className="row g-5 align-items-center">
+                   
+                        {/* <div className="row g-5 align-items-center">
                             <div className="col-lg-7 col-md-12">
                                 <small className="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-4 animated bounceInDown">Welcome to FoodSeeker</small>
                                 <h1 className="display-1 mb-4 animated bounceInDown">Bạn<span className="text-primary">Muốn</span>Ăn Gì?</h1>
@@ -52,9 +73,30 @@ const Trangchu = () => {
                             <div className="col-lg-5 col-md-12">
                                 <img src="img/hero.png" className="img-fluid rounded animated zoomIn" alt="" />
                             </div>
-                        </div>
-                    </div>
+                        </div> */}
+                        <MapContainer
+                            center={center}
+                            zoom={ZOOM_LEVEL}
+                            ref={mapRef}
+                            style={{ height: "500px", width: "100%", border: "10px", borderRadius: "10px" }}
+                        >
+                            <TileLayer url={osm.maptiler.url} attribution={osm.maptiler.attribution} />
+
+                            {locations.map((element, index) => (
+                                <Marker key={index} position={[element.coords.lat, element.coords.lng]} icon={makerIcon}>
+                                    <Popup>
+                                        <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{ width: "100%" }} /><br />
+                                        <b>{element.ten_quan_an}</b><br />
+                                        {element.gio_hoat_dong} <br />
+                                        {element.dia_chi}
+                                    </Popup>
+                                </Marker>
+                            ))}
+                        </MapContainer>
+
                 </div>
+
+
 
                 <div className="container-fluid py-3">
                     <div className="container">
