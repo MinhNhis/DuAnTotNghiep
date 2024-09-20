@@ -8,6 +8,8 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Card,
+  CardContent
 } from "@mui/material";
 
 import IconButton from '@mui/material/IconButton';
@@ -173,6 +175,31 @@ const ExQuanAn = () => {
           <PaginationRounded onDataChange={cookies.role === 0 ? initData : initQuanan} paginator={paginator} />
         </TableRow>
       )}
+      <Card>
+        <CardContent>
+            <div class="row mb-2" style={{ height: "400px" }}>
+                <div class="col-12 ">
+                    <img
+                        src=""
+                        className=""
+                        alt=""
+                        style={{ width: "100%", height: "200px" }}
+                    />
+                </div>
+            </div>
+            <div className="container">
+            <div class="d-flex align-items-center justify-content-between ">
+                        <h2
+                            className="display-5 mb-3"
+                            style={{ fontSize: "60px", fontWeight: "bold" }}
+                        >
+                            HAHAHAHAH
+                        </h2>
+
+                    </div>
+            </div>
+        </CardContent>
+      </Card>
     </>
   );
 };
