@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Dialog, DialogContent, DialogContentText, DialogTitle, TextField } from "@mui/material";
 import { searchQuanan } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
+import { BASE_URL } from "../../../config/ApiConfig";
 
-
-const Search = () => {
+const Search = ({ open, onClose }) => {
   const [timkiem, setTimkiem] = useState("");
   const [dstimkiem, setDstimkiem] = useState([]);
 
@@ -13,78 +14,51 @@ const Search = () => {
     setDstimkiem(resultSeach.data);
   };
 
-  const handelTimKiem = async () => {};
-  const closeModal = () => {
-    const modal = document.getElementById('searchModal');
-    modal.hide();
-  };
   return (
-    <div
-          className="modal fade"
-          id="searchModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-fullscreen">
-            <div className="modal-content rounded">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">
-                  Tìm kiếm
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  data-bs-dismiss="modal"
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body d-flex align-items-center">
-                <div className="input-group w-75 mx-auto d-flex">
-                  <input
-                    type="search"
-                    className="form-control bg-transparent p-3"
-                    placeholder="Nhập từ khóa"
-                    value={timkiem}
-                    onChange={handelTimKiemThayDoi}
-                    aria-describedby="search-icon-1"
-                  />
-                  <span
-                    id="search-icon-1"
-                    className="input-group-text p-3"
-                    onClick={handelTimKiemThayDoi}
-                  >
-                    <i className="fa fa-search"></i>
-                  </span>
-                </div>
-              </div>
-              <div className="modal-body d-flex flex-wrap">
-                {dstimkiem.length > 0 ? (
-                  dstimkiem.map((value, index) => (
-                    <Link to={`/chi-tiet/${value.id_quanan}`} onClick={closeModal}>
-                      <div
-                        key={index}
-                        className="card m-2"
-                        style={{ width: "300px" }}
-                      >
-                        <img
-                          src="https://hoangminhdecor.com/wp-content/uploads/2021/01/thiet-ke-quan-an-dep.jpg"
-                          className="card-img-top"
-                          alt={value.ten_quan_an}
-                        />
-                        <div className="card-body">
-                          <h5 className="card-title">{value.ten_quan_an}</h5>
-                        </div>
-                      </div>
-                    </Link>
-                  ))
-                ) : (
-                  <div className="text-center">Trống</div>
-                )}
-              </div>
-            </div>
-          </div>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+      <DialogTitle>Tìm kiếm quán ăn</DialogTitle>
+      <DialogContent>
+        <div className="w-75 mx-auto d-flex mt-3" style={{width: "500px"}}>
+          <TextField
+            type="search"
+            label="Nhập từ khóa"
+            fullWidth
+            variant="outlined"
+            value={timkiem}
+            onChange={handelTimKiemThayDoi}
+            sx={{
+              marginBottom: '20px',
+            }}
+          />
         </div>
+        <div className="modal-body d-flex flex-wrap justify-content-center">
+          <DialogContentText>
+            {dstimkiem.length > 0 ? (
+              <>
+                {dstimkiem.map((value, index) => (
+                  <Link to={`/chi-tiet/${value.id_quanan}`} onClick={onClose} key={index}>
+                    <div className="card mb-3" fullWidth>
+                      <img
+                        src={`${BASE_URL}/uploads/${value?.hinh_anh}`}
+                        className="card-img-top"
+                        alt={value.ten_quan_an}
+                        style={{ width: "100%", height: "200px" }}
+                      />
+                      <div className="card-body">
+                        <h5 className="card-title">{value.ten_quan_an}</h5>
+                        <span>Giờ hoạt động: {value?.gio_hoat_dong}</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </>
+            ) : (
+              <div className="text-center">Trống</div>
+            )}
+          </DialogContentText>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

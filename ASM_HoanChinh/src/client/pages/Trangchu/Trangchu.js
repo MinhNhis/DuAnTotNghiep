@@ -13,7 +13,6 @@ import "leaflet-routing-machine";
 import geocodeAddress from '../../components/GeoLocation';
 import osm from "../../components/Map/osm-providers";
 import { makerIcon } from '../../components/Map';
-import Search from '../../components/Search/Search'
 
 
 const Trangchu = () => {
@@ -118,8 +117,6 @@ const Trangchu = () => {
     return (
         <>
             <div>
-                <Search></Search>
-
                 <div className="container-fluid bg-light py-3 my-6 mt-0">
                     <div style={{ position: 'relative', width: '100%' }}>
                         <MapContainer
