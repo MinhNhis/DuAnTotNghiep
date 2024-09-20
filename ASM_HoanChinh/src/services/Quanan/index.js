@@ -83,4 +83,13 @@ const paginator = async (page) => {
     return res
 }
 
-export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan }
+const searchQuanan = async(keyword) =>{
+    const res = await request({
+        method: 'GET',
+        path: `/api/search-quanan?keyword=${keyword}`
+    })
+
+    return res
+}
+
+export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan}
