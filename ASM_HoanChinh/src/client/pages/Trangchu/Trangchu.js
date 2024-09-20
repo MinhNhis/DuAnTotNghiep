@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BounceLoader, BeatLoader } from "react-spinners";
 
 import './style.css'
-import { getQuanan, paginator } from '../../../services/Quanan';
+import { getQuanan, paginator, searchQuanan } from '../../../services/Quanan';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
@@ -114,6 +114,20 @@ const Trangchu = () => {
             setIsLoading(false);
         }
     };
+    //Tìm kiếm Map
+    const [timKiem, setTimKiem] = useState('');
+    const [dstimkiem, setDstimkiem] = useState([]);
+
+    const handleChange = async (event) => {
+        const value = event.target.value;
+        setTimKiem(value);
+        if (value) {
+            const resultSeach = await searchQuanan(value);
+            setDstimkiem(resultSeach.data);
+        } else {
+            setDstimkiem([]);
+        }
+    };
     return (
         <>
             <div>
@@ -123,6 +137,7 @@ const Trangchu = () => {
                             center={center}
                             zoom={ZOOM_LEVEL}
                             ref={mapRef}
+                            zoomControl={false}
                             className="position-relative"
                             style={{ height: '500px', width: '100%', border: '10px', borderRadius: '10px' }}
                         >
@@ -150,26 +165,53 @@ const Trangchu = () => {
                             )}
                         </MapContainer>
 
-                        <div style={{ position: 'absolute', top: '10px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}>
-                            <div className="input-group mx-auto d-flex" style={{ width: '100%'}}>
+                        <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 2000 }}>
+                            <div className="input-group mx-auto d-flex" style={{ width: '200%' }}>
                                 <input
                                     type="search"
                                     className="form-control p-2"
-                                    placeholder="Search..."
+                                    placeholder="Tìm kiếm quán ăn..."
                                     aria-describedby="search-icon-1"
-                                    style={{ backgroundColor: 'white', height: '40px', border: '2px solid #ccc', borderRadius: '50px 0 0 50px' }}
+                                    value={timKiem}
+                                    onChange={handleChange}
+                                    style={{
+                                        backgroundColor: 'white',
+                                        height: '50px',
+                                        border: '2px solid #ccc',
+                                        borderRadius: '40px',
+                                        width: '100%'
+                                    }}
                                 />
-                                <span
-                                    id="search-icon-1"
-                                    className="input-group-text p-2"
-                                    style={{ backgroundColor: 'white', height: '40px', border: '2px solid #ccc', borderRadius: '0px 50px 50px 0px'}}
-                                >
-                                    <i className="fa fa-search"></i>
-                                </span>
                             </div>
+                            {dstimkiem.length > 0 && (
+                                <div className="dropdown-menu show" style={{ position: 'absolute', width: '200%', zIndex: 1000, maxHeight: '400px', overflowY: 'auto' }}>
+                                    {dstimkiem.map((value, index) => (
+                                        <Link to={`/chi-tiet/${value.id_quanan}`} key={index} className="dropdown-item" onClick={() => setTimKiem(value?.ten_quan_an)}>
+                                            <div className="card mb-3" fullWidth>
+                                                <img
+                                                    src={`${BASE_URL}/uploads/${value?.hinh_anh}`}
+                                                    className="card-img-top"
+                                                    alt={value.ten_quan_an}
+                                                    style={{ width: "100%", height: "200px" }}
+                                                />
+                                                <div className="card-body">
+                                                    <h5 className="card-title">{value.ten_quan_an}</h5>
+                                                    <div><strong>Giờ hoạt động:</strong> {value?.gio_hoat_dong}</div>
+                                                    <p style={{
+                                                        width: "100%",
+                                                        fontSize: "15px",
+                                                        whiteSpace: "normal",
+                                                        wordWrap: "break-word"
+                                                    }}>
+                                                        {value?.dia_chi}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
                         </div>
-
-
                     </div>
                 </div>
 

@@ -10,24 +10,33 @@ const Search = ({ open, onClose }) => {
 
   const handelTimKiemThayDoi = async (event) => {
     setTimkiem(event.target.value);
-    const resultSeach = await searchQuanan(event.target.value);
-    setDstimkiem(resultSeach.data);
+    if (event.target.value) {
+      const resultSeach = await searchQuanan(event.target.value);
+      setDstimkiem(resultSeach.data);
+    } else {
+      setDstimkiem([]);
+    }
+
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
-      <DialogTitle>Tìm kiếm quán ăn</DialogTitle>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md" sx={{ '& .MuiDialog-paper': { padding: 0, margin: 0, width: "500px" } }}>
+      <DialogTitle><h4>Tìm kiếm quán ăn</h4></DialogTitle>
       <DialogContent>
-        <div className="w-75 mx-auto d-flex mt-3" style={{width: "500px"}}>
-          <TextField
+        <div className="w-75 mx-auto d-flex mt-3" style={{ width: "100%" }}>
+          <input
             type="search"
-            label="Nhập từ khóa"
-            fullWidth
-            variant="outlined"
+            className="form-control p-2"
+            placeholder="Tìm kiếm quán ăn..."
+            aria-describedby="search-icon-1"
             value={timkiem}
             onChange={handelTimKiemThayDoi}
-            sx={{
-              marginBottom: '20px',
+            style={{
+              backgroundColor: 'white',
+              height: '50px',
+              border: '2px solid #ccc',
+              borderRadius: '40px',
+              width: '100%',
             }}
           />
         </div>
@@ -44,9 +53,17 @@ const Search = ({ open, onClose }) => {
                         alt={value.ten_quan_an}
                         style={{ width: "100%", height: "200px" }}
                       />
-                      <div className="card-body">
+                      <div className="card-body" fullWidth>
                         <h5 className="card-title">{value.ten_quan_an}</h5>
-                        <span>Giờ hoạt động: {value?.gio_hoat_dong}</span>
+                        <div><strong>Giờ hoạt động:</strong> {value?.gio_hoat_dong}</div>
+                        <p style={{
+                          width: "100%",
+                          fontSize: "15px",
+                          whiteSpace: "normal",
+                          wordWrap: "break-word"
+                        }}>
+                          {value?.dia_chi}
+                        </p>
                       </div>
                     </div>
                   </Link>
