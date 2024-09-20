@@ -259,7 +259,6 @@ const ExQuanAn = () => {
         </Grid>
       </>
   );
-
   return cookies.role === 0 ? renderTable() : renderProfile();
 };
 
