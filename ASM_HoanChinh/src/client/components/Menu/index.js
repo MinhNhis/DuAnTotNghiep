@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { TableRow } from "@mui/material";
+
 import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhmuc } from "../../../services/Danhmuc";
 import { getQuanan } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
-
-
 
 const Menu = () => {
     const [menu, setMenu] = useState([]);
@@ -53,7 +53,7 @@ const Menu = () => {
             setSelectedCategory(categoryId);
         }
     };
-    
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
@@ -113,10 +113,28 @@ const Menu = () => {
                                         </div>
                                     </div>
                                 ))}
-                                <div className="mt-5 mb-3" style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-                                    <PaginationRounded onDataChange={initData} paginator={paginator} />
-
-                                </div>
+                                <TableRow
+                                    sx={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "20px",
+                                        button: {
+                                            backgroundColor: "#d4a762",
+                                            color: "#fff",
+                                            borderRadius: "50%",
+                                            width: "20px",
+                                            height: "20px",
+                                            fontSize: "0.8rem",
+                                            margin: "0 5px",
+                                            "&.Mui-selected": {
+                                                backgroundColor: "#b0853d",
+                                            }
+                                        },
+                                    }}
+                                >
+                                    <PaginationRounded onDataChange={initData} paginator={paginator}
+                                    />
+                                </TableRow>
                             </div>
                         </div>
                     </div>

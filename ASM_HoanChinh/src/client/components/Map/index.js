@@ -20,7 +20,7 @@ export const makerIcon = new L.Icon({
     popupAnchor: [0, -45]
 });
 
-const makerIconBlue = new L.Icon({
+export const makerIconBlue = new L.Icon({
     iconUrl: require('../../../admin/assets/images/makerblue.png'),
     iconSize: [20, 37],
     iconAnchor: [17, 45],
@@ -38,6 +38,7 @@ const MapComponent = () => {
     const ZOOM_LEVEL = 9;
     const mapRef = useRef(null);
     const dialogMapRef = useRef(null);
+    const [quan, setQuan] = useState([]);
     const [locations, setLocations] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
     const [open, setOpen] = useState(false);
@@ -83,6 +84,7 @@ const MapComponent = () => {
         locationQuan.forEach((e) => {
             if (e && e.coords) {
                 setCenter({ lat: e.coords.lat, lng: e.coords.lng });
+                setQuan(e)
             }
         });
     }, [locations, id]);
@@ -168,6 +170,7 @@ const MapComponent = () => {
                                     { lat: userLocation.lat, lng: userLocation.lng },
                                     { lat: center.lat, lng: center.lng },
                                 ]}
+                                obj={quan}
                             />
                         )}
                     </MapContainer>

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BounceLoader, BeatLoader } from "react-spinners";
+import { TableRow } from '@mui/material';
 
 import './style.css'
 import { getQuanan, paginator, searchQuanan } from '../../../services/Quanan';
@@ -12,7 +13,8 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "leaflet-routing-machine";
 import geocodeAddress from '../../components/GeoLocation';
 import osm from "../../components/Map/osm-providers";
-import { makerIcon } from '../../components/Map';
+import { makerIcon, makerIconBlue } from '../../components/Map';
+import Routing from '../../components/RoutingMap';
 
 
 const Trangchu = () => {
@@ -128,6 +130,8 @@ const Trangchu = () => {
             setDstimkiem([]);
         }
     };
+console.log(quanan);
+
     return (
         <>
             <div>
@@ -151,16 +155,42 @@ const Trangchu = () => {
                                 </div>
                             ) : (
                                 <>
+                                    {userLocation && (
+                                        <Marker position={[userLocation.lat, userLocation.lng]} icon={makerIconBlue}>
+                                            <Popup>
+                                                <b>Vị trí của bạn</b><br />
+                                            </Popup>
+                                        </Marker>
+                                    )}
                                     {locations.map((element, index) => (
                                         <Marker key={index} position={[element.coords.lat, element.coords.lng]} icon={makerIcon}>
                                             <Popup>
                                                 <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{ width: "100%" }} /><br />
                                                 <b>{element.ten_quan_an}</b><br />
                                                 {element.gio_hoat_dong} <br />
+                                                {element.distanceInKm} Km <br />
                                                 {element.dia_chi}
                                             </Popup>
                                         </Marker>
                                     ))}
+                                    {accounts ?
+                                        <>
+                                            {userLocation && quanan20Km && (
+                                                quanan20Km.map((value, index) => (
+                                                    <Routing
+                                                        key={index}
+                                                        waypoints={[
+                                                            { lat: userLocation.lat, lng: userLocation.lng },
+                                                            { lat: value.coords.lat, lng: value.coords.lng },
+                                                        ]}
+                                                        obj={value}
+                                                    />
+                                                ))
+                                            )}
+                                        </> : ''
+                                    }
+
+
                                 </>
                             )}
                         </MapContainer>
@@ -218,11 +248,11 @@ const Trangchu = () => {
                 <div className="container-fluid">
                     <div className="container">
                         <div className="text-center wow " data-wow-delay="0.1s">
-                            <div class="hr-with-icon-centered">
+                            <div className="hr-with-icon-centered">
                                 <hr />
-                                <i class="fas fa-snowflake"></i>
-                                <i class="fas fa-snowflake"></i>
-                                <i class="fas fa-snowflake"></i>
+                                <i className="fas fa-snowflake"></i>
+                                <i className="fas fa-snowflake"></i>
+                                <i className="fas fa-snowflake"></i>
                                 <hr />
                             </div>
                             <h1 className="display-5 mb-5">Có thể bạn sẽ thích</h1>
@@ -250,6 +280,9 @@ const Trangchu = () => {
                                                             <div className='row g-5'>
                                                                 <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                     <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
+                                                                    <div className='mb-2'>
+                                                                        {value.distanceInKm} Km
+                                                                    </div>
                                                                     <div className='mb-2'>
                                                                         Giờ hoạt động: {value.gio_hoat_dong}
                                                                     </div>
@@ -305,6 +338,9 @@ const Trangchu = () => {
                                                                 <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                     <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
                                                                     <div className='mb-2'>
+                                                                        {/* {value.distanceInKm} Km */}
+                                                                    </div>
+                                                                    <div className='mb-2'>
                                                                         Giờ hoạt động: {value.gio_hoat_dong}
                                                                     </div>
 
@@ -342,9 +378,28 @@ const Trangchu = () => {
                                                     )
                                                 })
                                             }
-                                            <div className='mt-5 mb-3' style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
-                                                <PaginationRounded onDataChange={initData} paginator={paginator} />
-                                            </div>
+                                            <TableRow
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    marginTop: "20px",
+                                                    button: {
+                                                        backgroundColor: "#d4a762",
+                                                        color: "#fff",
+                                                        borderRadius: "50%",
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        fontSize: "0.8rem",
+                                                        margin: "0 5px",
+                                                        "&.Mui-selected": {
+                                                            backgroundColor: "#b0853d",
+                                                        }
+                                                    },
+                                                }}
+                                            >
+                                                <PaginationRounded onDataChange={initData} paginator={paginator}
+                                                />
+                                            </TableRow>
                                         </>
                                     }
 
@@ -356,11 +411,11 @@ const Trangchu = () => {
                 </div>
                 <div className="container-fluid event py-3">
                     <div className="container">
-                        <div class="hr-with-icon-centered">
+                        <div className="hr-with-icon-centered">
                             <hr />
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
                             <hr />
                         </div>
                         <Menu />
@@ -368,11 +423,11 @@ const Trangchu = () => {
                 </div>
                 <div className="container-fluid blog py-3">
                     <div className="container">
-                        <div class="hr-with-icon-centered">
+                        <div className="hr-with-icon-centered">
                             <hr />
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
-                            <i class="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
+                            <i className="fas fa-snowflake"></i>
                             <hr />
                         </div>
                         <div className="text-center wow " data-wow-delay="0.1s">

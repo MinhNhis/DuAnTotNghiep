@@ -1,19 +1,20 @@
 import React, { useEffect, useRef } from "react";
-import {useMapEvents} from "react-leaflet";
+import { useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 import "leaflet/dist/leaflet.css";
 import './style.css';
 
 import { makerIcon } from "../Map";
+import { BASE_URL } from "../../../config/ApiConfig";
 
-const Routing = ({ waypoints }) => {
+const Routing = ({ waypoints, obj }) => {
     const map = useMapEvents({
         click() {
             map.locate();
         },
         locationfound(e) {
-            console.log("Location found:", e.latlng);
+
         },
     });
     const routingControlRef = useRef(null);
@@ -44,9 +45,21 @@ const Routing = ({ waypoints }) => {
                 },
                 createMarker: (i, waypoint, n) => {
                     if (i === n - 1) {
-                        return L.marker(waypoint.latLng, {
+                        const marker = L.marker(waypoint.latLng, {
                             icon: makerIcon
                         });
+                        const popup = `
+                                <div>
+                                    <img src="${BASE_URL}/uploads/${obj.hinh_anh}" alt="" style="width: 100%;" />
+                                    <b>${obj.ten_quan_an}</b> </br>
+                                    <span>${obj.gio_hoat_dong}</span></br>
+                                    <span>${obj.distanceInKm} Km </span></br>
+                                    <span>${obj.dia_chi}</span>
+                                </div>
+                        `;
+
+                        marker.bindPopup(popup).openPopup();
+                        return marker;
                     }
                 }
             }).addTo(map);
