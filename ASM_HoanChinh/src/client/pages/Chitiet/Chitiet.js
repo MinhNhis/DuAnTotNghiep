@@ -52,6 +52,7 @@ const Gioithieu = () => {
 
     useEffect(() => {
         initData();
+        handleCheckboxChange();
     }, []);
 
     const initData = async () => {
@@ -162,6 +163,33 @@ const Gioithieu = () => {
     const handleLoadMore = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
+
+
+    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
+
+
+    const handleCheckboxChange = (event) => {
+        if (event && event.target) {
+            const menuItemId = parseInt(event.target.value);
+            const isChecked = event.target.checked;
+
+            if (isChecked) {
+                setSelectedMenuItems([...selectedMenuItems, menuItemId]);
+            } else {
+                const updatedSelectedItems = selectedMenuItems.filter((item) => item !== menuItemId);
+                setSelectedMenuItems(updatedSelectedItems);
+            }
+        }
+    };
+
+    // Calculate total price whenever selectedMenuItems changes
+    useEffect(() => {
+        const selectedMenus = menu.filter((item) => selectedMenuItems.includes(item.id_menu));
+        const totalPrice = selectedMenus.reduce((acc, curr) => acc + curr.gia, 0);
+        setTotalPrice(totalPrice);
+    }, [selectedMenuItems, menu]);
+
 
     // an bot
     return (
@@ -404,6 +432,7 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
+
                                                         <Grid item xs={12}>
                                                             <Box display="flex" alignItems="center" className="mb-0">
                                                                 <Button
@@ -454,17 +483,23 @@ const Gioithieu = () => {
                                                     <h5 className="text-dark mt-1">{value.ten_menu}</h5>
                                                     <h6 className="text-secondary mt-1 ">{value.gia}đ</h6>
 
-                                                    <div class="form-check mb-4">
-                                                        <input class="form-check-input" type="checkbox" value=""
-                                                            id="dat_mon" />
-                                                        <label class="form-check-label" id="dat_mon" for=""> Chọn
-                                                            món </label>
+
+                                                    <div className="form-check mb-4">
+                                                        <input
+                                                            className="form-check-input"
+                                                            type="checkbox"
+                                                            value={value.id_menu}
+                                                            id={`menu_${value.id_menu}`}
+                                                            onChange={handleCheckboxChange}
+                                                        />
+                                                        <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
                                                 </div>
                                             ) : ""
                                         })}
 
                                     </div>
+                                    <p>Total Price: {totalPrice} đ</p>
                                 </CardContent>
                             </Card>
                         </div>
@@ -698,7 +733,7 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            {!mapRef.current ? <MapComponent />: null} 
+                                            {!mapRef.current ? <MapComponent /> : null}
                                         </div>
                                         <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
