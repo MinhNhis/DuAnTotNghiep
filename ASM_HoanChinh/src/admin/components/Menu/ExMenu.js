@@ -135,7 +135,24 @@ const ExMenu = () => {
         </TableBody>
       </Table>
       {cookies.role !== 2 && (
-        <TableRow sx={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
+        <TableRow
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "20px",
+            button: {
+              backgroundColor: "#1976d2",
+              color: "#fff",
+              borderRadius: "50%",
+              width: "20px",
+              height: "20px",
+              fontSize: "0.8rem",
+              margin: "0 5px",
+              "&.Mui-selected": {
+                backgroundColor: "#1e88e5",
+              }
+            },
+          }}>
           <PaginationRounded onDataChange={cookies.role === 0 ? initData : initMenu} paginator={paginator} />
         </TableRow>
       )}

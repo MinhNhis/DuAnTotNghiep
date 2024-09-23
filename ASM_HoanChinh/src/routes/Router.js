@@ -87,6 +87,7 @@ const QuanAn = lazy(() => import("../admin/views/quanan/index.js"))
 const AddQuanAn = lazy(() => import("../admin/views/quanan/Add/index.js"));
 const EditQuanAn = lazy(() => import("../admin/views/quanan/Edit/index.js"));
 const DeleteQuanAn = lazy(() => import("../admin/views/quanan/Delete/index.js"));
+const ListQuanAn = lazy(() => import("../admin/views/quanan/List/index.js"));
 /****Layouts*****/
 const FullLayout = lazy(() => import("../admin/layouts/FullLayout/FullLayout.js"));
 /****End Layouts*****/
@@ -118,7 +119,7 @@ const ThemeRoutes = [
     element: <Client />,
     children: [
       { path: "", exact: true, element: <Trangchu /> },
-      { path: "/chi-tiet/:id", element: <Chitiet/>},
+      { path: "/chi-tiet/:id", element: <Chitiet /> },
       // {
       //   path: '/login',
       //   element: <Login />
@@ -143,7 +144,7 @@ const ThemeRoutes = [
         path: '/dat-cho/:id',
         element: <DatCho />
       },
-      
+
       {
         path: '/chi-tiet-don',
         element: <ChiTietDon />
@@ -259,6 +260,7 @@ const ThemeRoutes = [
       { path: "admin/quanan/add", exact: true, element: <AddQuanAn /> },
       { path: "admin/quanan/edit/:id_quanan", exact: true, element: <EditQuanAn /> },
       { path: "admin/quanan/delete/:id_quanan", exact: true, element: <DeleteQuanAn /> },
+      { path: "admin/quanan/chi-tiet/:id", exact: true, element: <ListQuanAn /> },
 
       { path: "admin/loai-khach-hang/add", exact: true, element: <AddLKH /> },
       { path: "admin/loai-khach-hang/edit/:id", exact: true, element: <EditLKH /> },
