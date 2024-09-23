@@ -260,63 +260,145 @@ const Trangchu = () => {
                                 <div className="row g-5 align-items-center">
                                     {accounts ?
                                         <>
-                                            {
-                                                quanan5Km.map((value, index) => {
-                                                    return (
-                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
-                                                            <div className='card'>
+                                            <div className='row mb-3'><h2>Các quán gần đây</h2>
+                                                {
+                                                    quanan5Km.map((value, index) => {
+                                                        return (
+                                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
+                                                                <div className='card'>
+                                                                    <div className='row g-5'>
+                                                                        <div className="col-lg-12 wow " data-wow-delay="0.1s">
+                                                                            <Link to={`/chi-tiet/${value.id_quanan}`}><img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "100%", height: "200px" }} /></Link>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                                 <div className='row g-5'>
-                                                                    <div className="col-lg-12 wow " data-wow-delay="0.1s">
-                                                                        <Link to={`/chi-tiet/${value.id_quanan}`}><img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "100%", height: "200px" }} /></Link>
+                                                                    <div className="col-lg-12 wow " data-wow-delay="0.3s">
+                                                                        <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
+                                                                        <div className='mb-2'>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            {value.distanceInKm.toFixed(1)} Km
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            Giờ hoạt động: {value.gio_hoat_dong}
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            {value.dia_chi}
+                                                                        </div>
+                                                                        <div className="row g-4 text-dark mb-5">
+                                                                            {
+                                                                                gioithieu.map((gt) => {
+                                                                                    return (
+                                                                                        gt.id_gioithieu === value.id_gioithieu ? <div
+                                                                                            style={{
+                                                                                                display: '-webkit-box',
+                                                                                                WebkitLineClamp: 2,
+                                                                                                WebkitBoxOrient: 'vertical',
+                                                                                                overflow: 'hidden',
+                                                                                                textOverflow: 'ellipsis',
+                                                                                                whiteSpace: 'normal'
+                                                                                            }}
+                                                                                            key={gt.id_gioithieu}>
+                                                                                            {gt.gioi_thieu}
+                                                                                        </div> : ''
+                                                                                    )
+
+                                                                                })
+                                                                            }
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div className='row g-5'>
-                                                                <div className="col-lg-12 wow " data-wow-delay="0.3s">
-                                                                    <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
-                                                                    <div className='mb-2'>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                            <div className='mt-5 row mb-3'><h2>Tất cả quán</h2>
+                                                {
+                                                    quanan.map((value, index) => {
+                                                        return (
+                                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
+                                                                <div className='card'>
+                                                                    <div className='row g-5'>
+                                                                        <div className="col-lg-12 wow " data-wow-delay="0.1s">
+                                                                            <Link to={`/chi-tiet/${value.id_quanan}`}><img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "100%", height: "200px" }} /></Link>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className='mb-2'>
-                                                                        {value.distanceInKm.toFixed(1)} Km
-                                                                    </div>
-                                                                    <div className='mb-2'>
-                                                                        Giờ hoạt động: {value.gio_hoat_dong}
-                                                                    </div>
-                                                                    <div className='mb-2'>
-                                                                        {value.dia_chi}
-                                                                    </div>
-                                                                    <div className="row g-4 text-dark mb-5">
-                                                                        {
-                                                                            gioithieu.map((gt) => {
-                                                                                return (
-                                                                                    gt.id_gioithieu === value.id_gioithieu ? <div
-                                                                                        style={{
-                                                                                            display: '-webkit-box',
-                                                                                            WebkitLineClamp: 2,
-                                                                                            WebkitBoxOrient: 'vertical',
-                                                                                            overflow: 'hidden',
-                                                                                            textOverflow: 'ellipsis',
-                                                                                            whiteSpace: 'normal'
-                                                                                        }}
-                                                                                        key={gt.id_gioithieu}>
-                                                                                        {gt.gioi_thieu}
-                                                                                    </div> : ''
-                                                                                )
+                                                                </div>
+                                                                <div className='row g-5'>
+                                                                    <div className="col-lg-12 wow " data-wow-delay="0.3s">
+                                                                        <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
+                                                                        <div className='mb-2'>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            {/* {value.distanceInKm} Km */}
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            Giờ hoạt động: {value.gio_hoat_dong}
+                                                                        </div>
+                                                                        <div className='mb-2'>
+                                                                            {value.dia_chi}
+                                                                        </div>
+                                                                        <div className="row g-4 text-dark mb-5">
+                                                                            {
+                                                                                gioithieu.map((gt) => {
+                                                                                    return (
+                                                                                        gt.id_gioithieu === value.id_gioithieu ? <div
+                                                                                            style={{
+                                                                                                display: '-webkit-box',
+                                                                                                WebkitLineClamp: 2,
+                                                                                                WebkitBoxOrient: 'vertical',
+                                                                                                overflow: 'hidden',
+                                                                                                textOverflow: 'ellipsis',
+                                                                                                whiteSpace: 'normal'
+                                                                                            }}
+                                                                                            key={gt.id_gioithieu}>
+                                                                                            {gt.gioi_thieu}
+                                                                                        </div> : ''
+                                                                                    )
 
-                                                                            })
-                                                                        }
+                                                                                })
+                                                                            }
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
 
-                                                    )
-                                                })
-                                            }
+                                                        )
+                                                    })
+                                                }
+                                            </div>
+                                            <TableRow
+                                                sx={{
+                                                    display: "flex",
+                                                    justifyContent: "center",
+                                                    marginTop: "20px",
+                                                    button: {
+                                                        backgroundColor: "#d4a762",
+                                                        color: "#fff",
+                                                        borderRadius: "50%",
+                                                        width: "20px",
+                                                        height: "20px",
+                                                        fontSize: "0.8rem",
+                                                        margin: "0 5px",
+                                                        "&.Mui-selected": {
+                                                            backgroundColor: "#b0853d",
+                                                        }
+                                                    },
+                                                }}
+                                            >
+                                                <PaginationRounded onDataChange={initData} paginator={paginator}
+                                                />
+                                            </TableRow>
                                         </>
                                         : <>
                                             {
