@@ -8,7 +8,6 @@ import { BASE_URL } from "../../../../config/ApiConfig";
 import imgUser from "../../../assets/images/user.png";
 
 import { getQuanan } from "../../../../services/Quanan";
-import { getQuananById } from "../../../../services/Quanan";
 
 
 const EditNguoiDung = () => {
@@ -24,20 +23,19 @@ const EditNguoiDung = () => {
 
   const initData = async () => {
     try {
-
-      const quananResult = await getQuananById(id);
-      setQuanan(quananResult.data);
-
       const result = await getNguoiDungById(id);
       setNguoidung(result.data);
+
+      if (result.data.id_nguoidung) {
+        const quananResult = await getQuanan();
+        const quan = quananResult.data.find((e) => e.created_user === result.data.id_nguoidung)
+        setQuanan(quan);
+      }
 
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
   };
-  console.log(nguoidung);
-  
-
 
   return (
     <div className="container">
@@ -75,7 +73,7 @@ const EditNguoiDung = () => {
         </CardContent>
       </Card>
 
-       {nguoidung && quanan.created_user === nguoidung.id_nguoidung ? 
+      {nguoidung && quanan && quanan.created_user === nguoidung.id_nguoidung ?
         <Grid item xs={12} md={6}>
           <Card style={{ height: "100%" }}>
             <CardContent>
@@ -117,7 +115,9 @@ const EditNguoiDung = () => {
             </CardContent>
           </Card>
         </Grid>
-         : null }
+        : null}
+        <>
+        </>
     </div>
 
   );
