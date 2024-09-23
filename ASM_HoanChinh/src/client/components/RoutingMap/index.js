@@ -53,7 +53,7 @@ const Routing = ({ waypoints, obj }) => {
                                     <img src="${BASE_URL}/uploads/${obj.hinh_anh}" alt="" style="width: 100%;" />
                                     <b>${obj.ten_quan_an}</b> </br>
                                     <span>${obj.gio_hoat_dong}</span></br>
-                                    <span>${obj.distanceInKm} Km </span></br>
+                                    <span>${(obj.distanceInKm)} Km </span></br>
                                     <span>${obj.dia_chi}</span>
                                 </div>
                         `;

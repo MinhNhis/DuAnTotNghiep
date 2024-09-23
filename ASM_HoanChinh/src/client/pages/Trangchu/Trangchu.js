@@ -24,7 +24,7 @@ const Trangchu = () => {
     const [locations, setLocations] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
     const [quanan, setQuanan] = useState([]);
-    const [quanan20Km, setQuanan20Km] = useState([]);
+    const [quanan5Km, setQuanan5Km] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -108,8 +108,8 @@ const Trangchu = () => {
             setLocations(fillQuan);
 
             // Lọc khoảng cách <= 20 km
-            const quan20Km = fillQuan.filter(quan => quan.distanceInKm <= 20);
-            setQuanan20Km(quan20Km);
+            const quan5Km = fillQuan.filter(quan => quan.distanceInKm <= 5);
+            setQuanan5Km(quan5Km);
         } catch (error) {
             console.error("Error loading map data:", error);
         } finally {
@@ -130,7 +130,6 @@ const Trangchu = () => {
             setDstimkiem([]);
         }
     };
-console.log(quanan);
 
     return (
         <>
@@ -168,29 +167,25 @@ console.log(quanan);
                                                 <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{ width: "100%" }} /><br />
                                                 <b>{element.ten_quan_an}</b><br />
                                                 {element.gio_hoat_dong} <br />
-                                                {element.distanceInKm} Km <br />
+                                                {element.distanceInKm.toFixed(1)} Km <br />
                                                 {element.dia_chi}
                                             </Popup>
                                         </Marker>
                                     ))}
-                                    {accounts ?
-                                        <>
-                                            {userLocation && quanan20Km && (
-                                                quanan20Km.map((value, index) => (
-                                                    <Routing
-                                                        key={index}
-                                                        waypoints={[
-                                                            { lat: userLocation.lat, lng: userLocation.lng },
-                                                            { lat: value.coords.lat, lng: value.coords.lng },
-                                                        ]}
-                                                        obj={value}
-                                                    />
-                                                ))
-                                            )}
-                                        </> : ''
-                                    }
-
-
+                                    <>
+                                        {userLocation && quanan5Km && (
+                                            quanan5Km.map((value, index) => (
+                                                <Routing
+                                                    key={index}
+                                                    waypoints={[
+                                                        { lat: userLocation.lat, lng: userLocation.lng },
+                                                        { lat: value.coords.lat, lng: value.coords.lng },
+                                                    ]}
+                                                    obj={value}
+                                                />
+                                            ))
+                                        )}
+                                    </>
                                 </>
                             )}
                         </MapContainer>
@@ -266,10 +261,9 @@ console.log(quanan);
                                     {accounts ?
                                         <>
                                             {
-                                                quanan20Km.map((value, index) => {
+                                                quanan5Km.map((value, index) => {
                                                     return (
-
-                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "300px" }}>
+                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
                                                             <div className='card'>
                                                                 <div className='row g-5'>
                                                                     <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -281,17 +275,19 @@ console.log(quanan);
                                                                 <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                     <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
                                                                     <div className='mb-2'>
-                                                                        {value.distanceInKm} Km
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                    </div>
+                                                                    <div className='mb-2'>
+                                                                        {value.distanceInKm.toFixed(1)} Km
                                                                     </div>
                                                                     <div className='mb-2'>
                                                                         Giờ hoạt động: {value.gio_hoat_dong}
                                                                     </div>
-
                                                                     <div className='mb-2'>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        {value.dia_chi}
                                                                     </div>
                                                                     <div className="row g-4 text-dark mb-5">
                                                                         {
@@ -326,7 +322,7 @@ console.log(quanan);
                                             {
                                                 quanan.map((value, index) => {
                                                     return (
-                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "300px" }}>
+                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
                                                             <div className='card'>
                                                                 <div className='row g-5'>
                                                                     <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -338,17 +334,19 @@ console.log(quanan);
                                                                 <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                     <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
                                                                     <div className='mb-2'>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                    </div>
+                                                                    <div className='mb-2'>
                                                                         {/* {value.distanceInKm} Km */}
                                                                     </div>
                                                                     <div className='mb-2'>
                                                                         Giờ hoạt động: {value.gio_hoat_dong}
                                                                     </div>
-
                                                                     <div className='mb-2'>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                        {value.dia_chi}
                                                                     </div>
                                                                     <div className="row g-4 text-dark mb-5">
                                                                         {
