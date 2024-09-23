@@ -66,12 +66,12 @@ const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so
     return res
 }
 
-const deleteNguoiDung = async (id) => {
+const deleteNguoiDung = async (id, reason) => {
 
     const res = await request({
         method: "DELETE",
         path: `api/nguoidungs/${id}`,
-        data: null
+        data: { reason }
     })
 
     return res
