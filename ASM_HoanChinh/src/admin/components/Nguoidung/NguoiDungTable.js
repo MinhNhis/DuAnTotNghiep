@@ -20,6 +20,8 @@ import imgUser from '../../assets/images/user.png';
 import PaginationRounded from "../Paginator";
 import { useCookies } from "react-cookie";
 
+
+
 const DichVuTable = () => {
   const navigate = useNavigate();
   const [nguoidung, setNguoidung] = useState([]);
@@ -42,7 +44,11 @@ const DichVuTable = () => {
       const result = await getNguoiDung()
       setNguoidung(result.data)
     }
+    
   };
+
+
+
 
   const initNguoidung = async () => {
     if (cookies.role !== 0) {
@@ -128,29 +134,37 @@ const DichVuTable = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Box>
                     <Typography variant="body1" sx={{ ml: 0.5 }}>
-                      {value?.vai_tro == 0 ? "Admin" : ""}
-                      {value?.vai_tro == 1 ? "User" : ""}
-                      {value?.vai_tro == 2 ? "Admin quán" : ""}
+                      {value?.vai_tro === 0 ? "Admin" : ""}
+                      {value?.vai_tro === 1 ? "User" : ""}
+                      {value?.vai_tro === 2 ? "Admin quán" : ""}
                     </Typography>
                   </Box>
                 </Box>
               </TableCell>
               <TableCell>
                 <Typography>
-                  <Link to={`/admin/nguoi-dung/chi-tiet/${value?.id_nguoidung}`}>
-                    <IconButton
-                      aria-label="edit"
-                      color="primary"
-                      style={{ width: "50px", height: "50px" }}
-                    >
-                      <Visibility />
-                    </IconButton>
-                  </Link>
-                  <Link to={`/admin/nguoi-dung/delete/${value?.id_nguoidung}`}>
-                    <IconButton aria-label="delete" color="danger" style={{ width: "50px", height: "50px" }}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </Link>
+                  {value.vai_tro !== 0 && (
+                    <Link to={`/admin/nguoi-dung/chi-tiet/${value?.id_nguoidung}`}>
+                      <IconButton
+                        aria-label="edit"
+                        color="primary"
+                        style={{ width: "50px", height: "50px" }}
+                      >
+                        <Visibility />
+                      </IconButton>
+                    </Link>
+                  )}
+                  {value?.vai_tro !== 0 && (
+                    <Link to={`/admin/nguoi-dung/delete/${value?.id_nguoidung}`}>
+                      <IconButton
+                        aria-label="delete"
+                        color="danger"
+                        style={{ width: "50px", height: "50px" }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Link>
+                  )}
                 </Typography>
               </TableCell>
             </TableRow>
