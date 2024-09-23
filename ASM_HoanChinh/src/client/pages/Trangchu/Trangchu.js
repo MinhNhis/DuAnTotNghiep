@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { BounceLoader, BeatLoader } from "react-spinners";
 import { TableRow } from '@mui/material';
 
-import './style.css'
+import './style.css';
 import { getQuanan, paginator, searchQuanan } from '../../../services/Quanan';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
