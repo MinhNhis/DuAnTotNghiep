@@ -87,7 +87,7 @@ const Sidebar = (props) => {
                         <item.icon width="20" height="20" />
                       </ListItemIcon>
                       <ListItemText primary={item.title} />
-                      {item.children &&
+                      {item.children && item.title === 'Giới thiệu' &&
                           (open[index] ? <ExpandLess /> : <ExpandMore />)}
                     </ListItem>
                     {cookie.role === 0 ? (
