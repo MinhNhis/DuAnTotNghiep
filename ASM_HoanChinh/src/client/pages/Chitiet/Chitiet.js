@@ -112,21 +112,58 @@ const Gioithieu = () => {
     };
 
     const submit = async (value) => {
-        await addDatcho({
-            ten_quan: quanan.ten_quan_an,
-            ten_kh: value?.ten_kh,
-            sdt_kh: value?.sdt,
-            email_kh: value?.email,
-            ngay_dat: value?.ngay,
-            thoi_gian: value?.thoi_gian,
-            so_luong_nguoi: value?.so_luong,
-            trang_thai: 0,
-            yeu_cau_khac: value?.yeu_cau,
-            id_nguoidung: accounts.id_nguoidung,
-            id_quanan: id
-        })
-        enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
-        navigate("/profile")
+        if (value.so_luong > quanan.so_luong_cho) {
+            enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
+        } else {
+            const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian + ':00' && e.trang_thai !== 2);
+            let tongCho = 0
+
+            fillDatcho.forEach((e) => {
+                tongCho += e.so_luong_nguoi
+            })
+            let so_luong_cho_trong = quanan.so_luong_cho - tongCho;
+
+            fillDatcho.find(async (e) => {
+                if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
+                    await addDatcho({
+                        ten_quan: quanan.ten_quan_an,
+                        ten_kh: value?.ten_kh,
+                        sdt_kh: value?.sdt,
+                        email_kh: value?.email,
+                        ngay_dat: value?.ngay,
+                        thoi_gian: value?.thoi_gian,
+                        so_luong_nguoi: value?.so_luong,
+                        trang_thai: 0,
+                        yeu_cau_khac: value?.yeu_cau,
+                        id_nguoidung: accounts.id_nguoidung,
+                        id_quanan: id
+                    })
+                    enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+                    navigate("/profile")
+
+                } else {
+                    return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
+                }
+            })
+
+            if (fillDatcho.length === 0) {
+                await addDatcho({
+                    ten_quan: quanan.ten_quan_an,
+                    ten_kh: value?.ten_kh,
+                    sdt_kh: value?.sdt,
+                    email_kh: value?.email,
+                    ngay_dat: value?.ngay,
+                    thoi_gian: value?.thoi_gian,
+                    so_luong_nguoi: value?.so_luong,
+                    trang_thai: 0,
+                    yeu_cau_khac: value?.yeu_cau,
+                    id_nguoidung: accounts.id_nguoidung,
+                    id_quanan: id
+                })
+                enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+                navigate("/profile")
+            }
+        }
     }
 
     const renderStars = (stars) => {
@@ -140,7 +177,6 @@ const Gioithieu = () => {
             }
         });
     };
-
 
     useEffect(() => {
         let totalStars = 0;
@@ -190,23 +226,27 @@ const Gioithieu = () => {
         setTotalPrice(totalPrice);
     }, [selectedMenuItems, menu]);
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    };
 
     // an bot
     return (
         <>
-            {/* <Navbar /> */}
-            <div class="row mb-2" style={{ height: "600px" }}>
-                <div class="col-12 ">
-                    <img
-                        src={`${BASE_URL}/uploads/${quanan.hinh_anh}`}
-                        className=""
-                        alt=""
-                        style={{ width: "100%", height: "600px" }}
-                    />
-                </div>
-            </div>
+
 
             <div className="container-fluid py-1">
+                {/* <Navbar /> */}
+                <div class="row mb-2" fullWidth style={{ height: "600px" }}>
+                    <div class="col-12 ">
+                        <img
+                            src={`${BASE_URL}/uploads/${quanan.hinh_anh}`}
+                            className=""
+                            alt=""
+                            style={{ width: "100%", height: "600px" }}
+                        />
+                    </div>
+                </div>
                 <div className="container">
                     <div class="d-flex align-items-center justify-content-between ">
                         <h2
@@ -373,6 +413,12 @@ const Gioithieu = () => {
                                                                     required: {
                                                                         value: true,
                                                                         message: "Số lượng không được bỏ trống"
+                                                                    },
+                                                                    validate: (so_luong) => {
+                                                                        if (so_luong <= 0) {
+                                                                            return "Số lượng phải lớn hơn 0"
+                                                                        }
+                                                                        return true
                                                                     }
                                                                 })}
                                                             />
@@ -481,7 +527,7 @@ const Gioithieu = () => {
                                                         }}
                                                     />
                                                     <h5 className="text-dark mt-1">{value.ten_menu}</h5>
-                                                    <h6 className="text-secondary mt-1 ">{value.gia}đ</h6>
+                                                    <h6 className="text-secondary mt-1 ">{formatPrice(value.gia)}</h6>
 
 
                                                     <div className="form-check mb-4">
@@ -499,7 +545,7 @@ const Gioithieu = () => {
                                         })}
 
                                     </div>
-                                    <p>Total Price: {totalPrice} đ</p>
+                                    <p>Tổng tiền dự tính: {formatPrice(totalPrice)}</p>
                                 </CardContent>
                             </Card>
                         </div>
