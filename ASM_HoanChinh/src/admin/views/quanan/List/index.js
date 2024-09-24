@@ -25,6 +25,7 @@ const ListQuanAn = () => {
   const [quanan, setQuanan] = useState(null);
   const [menu, setMenu] = useState([]);
   const [nguoidung, setNguoidung] = useState([]);
+  const [nguoidungdanh, setNguoiDungDanhGia] = useState([]);
   const [selectedTab, setSelectedTab] = useState("menu");
   const [danhmuc, setDanhMuc] = useState([]);
   const [danhgia, setDanhGia] = useState([]);
@@ -55,6 +56,8 @@ const ListQuanAn = () => {
       } else {
         setNguoidung([]);
       }
+      setNguoiDungDanhGia(nguoiDungList.data);
+
       const DanhMucList = await getDanhmuc();
       setDanhMuc(DanhMucList.data);
 
@@ -76,6 +79,7 @@ const ListQuanAn = () => {
     ));
   };
 
+console.log(nguoidungdanh);
 
   return (
     <div className="container mt-4">
@@ -267,15 +271,21 @@ const ListQuanAn = () => {
                                   marginTop: "10px",
                                 }}
                               >
-                                <Typography
-                                  sx={{
-                                    fontSize: "15px",
-                                    color: "#000",
-                                  }}
-                                >
-                                  ten nguoi danh gia
-                                </Typography>
-
+                                {nguoidungdanh.map((ngdg) => {
+                                  if (ngdg.id_nguoidung === danhgia.id_nguoidung) {
+                                    return (
+                                      <Typography
+                                        sx={{
+                                          fontSize: "15px",
+                                          color: "#000",
+                                        }}
+                                      >
+                                        <strong>{ngdg.ten_nguoi_dung}</strong>
+                                      </Typography>
+                                    )
+                                  } else return null
+                                }
+                                )}
                                 <Typography
                                   sx={{
                                     fontSize: "14px",

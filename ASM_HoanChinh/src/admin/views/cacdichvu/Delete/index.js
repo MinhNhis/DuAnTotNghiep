@@ -1,100 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import {
-  Card,
-  CardContent,
-  CardActions,
-  Box,
-  Typography,
-  Button,
-} from "@mui/material";
-import { deleteCDV, getCDVById } from "../../../../services/Cacdichvu";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box } from "@mui/material";
+import { deleteCDV } from "../../../../services/Cacdichvu";
 
 const DeleteCDV = () => {
-  const [CDV, setCDV] = useState({});
   const navigate = useNavigate();
   const params = useParams();
   const id = params.id;
-  const { enqueueSnackbar } = useSnackbar(); 
+  const { enqueueSnackbar } = useSnackbar();
+  const [open, setOpen] = useState(true);
 
-  const handleCancel = () => {
-    navigate("/admin/cac-dich-vu");
+  const handleClose = () => {
+    setOpen(false);
+    navigate('/admin/cac-dich-vu');
   };
-
-  useEffect(() => {
-    initData();
-  }, []);
-
-  const initData = async () => {
-    try {
-      const result = await getCDVById(id);
-      setCDV(result.data);
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu:", error);
-    }
-  };
-
-  const submit = async () => {
+  const handleDelete = async () => {
     try {
       await deleteCDV(id);
-      enqueueSnackbar("Xóa dịch vụ thành công!", { variant: "success" }); 
+      enqueueSnackbar('Xóa các dịch vụ thành công!', { variant: 'success' });
       navigate("/admin/cac-dich-vu");
     } catch (error) {
-      enqueueSnackbar("Có lỗi xảy ra khi xóa dịch vụ!", { variant: "error" }); 
-      console.error("Lỗi khi xóa dịch vụ:", error);
+      enqueueSnackbar('Có lỗi xảy ra khi xóa các dịch vụ!', { variant: 'error' });
     }
   };
 
   return (
-    <div>
-      <Card
-        variant="outlined"
-        sx={{
-          maxWidth: 1100,
-          margin: "20px auto",
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <CardContent sx={{ padding: "30px", textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 2,
-            }}
-          >
-            <WarningIcon sx={{ fontSize: 40, color: "warning.main" }} />
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <WarningIcon sx={{ fontSize: 40, color: 'warning.main', marginRight: 1 }} />
+            Bạn có chắc chắn muốn xóa?
           </Box>
-          <Typography variant="h5" gutterBottom>
-            Bạn có chắc chắn muốn xóa ?
-          </Typography>
-        </CardContent>
-        <CardActions sx={{ justifyContent: "center", padding: "20px" }}>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText align="center">
+            Hành động này sẽ không thể hoàn tác.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ justifyContent: 'center' }}>
           <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            sx={{ marginRight: 2 }}
-            style={{ width: "100px" }}
-            onClick={submit}
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleDelete}
+              sx={{ width: "100px" }}
           >
             Delete
           </Button>
           <Button
-            variant="outlined"
-            onClick={handleCancel}
-            style={{ width: "100px" }}
+              variant="outlined"
+              onClick={handleClose}
+              sx={{ width: "100px" }}
           >
             Cancel
           </Button>
-        </CardActions>
-      </Card>
-    </div>
+        </DialogActions>
+      </Dialog>
   );
 };
 

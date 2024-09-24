@@ -1,70 +1,65 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardActions, Box, Typography, Button } from "@mui/material";
-import { useSnackbar } from 'notistack'; 
-import { deleteMenu, getMenuById } from "../../../../services/MenuPhu";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box } from "@mui/material";
+import { useSnackbar } from 'notistack';
+import { deleteMenu } from "../../../../services/MenuPhu";
 
 const DeleteMenu = () => {
-    const [menu, setMenu] = useState({});
     const navigate = useNavigate();
     const params = useParams();
     const id = params.id_menu;
-    const { enqueueSnackbar } = useSnackbar(); 
+    const { enqueueSnackbar } = useSnackbar();
+    const [open, setOpen] = useState(true);
 
-    const handleCancle = () => {
+    const handleClose = () => {
+        setOpen(false);
         navigate('/admin/menu');
     };
 
-    useEffect(() => {
-        initData();
-    }, []);
-
-    const initData = async () => {
-        try {
-            const result = await getMenuById(id);
-            setMenu(result.data);
-        } catch (error) {
-            console.error('Lỗi khi lấy dữ liệu:', error);
-        }
-    };
-
-    const submit = async () => {
+    const handleDelete = async () => {
         try {
             await deleteMenu(id);
-            enqueueSnackbar('Xóa menu thành công!', { variant: 'success' }); 
+            enqueueSnackbar('Xóa menu thành công!', { variant: 'success' });
             navigate("/admin/menu");
         } catch (error) {
-            enqueueSnackbar('Có lỗi xảy ra khi xóa menu!', { variant: 'error' }); 
-            console.error('Lỗi khi xóa menu:', error);
+            enqueueSnackbar('Có lỗi xảy ra khi xóa menu!', { variant: 'error' });
         }
     };
 
     return (
-        <div>
-            <Card variant="outlined" sx={{ maxWidth: 1100, margin: '20px auto', borderRadius: 2, boxShadow: 3 }}>
-                <CardContent sx={{ padding: '30px', textAlign: 'center' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 2 }}>
-                        <WarningIcon sx={{ fontSize: 40, color: 'warning.main' }} />
-                    </Box>
-                    <Typography variant="h5" gutterBottom>
-                        Bạn có chắc chắn muốn xóa ?
-                    </Typography>
-                    <Typography variant="body1" color="textSecondary">
-                        Menu: {menu.ten_menu}
-                    </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'center', padding: '20px' }}>
-                    <Button variant="contained" color="error" startIcon={<DeleteIcon />} sx={{ marginRight: 2 }} style={{width: "100px"}} onClick={submit}>
-                        Delete
-                    </Button>
-                    <Button variant="outlined" onClick={handleCancle} style={{width: "100px"}}>
-                        Cancel
-                    </Button>
-                </CardActions>
-            </Card>
-        </div>
+        <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+            <DialogTitle>
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    <WarningIcon sx={{ fontSize: 40, color: 'warning.main', marginRight: 1 }} />
+                    Bạn có chắc chắn muốn xóa?
+                </Box>
+            </DialogTitle>
+            <DialogContent>
+                <DialogContentText align="center">
+                    Hành động này sẽ không thể hoàn tác.
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions sx={{ justifyContent: 'center' }}>
+                <Button
+                    variant="contained"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={handleDelete}
+                    sx={{ width: "100px" }}
+                >
+                    Delete
+                </Button>
+                <Button
+                    variant="outlined"
+                    onClick={handleClose}
+                    sx={{ width: "100px" }}
+                >
+                    Cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 
