@@ -55,7 +55,8 @@ const Menu = () => {
                             itemName.includes('soda'))) ||
                     (selectedCategoryName === 'Ăn vặt' &&
                         (itemName.includes('xúc xích') ||
-                            itemName.includes('thịt')));
+                            itemName.includes('thịt')||
+                            itemName.includes('cá viên ')));
             }));
         } else {
             setMenu(data.data);
@@ -95,7 +96,7 @@ const Menu = () => {
                             <li key={index} className="nav-item p-2">
                                 <a
                                     className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
-                                    onClick={() => handleCategoryClick(danhmuc.id_danhmuc, danhmuc.danh_muc)} // Pass category name
+                                    onClick={() => handleCategoryClick(danhmuc.id_danhmuc, danhmuc.danh_muc)} 
                                 >
                                     <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
                                 </a>
