@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { TableRow } from "@mui/material";
 
@@ -32,11 +33,12 @@ const Menu = () => {
         setQuanan(res.data)
     }
 
+
     const initDanhmuc = async () => {
         const res = await getDanhmuc();
         setDanhmuc(res.data);
     };
-
+    
     const initData = async (data) => {
         const result = await getMenus();
         if (selectedCategory) {
@@ -45,18 +47,25 @@ const Menu = () => {
             setMenu(data.data);
         }
     };
-
+    
     const handleCategoryClick = (categoryId) => {
         if (selectedCategory === categoryId) {
-            setSelectedCategory(null);
+            setSelectedCategory(null); 
         } else {
-            setSelectedCategory(categoryId);
+            setSelectedCategory(categoryId); 
         }
     };
+    
+    const filteredDanhmuc = Danhmuc.filter((danhmuc, index, self) =>
+        index === self.findIndex((t) => (
+            t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase()
+        ))
+    );
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
+
 
     return (
         <div className="tab-class text-center">
@@ -65,21 +74,26 @@ const Menu = () => {
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
                 <div className="tab-class text-center">
-                    <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow " data-wow-delay="0.1s">
-                        {Danhmuc.map((danhmuc, index) => (
-                            <li key={index} className="nav-item p-2">
-                                <a
-                                    className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
-                                    onClick={() => handleCategoryClick(danhmuc.id_danhmuc)}
-                                >
-                                    <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
-                                </a>
-                            </li>
-                        ))}
+                    <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+                    {filteredDanhmuc.map((danhmuc, index) => (
+                <li key={index} className="nav-item p-2">
+                    <a
+                        className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
+                        onClick={() => handleCategoryClick(danhmuc.id_danhmuc)}
+                    >
+                        <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
+                    </a>
+                </li>
+            ))}
                     </ul>
                     <div className="tab-content">
                         <div id="tab-1" className="tab-pane fade show p-0 active">
                             <div className="row g-4">
+                                {selectedCategory && menu.length === 0 && (
+                                    <div className="col-12 text-center">
+                                        <p className="text-muted">Không có món ăn nào trong danh mục này.</p>
+                                    </div>
+                                )}
                                 {menu.map((menuItem, index) => (
                                     <div key={index} className="col-lg-3 col-md-4 wow " data-wow-delay="0.1s">
                                         <div className="event-img position-relative d-flex align-items-center">
@@ -145,3 +159,5 @@ const Menu = () => {
 };
 
 export default Menu;
+
+

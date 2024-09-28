@@ -3,31 +3,59 @@ import React from "react";
 
 
 const KhamPha = () => {
+    const khamPha = [
+        {
+            id: 1,
+            name: "Quán ăn Hương Vị Việt - Nơi Hòa Quyện Hương Vị Truyền Thống",
+            images: "nhahang1.jpg",
+            descript: "Chào mừng quý khách đến với quán ăn Hương Vị Việt - nơi mang đến cho bạn những trải nghiệm ẩm thực đậm chất Việt Nam. Với phong cách truyền thống kết hợp cùng sự sáng tạo hiện đại, chúng tôi tự hào là điểm đến lý tưởng cho những ai yêu thích hương vị truyền thống và không gian ấm cúng."
+        },
+
+        {
+            id: 2,
+            name: "Quán ăn Truyền Thống - Nơi Hòa Quyện Hương Vị Truyền Thống",
+            images: "nhahang2.jpg",
+            descript: "Chào mừng quý khách đến với nhà hàng chúng tôi - nơi kết hợp hoàn hảo giữa hương vị tinh tế và không gian đẳng cấp Cảm ơn quý khách đã lựa chọn nhà hàng của chúng tôi. Chúng tôi hy vọng sẽ mang đến cho quý vị một trải nghiệm ẩm thực đáng nhớ và thú vị"
+        },
+
+        {
+            id: 3,
+            name: "Quán ăn Mái Ấm - Nơi Hòa Quyện Hương Vị Truyền Thống",
+            images: "nhahang3.jpg",
+            descript: "Chào mừng quý khách đến với nhà hàng chúng tôi - nơi kết hợp hoàn hảo giữa hương vị tinh tế và không gian đẳng cấp Cảm ơn quý khách đã lựa chọn nhà hàng của chúng tôi. Chúng tôi hy vọng sẽ mang đến cho quý vị một trải nghiệm ẩm thực đáng nhớ và thú vị"
+        },
+        {
+            id: 4,
+            name: "Quán ăn Hài Hòa - Nơi Hòa Quyện Hương Vị Truyền Thống",
+            images: "nhahang4.jpg",
+            descript: "Chào mừng quý khách đến với nhà hàng chúng tôi - nơi kết hợp hoàn hảo giữa hương vị tinh tế và không gian đẳng cấp Cảm ơn quý khách đã lựa chọn nhà hàng của chúng tôi. Chúng tôi hy vọng sẽ mang đến cho quý vị một trải nghiệm ẩm thực đáng nhớ và thú vị"
+        },
+
+    ]
+
+
     return (
         <>
-            <div className="container-fluid bg-light py-6 my-6 mt-0">
+            <div className="container-fluid bg-light py-6 my-6 mt-0 pb-4">
                 <div className="container text-center animated ">
-                    <h1 className="display-1 mb-4">Khám Phá Nhà Hàng</h1>
+                    <h1 className="display-1 mb-4">Khám Phá Quán Ăn </h1>
                     <ol className="breadcrumb justify-content-center mb-0 animated ">
                         <li className="breadcrumb-item"><a href="/">Trang Chủ</a></li>
                         <li className="breadcrumb-item text-dark" aria-current="page">Khám Phá</li>
                     </ol>
                 </div>
             </div>
-            
-            <div className="container-fluid py-6">
-                <div className="container">
-                    <div className="row g-5 align-items-center">
-                        <div className="col-lg-5 wow " data-wow-delay="0.1s">
-                            <img src="img/about.jpg" className="img-fluid rounded" alt="Giới Thiệu Nhà Hàng"/>
+
+            {khamPha.map((value) => (
+                <div className="container py-4">
+                    <div className="row g-4 align-items-center">
+                        <div className="col-lg-5">
+                         <img src={`/images/${value?.images}`} className="img-fluid rounded" style={{ height: "320px", width: "500px" }} alt="Giới Thiệu Nhà Hàng" />
                         </div>
-                        <div className="col-lg-7 wow " data-wow-delay="0.3s">
-                            <small className="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Giới Thiệu</small>
-                            <h1 className="display-5 mb-4">Phục Vụ Món Ăn Ngon Hơn 10 Năm</h1>
-                            <p className="mb-4">
-                                Chào mừng đến với nhà hàng của chúng tôi, nơi chúng tôi cung cấp đa dạng các món ăn được làm từ nguyên liệu tươi ngon. Sứ mệnh của chúng tôi là mang đến trải nghiệm ẩm thực khó quên với dịch vụ xuất sắc và không gian thân thiện. Dù bạn đến đây cho một bữa ăn bình thường hay một dịp đặc biệt, chúng tôi luôn nỗ lực để mỗi lần ghé thăm của bạn trở nên đáng nhớ.
-                            </p>
-                            <div className="row g-4 text-dark mb-5">
+                        <div className="col-lg-7">
+                            <h1 className="display-5 mb-4">{value?.name}</h1>
+                            <p className="mb-4">{value?.descript}</p>
+                            <div className="row g-3 text-dark mb-4">
                                 <div className="col-sm-6">
                                     <i className="fas fa-share text-primary me-2"></i>Giao Hàng Nhanh Và Tươi
                                 </div>
@@ -41,13 +69,15 @@ const KhamPha = () => {
                                     <i className="fas fa-share text-primary me-2"></i>Ưu Đãi Ngon Cho Bữa Ăn Ngon
                                 </div>
                             </div>
-                            <a href="/about" className="btn btn-primary py-3 px-5 rounded-pill">Tìm Hiểu Thêm<i className="fas fa-arrow-right ps-2"></i></a>
                         </div>
                     </div>
+                    <hr />
                 </div>
-            </div>
+            ))}
 
-            <div className="container-fluid facts py-6">
+
+
+            {/* <div className="container-fluid facts py-6">
                 <div className="container">
                     <div className="row g-4 align-items-center">
                         <div className="col-lg-7">
@@ -101,9 +131,9 @@ const KhamPha = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
 
-            <div className="container-fluid team py-6">
+            {/* <div className="container-fluid team py-6">
                 <div className="container">
                     <div className="text-center wow " data-wow-delay="0.1s">
                         <small className="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Đội Ngũ</small>
@@ -112,7 +142,7 @@ const KhamPha = () => {
                     <div className="row g-4">
                         <div className="col-lg-3 col-md-6 wow " data-wow-delay="0.1s">
                             <div className="team-item rounded">
-                                <img className="img-fluid rounded-top" src="img/team-1.jpg" alt="Đầu Bếp Henry"/>
+                                <img className="img-fluid rounded-top" src="img/team-1.jpg" alt="Đầu Bếp Henry" />
                                 <div className="team-content text-center py-3 bg-dark rounded-bottom">
                                     <h4 className="text-primary">Henry</h4>
                                     <p className="text-white mb-0">Đầu Bếp Trang Trí</p>
@@ -127,7 +157,7 @@ const KhamPha = () => {
                         </div>
                         <div className="col-lg-3 col-md-6 wow " data-wow-delay="0.3s">
                             <div className="team-item rounded">
-                                <img className="img-fluid rounded-top" src="img/team-2.jpg" alt="Đầu Bếp James Born"/>
+                                <img className="img-fluid rounded-top" src="img/team-2.jpg" alt="Đầu Bếp James Born" />
                                 <div className="team-content text-center py-3 bg-dark rounded-bottom">
                                     <h4 className="text-primary">James Born</h4>
                                     <p className="text-white mb-0">Bếp Trưởng</p>
@@ -142,7 +172,7 @@ const KhamPha = () => {
                         </div>
                         <div className="col-lg-3 col-md-6 wow " data-wow-delay="0.5s">
                             <div className="team-item rounded">
-                                <img className="img-fluid rounded-top" src="img/team-3.jpg" alt="Đầu Bếp Dony"/>
+                                <img className="img-fluid rounded-top" src="img/team-3.jpg" alt="Đầu Bếp Dony" />
                                 <div className="team-content text-center py-3 bg-dark rounded-bottom">
                                     <h4 className="text-primary">Dony</h4>
                                     <p className="text-white mb-0">Đầu Bếp Bánh</p>
@@ -157,7 +187,7 @@ const KhamPha = () => {
                         </div>
                         <div className="col-lg-3 col-md-6 wow " data-wow-delay="0.7s">
                             <div className="team-item rounded">
-                                <img className="img-fluid rounded-top" src="img/team-4.jpg" alt="Đầu Bếp Hana"/>
+                                <img className="img-fluid rounded-top" src="img/team-4.jpg" alt="Đầu Bếp Hana" />
                                 <div className="team-content text-center py-3 bg-dark rounded-bottom">
                                     <h4 className="text-primary">Hana</h4>
                                     <p className="text-white mb-0">Đầu Bếp Phụ</p>
@@ -172,7 +202,7 @@ const KhamPha = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>
     );
 };
