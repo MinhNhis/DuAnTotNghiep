@@ -120,11 +120,11 @@ const GioiThieuTable = () => {
                                 Bãi đổ xe
                             </Typography>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Không khí
                             </Typography>
-                        </TableCell>
+                        </TableCell> */}
                         {/* <TableCell>
                         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                             Khách hàng
@@ -214,7 +214,7 @@ const GioiThieuTable = () => {
                                     </Box>
                                 </Box>
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                     <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>
 
@@ -231,7 +231,7 @@ const GioiThieuTable = () => {
                                         }
                                     </Box>
                                 </Box>
-                            </TableCell>
+                            </TableCell> */}
                             {/* <TableCell>
                             <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap" }}>
                                 <Box sx={{ display: "flex", alignItems: "center", mr: 1, mb: 1 }}>

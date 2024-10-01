@@ -18,6 +18,8 @@ import CacDichVu from "../admin/views/cacdichvu/index.js";
 import ChiTietDon from "../client/pages/Chitietdon/Chitietdon.js";
 import Profile from "../client/pages/Profile/index.js";
 import Client from "../client/pages/index.js";
+import ThanhToan from "../admin/views/thanhtoandki/index.js";
+import ThanhToanDKi from "../admin/views/thanhtoandki/Add/index.js";
 
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"))
 const AddDichVu = lazy(() => import("../admin/views/dichvu/Add/index.js"));
@@ -276,6 +278,10 @@ const ThemeRoutes = [
       { path: "admin/nguoi-dung/chi-tiet/:id", exact: true, element: <EditNguoiDung /> },
       { path: "admin/nguoi-dung/delete/:id", exact: true, element: <DeleteNguoiDung /> },
       { path: "admin/nguoi-dung", element: <NguoiDung />, },
+
+      { path: "admin/thanh-toan", element: <ThanhToan />, },
+      { path: "admin/thanh-toan/thanh-toan-dki",exact: true, element: <ThanhToanDKi />, },
+
     ],
   },
 

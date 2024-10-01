@@ -88,7 +88,7 @@ const EditNguoiDung = () => {
                   className="img-fluid"
                   style={{
                     width: "100%",
-                    height: "250px",
+                    height: "400px",
                     borderRadius: "10px",
                     objectFit: "cover",
                   }}
