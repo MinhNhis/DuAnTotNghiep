@@ -20,6 +20,8 @@ import Profile from "../client/pages/Profile/index.js";
 import Client from "../client/pages/index.js";
 import ThanhToan from "../admin/views/thanhtoandki/index.js";
 import ThanhToanDKi from "../admin/views/thanhtoandki/Add/index.js";
+import Success from "../admin/views/thanhtoandki/Success/index.js";
+import Failed from "../admin/views/thanhtoandki/Failed/index.js";
 
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"))
 const AddDichVu = lazy(() => import("../admin/views/dichvu/Add/index.js"));
@@ -281,6 +283,8 @@ const ThemeRoutes = [
 
       { path: "admin/thanh-toan", element: <ThanhToan />, },
       { path: "admin/thanh-toan/thanh-toan-dki",exact: true, element: <ThanhToanDKi />, },
+      { path: "admin/thanh-toan/success",exact: true, element: <Success />, },
+      { path: "admin/thanh-toan/failed",exact: true, element: <Failed />, },
 
     ],
   },

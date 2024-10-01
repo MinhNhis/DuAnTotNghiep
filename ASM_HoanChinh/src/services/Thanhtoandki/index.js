@@ -82,7 +82,7 @@ const checkStatus = async ({orderId}) => {
 const sendMail = async ({orderId, transId, name, amount, email}) => {
     const res = await request({
         method: "POST",
-        path: "api/callback",
+        path: "/api/callback",
         data: {
             orderId: orderId,
             transId: transId,

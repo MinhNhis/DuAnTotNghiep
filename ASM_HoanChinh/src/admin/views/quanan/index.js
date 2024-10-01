@@ -4,7 +4,7 @@ import { Card, CardContent, Box, Typography, Button } from "@mui/material";
 
 import ExQuanAn from "../../components/QuanAn/QuanAnTable";
 import { useCookies } from "react-cookie";
-import { checkStatus, getThanhtoan, sendMail } from "../../../services/Thanhtoandki";
+import { checkStatus, getThanhtoan } from "../../../services/Thanhtoandki";
 import { getQuanan } from "../../../services/Quanan";
 
 const QuanAn = () => {
@@ -33,13 +33,6 @@ const QuanAn = () => {
       const res = await checkStatus({ orderId: thanhtoan.ma_don })
       if (res.resultCode === 0) {
         navigate('/admin/quanan/add');
-        await sendMail({
-          orderId: res.orderId,
-          transId: res.transId,
-          name: accounts.ten_nguoi_dung,
-          amount: res.amount,
-          email: accounts.email,
-        })
       } else {
         navigate('/admin/thanh-toan/thanh-toan-dki')
       }
