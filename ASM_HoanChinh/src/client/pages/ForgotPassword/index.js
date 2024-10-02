@@ -7,13 +7,13 @@ const ForgotPassword = () => {
   const { register, handleSubmit, formState } = useForm();
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('danger');
-  const APIUrl = 'http://localhost:3300'
+  const PageUrl = 'http://localhost:3300'
 
   const submit = async (data) => {
     try {
       console.log('Submitting data:', data);
 
-      const response = await fetch(`${APIUrl}/api/reset`, {
+      const response = await fetch(`${PageUrl}/api/reset`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
