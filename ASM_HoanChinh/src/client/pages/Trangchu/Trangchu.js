@@ -264,7 +264,7 @@ const Trangchu = () => {
                                                 {
                                                     quanan5Km.map((value, index) => {
                                                         return (
-                                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
+                                                            <div className='col-lg-3' key={index} style={{ height: "auto" }}>
                                                                 <div className='card'>
                                                                     <div className='row g-5'>
                                                                         <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -287,7 +287,14 @@ const Trangchu = () => {
                                                                         <div className='mb-2'>
                                                                             Giờ hoạt động: {value.gio_hoat_dong}
                                                                         </div>
-                                                                        <div className='mb-2'>
+                                                                        <div className='mb-2' style={{
+                                                                            display: '-webkit-box',
+                                                                            WebkitLineClamp: 1,
+                                                                            WebkitBoxOrient: 'vertical',
+                                                                            overflow: 'hidden',
+                                                                            textOverflow: 'ellipsis',
+                                                                            whiteSpace: 'normal'
+                                                                        }}>
                                                                             {value.dia_chi}
                                                                         </div>
                                                                         <div className="row g-4 text-dark mb-5">
@@ -322,7 +329,7 @@ const Trangchu = () => {
                                                 {
                                                     quanan.map((value, index) => {
                                                         return (
-                                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
+                                                            <div className='col-lg-3' key={index} style={{ height: "auto" }}>
                                                                 <div className='card'>
                                                                     <div className='row g-5'>
                                                                         <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -345,7 +352,14 @@ const Trangchu = () => {
                                                                         <div className='mb-2'>
                                                                             Giờ hoạt động: {value.gio_hoat_dong}
                                                                         </div>
-                                                                        <div className='mb-2'>
+                                                                        <div className='mb-2' style={{
+                                                                            display: '-webkit-box',
+                                                                            WebkitLineClamp: 1,
+                                                                            WebkitBoxOrient: 'vertical',
+                                                                            overflow: 'hidden',
+                                                                            textOverflow: 'ellipsis',
+                                                                            whiteSpace: 'normal'
+                                                                        }}>
                                                                             {value.dia_chi}
                                                                         </div>
                                                                         <div className="row g-4 text-dark mb-5">
