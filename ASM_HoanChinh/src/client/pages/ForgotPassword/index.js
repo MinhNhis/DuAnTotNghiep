@@ -1,13 +1,14 @@
 // components/ForgotPassword.js
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import {BASE_URL} from "../../../config/ApiConfig";
 
 
 const ForgotPassword = () => {
   const { register, handleSubmit, formState } = useForm();
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('danger');
-  const PageUrl = 'http://localhost:3300'
+  const PageUrl = BASE_URL
 
   const submit = async (data) => {
     try {
