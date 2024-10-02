@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Card, Box, Typography, CardContent, TextField, Button, Divider } from "@mui/material";
+import { Card, Box, Typography, CardContent, TextField, Button, Divider, Grid } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useForm } from "react-hook-form";
-import { addMomo, addThanhtoan, checkStatus, getThanhtoan } from "../../../../services/Thanhtoandki";
 import { Link, useNavigate } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { addMomo, addThanhtoan, checkStatus, getThanhtoan } from "../../../../services/Thanhtoandki";
 
 const ThanhToanChuyenTien = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -22,11 +22,7 @@ const ThanhToanChuyenTien = () => {
                 orderInfo: data.noidung
             })
             setResThanhtoan(result)
-            enqueueSnackbar("Vui lòng chờ 3 giây", { variant: 'success' })
-            setTimeout(() => {
-                window.open(result.payUrl, "_blank");
-            }, 3000);
-
+            window.open(result.payUrl, "_self");
         } catch (error) {
             enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
         }
@@ -110,63 +106,105 @@ const ThanhToanChuyenTien = () => {
                     </Box>
                 </CardContent>
                 :
-                <CardContent sx={{ padding: "30px" }}>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <TextField
-                            id="price"
-                            label="100.000 (VNĐ)"
-                            variant="outlined"
-                            fullWidth
-                            sx={{ mb: 2 }}
-                            type="number"
-                            {...register("price", {
-                                required: {
-                                    value: true,
-                                    message: "Số tiền không được bỏ trống",
-                                },
-                                min: {
-                                    value: 1000,
-                                    message: "Số tiền tối thiểu là 1,000 VNĐ",
-                                },
-                            })}
-                        />
-                        {errors?.price && (
-                            <small className="text-danger">
-                                {errors?.price?.message}
-                            </small>
-                        )}
+                <Grid container spacing={2} >
+                    <Grid item xs={12} md={6}>
+                        <CardContent sx={{ padding: "30px", width: "100%" }}>
+                            <form onSubmit={handleSubmit(onSubmit)}>
+                                <TextField
+                                    id="price"
+                                    label="Số tiền (VND)"
+                                    defaultValue={'100000'}
+                                    multiline
+                                    variant="standard"
+                                    placeholder="100.000 VND"
+                                    sx={{
+                                        mb: 1,
+                                        '& .MuiOutlinedInput-root': {
+                                            '& fieldset': {
+                                                border: 'none',
+                                            },
+                                        },
+                                        width: "50%",
+                                    }}
+                                    type="text"
+                                    {...register("price", {
+                                        required: {
+                                            value: true,
+                                            message: "Số tiền không được bỏ trống",
+                                        },
+                                        pattern: {
+                                            value: /^[0-9]+$/,
+                                            message: "Chỉ được nhập số",
+                                        },
+                                        min: {
+                                            value: 1000,
+                                            message: "Số tiền tối thiểu là 1,000 VNĐ",
+                                        },
+                                    })}
+                                    error={!!errors?.price}
+                                />
+                                {errors?.price && (
+                                    <Typography variant="caption" color="error" sx={{ mb: 2, display: "block" }}>
+                                        {errors?.price?.message}
+                                    </Typography>
+                                )}
 
-                        <TextField
-                            id="noidung"
-                            label="pay with MOMO"
-                            variant="outlined"
-                            fullWidth
-                            sx={{ mb: 2 }}
-                            {...register("noidung", {
-                                required: {
-                                    value: true,
-                                    message: "Nội dung không được bỏ trống",
-                                },
-                            })}
-                        />
-                        {errors?.noidung && (
-                            <small className="text-danger">
-                                {errors?.noidung?.message}
-                            </small>
-                        )}
+                                <TextField
+                                    id="noidung"
+                                    label="Nội dung"
+                                    defaultValue={'pay with MOMO'}
+                                    fullWidth
+                                    sx={{
+                                        mb: 1,
+                                    }}
+                                    {...register("noidung", {
+                                        required: {
+                                            value: true,
+                                            message: "Nội dung không được bỏ trống",
+                                        },
+                                    })}
+                                    error={!!errors?.noidung}
+                                />
+                                {errors?.noidung && (
+                                    <Typography variant="caption" color="error" sx={{ mb: 2, display: "block" }}>
+                                        {errors?.noidung?.message}
+                                    </Typography>
+                                )}
 
-                        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-                            <Button
-                                color="primary"
-                                variant="contained"
-                                type="submit"
-                                style={{ width: "150px" }}
-                            >
-                                Thanh toán
-                            </Button>
-                        </Box>
-                    </form>
-                </CardContent>
+                                <Box sx={{ display: "flex", justifyContent: "left", mt: 2 }}>
+                                    <Button
+                                        color="primary"
+                                        variant="contained"
+                                        type="submit"
+                                        sx={{
+                                            width: "150px",
+                                            padding: "10px",
+                                            fontSize: "16px",
+                                            borderRadius: "8px",
+                                        }}
+                                    >
+                                        Thanh toán
+                                    </Button>
+                                </Box>
+                            </form>
+                        </CardContent>
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                        <CardContent sx={{ padding: "30px", width: "100%" }}>
+                            <Box
+                                component="img"
+                                src="/images/MOMO.jpg"
+                                alt="Hình ảnh"
+                                sx={{
+                                    width: "100%",
+                                    height: "400px",
+                                    borderRadius: "10px",
+                                }}
+                            />
+                        </CardContent>
+
+                    </Grid>
+                </Grid>
             }
         </Card>
     );
