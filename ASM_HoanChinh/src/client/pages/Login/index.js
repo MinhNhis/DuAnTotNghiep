@@ -65,12 +65,6 @@ const Login = () => {
         ></Link>
       </div>
       <div className="modal-body">
-        <div className="form-details">
-          <p>
-            Vui lòng đăng nhập bằng thông tin cá nhân của bạn để tiếp tục kết
-            nối với chúng tôi.
-          </p>
-        </div>
         {!showForgotPasswordForm ? (
           <div className="form-content">
             <h2>ĐĂNG NHẬP</h2>
