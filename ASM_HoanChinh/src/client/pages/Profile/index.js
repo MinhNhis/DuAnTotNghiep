@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { editDatcho, getDatcho } from "../../../services/Datcho";
 import { useForm } from "react-hook-form";
 import {
@@ -16,11 +16,11 @@ import {
     FormLabel,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import {editNguoiDung, getNguoiDungById} from "../../../services/Nguoidung";
+import { editNguoiDung, getNguoiDungById } from "../../../services/Nguoidung";
 import "./profile.css";
 import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
-import {changPassword} from "../../../services/Auth";
+import { changPassword } from "../../../services/Auth";
 import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
@@ -30,7 +30,7 @@ const Profile = () => {
 
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
-    const [ nguoidung, setnguoidung ] = useState();
+    const [nguoidung, setnguoidung] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
     const navigate = useNavigate();
@@ -128,15 +128,15 @@ const Profile = () => {
     };
 
     const onChangePassword = async (value) => {
-        try{
-            await changPassword(accounts.id_nguoidung,{
+        try {
+            await changPassword(accounts.id_nguoidung, {
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
             enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             localStorage.removeItem("accounts");
             navigate("/login");
-        }catch (error){
+        } catch (error) {
             console.log(error)
             if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
                 enqueueSnackbar('Mật khẩu hiện tại không chính xác!', { variant: 'error' });
@@ -154,8 +154,10 @@ const Profile = () => {
                         <img
                             src={
                                 nguoidung?.hinh_anh
-                                    ? `${BASE_URL}/uploads/${nguoidung.hinh_anh}`
-                                    : ImgUser
+                                    ? (nguoidung.hinh_anh.startsWith('http')
+                                        ? nguoidung.hinh_anh
+                                        : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`)
+                                    : (accounts.hinh_anh || ImgUser)
                             }
                             alt="User Avatar"
                             className="avatar-img"
@@ -247,11 +249,11 @@ const Profile = () => {
                                                     value: /^[0-9\b]+$/,
                                                     message: "Số điện thoại không hợp lệ",
                                                 },
-                                                maxLength:{
+                                                maxLength: {
                                                     value: 10,
                                                     message: "Số điện thoại phải 10 số"
                                                 },
-                                                minLength:{
+                                                minLength: {
                                                     value: 10,
                                                     message: "Số điện thoại phải 10 số"
                                                 }
@@ -349,8 +351,8 @@ const Profile = () => {
                             </form>
                         </Grid>
 
-                        <Grid item xs={6}>
-                            <form className="profile-form">
+                        <Grid item xs={6} sx={{ display: accounts.googleId === 3 ? 'none' : 'flex' }}>
+                            <form className="profile-form" >
                                 <h5 className="form-title">Đổi mật khẩu</h5>
                                 <Grid container spacing={2}>
                                     <Grid item xs={12}>
@@ -450,7 +452,7 @@ const Profile = () => {
                                         : value?.trang_thai === 1
                                             ? "badge-success"
                                             : "badge-danger"
-                                    }`}
+                                        }`}
                                 >
                                     {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                     {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
