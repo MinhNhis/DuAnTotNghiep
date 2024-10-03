@@ -351,7 +351,7 @@ const Profile = () => {
                             </form>
                         </Grid>
 
-                        <Grid item xs={6} sx={{ display: accounts.mat_khau === 'GoogleLogin' ? 'none' : 'flex' }}>
+                        <Grid item xs={6} sx={{ display: accounts.googleId === 3 ? 'none' : 'flex' }}>
                             <form className="profile-form" >
                                 <h5 className="form-title">Đổi mật khẩu</h5>
                                 <Grid container spacing={2}>
