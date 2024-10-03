@@ -76,7 +76,7 @@ const MapComponent = () => {
         });
 
         const results = await Promise.all(geocodePromises);
-        setLocations(results.filter(item => item.coords));
+        setLocations(results.filter(item => item.coords));   
     };
 
     useEffect(() => {
