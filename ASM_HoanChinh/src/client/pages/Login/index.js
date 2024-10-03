@@ -22,7 +22,7 @@ const Login = () => {
     if (userLogin) {
       localStorage.setItem("accounts", JSON.stringify(userLogin));
       setCookie("role", userLogin.vai_tro);
-      if (userLogin.vai_tro === 1 || accounts.googleId) {
+      if (userLogin.vai_tro === 1) {
         navigate("/");
       } else {
         navigate("/admin");
