@@ -154,9 +154,9 @@ const Login = () => {
               </small>
             )}
             <div className="mb-3">
-              <a href="/" className="forgot-pass-link">
-                Quên mật khẩu?
-              </a>
+              <Link to="#" onClick={handleShowForgotPasswordForm} id="signup-link">
+                Quên mật khẩu ?
+              </Link>
             </div>
             <button
               type="submit"
