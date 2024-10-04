@@ -22,8 +22,6 @@ const Menu = () => {
         setQuanan(res.data)
     }
 
-
-
     const initDanhmuc = async () => {
         const res = await getDanhmuc();
         if (res && res.data) {
@@ -33,23 +31,22 @@ const Menu = () => {
         }
     };
 
-    // const initData = async () => {
-    //     try {
-    //         const result = await getMenus();
-    //         if (selectedCategory) {
-    //             setMenu(result.data.filter(item => item.id_danhmuc === selectedCategory));
-    //         } else {
-    //             setMenu(result.data);
-    //         }
-    //     } catch (err) {
-    //         setError('Failed to load menus');
-    //     }
-    // };
+    const initPage = async (data) => {
+        try {
+            setMenu(data.data);
+        } catch (error) {
+            setError('Failed to load menus');
+        }
+    };
+
+
+
     const initData = async () => {
         try {
+
             const result = await getMenus();
             let filteredMenus = result.data;
-    
+
             if (selectedCategory) {
                 const categoryName = danhmuc.find((category) => category.id_danhmuc === selectedCategory)?.danh_muc;
                 if (categoryName) {
@@ -58,10 +55,11 @@ const Menu = () => {
                         return category && category.danh_muc.toLowerCase() === categoryName.toLowerCase();
                     });
                 }
+                setMenu(filteredMenus);
             }
-    
-            setMenu(filteredMenus);
-        } catch (err) {
+
+
+        } catch (error) {
             setError('Failed to load menus');
         }
     };
@@ -69,15 +67,15 @@ const Menu = () => {
     useEffect(() => {
         initDanhmuc();
         initQuanan();
-    }, []);
-
-    useEffect(() => {
         initData();
     }, [selectedCategory]);
+
+
 
     const handleCategoryClick = (categoryId) => {
         setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
     };
+
 
     const filteredDanhmuc = danhmuc.filter((danhmuc, index, self) =>
         index === self.findIndex((t) => t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase())
@@ -169,7 +167,7 @@ const Menu = () => {
                                         },
                                     }}
                                 >
-                                    <PaginationRounded onDataChange={initData} paginator={paginator}
+                                    <PaginationRounded onDataChange={initPage} paginator={paginator}
                                     />
                                 </TableRow>
                             </div>
@@ -182,4 +180,6 @@ const Menu = () => {
 };
 
 export default Menu;
+
+
 
