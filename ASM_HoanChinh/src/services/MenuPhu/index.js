@@ -79,4 +79,6 @@ const paginator = async (page) => {
 
 
 
+
+
 export { getMenus, addMenu, updateMenu, deleteMenu, getMenuById, paginator };
