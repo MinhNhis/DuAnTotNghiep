@@ -14,8 +14,7 @@ const Menu = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
-
-
+    const [isAllSelected, setIsAllSelected] = useState(false);
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -38,8 +37,10 @@ const Menu = () => {
             setError('Failed to load menus');
         }
     };
-
-
+    const AllMenu = async () => {
+        const res = await paginator(1);
+        setMenu(res.data);
+    }
 
     const initData = async () => {
         try {
@@ -68,14 +69,19 @@ const Menu = () => {
         initDanhmuc();
         initQuanan();
         initData();
+
     }, [selectedCategory]);
 
-
-
     const handleCategoryClick = (categoryId) => {
-        setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
+        if (categoryId === null) {
+            setIsAllSelected(true);
+            setSelectedCategory(null);
+            AllMenu();
+        } else {
+            setIsAllSelected(false);
+            setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
+        }
     };
-
 
     const filteredDanhmuc = danhmuc.filter((danhmuc, index, self) =>
         index === self.findIndex((t) => t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase())
@@ -87,7 +93,6 @@ const Menu = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
 
-
     return (
         <div className="tab-class text-center">
             <div className="container">
@@ -96,6 +101,14 @@ const Menu = () => {
                 </div>
                 <div className="tab-class text-center">
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+                        <li className="nav-item p-2">
+                            <button
+                                className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary text-dark' : 'bg-light'}`}
+                                onClick={() => handleCategoryClick(null)}
+                            >
+                                <span style={{ width: '150px' }}>All</span>
+                            </button>
+                        </li>
                         {filteredDanhmuc.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2">
                                 <a
