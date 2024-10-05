@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { TableRow } from "@mui/material";
 
@@ -10,23 +9,13 @@ import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
 
 const Menu = () => {
+    const [danhmuc, setDanhmuc] = useState([]);
     const [menu, setMenu] = useState([]);
-    const [Danhmuc, setDanhmuc] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
 
-    const [selectedCategory, setSelectedCategory] = useState(null);
 
-    useEffect(() => {
-        initDanhmuc();
-        //initData();
-        initQuanan();
-    }, []);
-
-    useEffect(() => {
-        if (selectedCategory !== null) {
-            initData();
-        }
-    }, [selectedCategory]);
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -34,33 +23,67 @@ const Menu = () => {
     }
 
 
+
     const initDanhmuc = async () => {
         const res = await getDanhmuc();
-        setDanhmuc(res.data);
-    };
-    
-    const initData = async (data) => {
-        const result = await getMenus();
-        if (selectedCategory) {
-            setMenu(result.data.filter(item => item.id_danhmuc === selectedCategory));
+        if (res && res.data) {
+            setDanhmuc(res.data);
         } else {
-            setMenu(data.data);
+            setError('Failed to load categories');
         }
     };
+
+    // const initData = async () => {
+    //     try {
+    //         const result = await getMenus();
+    //         if (selectedCategory) {
+    //             setMenu(result.data.filter(item => item.id_danhmuc === selectedCategory));
+    //         } else {
+    //             setMenu(result.data);
+    //         }
+    //     } catch (err) {
+    //         setError('Failed to load menus');
+    //     }
+    // };
+    const initData = async () => {
+        try {
+            const result = await getMenus();
+            let filteredMenus = result.data;
     
+            if (selectedCategory) {
+                const categoryName = danhmuc.find((category) => category.id_danhmuc === selectedCategory)?.danh_muc;
+                if (categoryName) {
+                    filteredMenus = result.data.filter(item => {
+                        const category = danhmuc.find(cat => cat.id_danhmuc === item.id_danhmuc);
+                        return category && category.danh_muc.toLowerCase() === categoryName.toLowerCase();
+                    });
+                }
+            }
+    
+            setMenu(filteredMenus);
+        } catch (err) {
+            setError('Failed to load menus');
+        }
+    };
+
+    useEffect(() => {
+        initDanhmuc();
+        initQuanan();
+    }, []);
+
+    useEffect(() => {
+        initData();
+    }, [selectedCategory]);
+
     const handleCategoryClick = (categoryId) => {
-        if (selectedCategory === categoryId) {
-            setSelectedCategory(null); 
-        } else {
-            setSelectedCategory(categoryId); 
-        }
+        setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
     };
-    
-    const filteredDanhmuc = Danhmuc.filter((danhmuc, index, self) =>
-        index === self.findIndex((t) => (
-            t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase()
-        ))
+
+    const filteredDanhmuc = danhmuc.filter((danhmuc, index, self) =>
+        index === self.findIndex((t) => t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase())
     );
+
+    if (error) return <p>{error}</p>;
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -75,16 +98,16 @@ const Menu = () => {
                 </div>
                 <div className="tab-class text-center">
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
-                    {filteredDanhmuc.map((danhmuc, index) => (
-                <li key={index} className="nav-item p-2">
-                    <a
-                        className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
-                        onClick={() => handleCategoryClick(danhmuc.id_danhmuc)}
-                    >
-                        <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
-                    </a>
-                </li>
-            ))}
+                        {filteredDanhmuc.map((danhmuc, index) => (
+                            <li key={index} className="nav-item p-2">
+                                <a
+                                    className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
+                                    onClick={() => handleCategoryClick(danhmuc.id_danhmuc)}
+                                >
+                                    <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
+                                </a>
+                            </li>
+                        ))}
                     </ul>
                     <div className="tab-content">
                         <div id="tab-1" className="tab-pane fade show p-0 active">
@@ -159,5 +182,4 @@ const Menu = () => {
 };
 
 export default Menu;
-
 
