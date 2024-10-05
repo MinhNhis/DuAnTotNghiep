@@ -53,7 +53,7 @@ const EditNguoiDung = () => {
             <CardContent>
               <div className="col-6 offset-3 text-center mb-5">
                 <img
-                  src={nguoidung?.hinh_anh ? `${BASE_URL}/uploads/${nguoidung?.hinh_anh}` : imgUser}
+                  src={nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung?.hinh_anh}`) : imgUser}
                   alt="image"
                   className="center"
                   style={{
