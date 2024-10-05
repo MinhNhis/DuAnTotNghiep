@@ -213,9 +213,9 @@ const Gioithieu = () => {
             setSelectedMenuItems(prev => {
                 const newSelected = { ...prev };
                 if (isChecked) {
-                    newSelected[menuItemId] = 1; // Set default quantity to 1
+                    newSelected[menuItemId] = 1; 
                 } else {
-                    delete newSelected[menuItemId]; // Remove item if unchecked
+                    delete newSelected[menuItemId]; 
                 }
                 return newSelected;
             });
@@ -225,7 +225,7 @@ const Gioithieu = () => {
     const handleQuantityChange = (id_menu, change) => {
         setSelectedMenuItems(prev => {
             const newQuantity = (prev[id_menu] || 1) + change;
-            if (newQuantity < 1) return prev; // Prevent negative quantities
+            if (newQuantity < 1) return prev; 
             return { ...prev, [id_menu]: newQuantity };
         });
     };
@@ -237,6 +237,10 @@ const Gioithieu = () => {
         }, 0);
         setTotalPrice(total);
     }, [selectedMenuItems, menu]);
+
+  
+
+
 
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
@@ -581,6 +585,7 @@ const Gioithieu = () => {
                                                             +
                                                         </button>
                                                     </div>
+                                                 
                                                 </div>
                                             ) : null;
                                         })}
