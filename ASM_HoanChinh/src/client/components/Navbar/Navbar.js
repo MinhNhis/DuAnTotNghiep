@@ -81,7 +81,13 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                   >
                     <img
-                      src={nguoidung?.hinh_anh ? `${BASE_URL}/uploads/${nguoidung.hinh_anh}` : ImgUser}
+                      src={
+                        nguoidung?.hinh_anh
+                          ? (nguoidung.hinh_anh.startsWith('http')
+                            ? nguoidung.hinh_anh
+                            : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`)
+                          : (accounts.hinh_anh || ImgUser)
+                      }
                       alt="User"
                       className="rounded-circle me-2 border-black user-icon"
                     />

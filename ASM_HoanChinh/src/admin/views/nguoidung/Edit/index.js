@@ -48,34 +48,54 @@ const EditNguoiDung = () => {
           </Box>
         </Box>
         <Divider />
-        <CardContent sx={{ padding: "30px" }}>
-
-          <Card style={{ position: 'relative' }}>
+        <CardContent sx={{ padding: "30px", backgroundColor: "#f9f9f9", borderRadius: "10px", boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)" }}>
+          <div style={{ position: 'relative' }}>
             <CardContent>
               <div className="col-6 offset-3 text-center mb-5">
-                <img src={nguoidung?.hinh_anh ? `${BASE_URL}/uploads/${nguoidung?.hinh_anh}` : imgUser} alt="image" className="center" style={{ width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover" }} />
-                <h3 className="text-dark">{nguoidung?.ten_nguoi_dung}</h3>
+                <img
+                  src={nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung?.hinh_anh}`) : imgUser}
+                  alt="image"
+                  className="center"
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "4px solid #ddd",
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                <h3 className="text-dark" style={{ fontWeight: "600", marginTop: "15px" }}>{nguoidung?.ten_nguoi_dung}</h3>
               </div>
-              <div className="row  offset-3">
-                <div className="col-6">
-                  <p className="mb-3"><strong>Ngày sinh</strong>: {nguoidung?.ngay_sinh}</p>
-                  <p className="mb-3"><strong>Giới tính</strong>: {nguoidung?.gioi_tinh}</p>
-                  <p className="mb-3"><strong>Email</strong>: {nguoidung?.email}</p>
+              <div className="row offset-3" style={{ display: 'flex', justifyContent: 'space-between', fontSize: "16px" }}>
+                <div className="col-6" style={{ marginBottom: "15px" }}>
+                  <p><strong>Ngày sinh</strong>: {nguoidung?.ngay_sinh}</p>
+                  <p><strong>Giới tính</strong>: {nguoidung?.gioi_tinh}</p>
+                  <p><strong>Email</strong>: {nguoidung?.email}</p>
                 </div>
-                <div className="col-6">
-                  <p className="mb-3"><strong>Số điện thoại</strong>: {nguoidung?.so_dien_thoai}</p>
-                  <p className="mb-3"><strong>Địa chỉ</strong>: {nguoidung?.dia_chi}</p>
+                <div className="col-6" style={{ marginBottom: "15px" }}>
+                  <p><strong>Số điện thoại</strong>: {nguoidung?.so_dien_thoai}</p>
+                  <p><strong>Địa chỉ</strong>: {nguoidung?.dia_chi}</p>
                 </div>
               </div>
             </CardContent>
-            <Link to={"/admin/nguoi-dung"}><CloseIcon style={{ position: 'absolute', top: 10, right: 10, cursor: 'pointer' }} /></Link>
-          </Card>
+            <Link to={"/admin/nguoi-dung"}>
+              <CloseIcon style={{
+                position: 'absolute',
+                top: 10,
+                right: 10,
+                cursor: 'pointer',
+                color: "#999",
+                transition: "color 0.3s ease"
+              }}
+                onMouseEnter={(e) => e.target.style.color = "#333"}
+                onMouseLeave={(e) => e.target.style.color = "#999"} />
+            </Link>
+          </div>
         </CardContent>
-      </Card>
 
-      {nguoidung && quanan && quanan.created_user === nguoidung.id_nguoidung ?
-        <Grid item xs={12} md={6}>
-          <Card style={{ height: "100%" }}>
+        {nguoidung && quanan && quanan.created_user === nguoidung.id_nguoidung ?
+          <Grid item xs={12} md={6}>
             <CardContent>
               <Box className="text-center mb-3">
                 <img
@@ -113,11 +133,9 @@ const EditNguoiDung = () => {
                 <strong>Chủ quán:</strong> {nguoidung?.ten_nguoi_dung}
               </Typography>
             </CardContent>
-          </Card>
-        </Grid>
-        : null}
-        <>
-        </>
+          </Grid>
+          : null}
+      </Card>
     </div>
 
   );
