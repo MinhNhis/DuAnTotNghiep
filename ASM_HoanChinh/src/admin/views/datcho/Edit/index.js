@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Card, CardContent, Divider, Box, Typography, Button, TextField, Select, MenuItem } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useForm } from "react-hook-form";
-import { editDatcho, getDatchoById, getKhachhang, getQuanan } from "../../../../services/Datcho";
+import { editDatcho, getDatchoById, getKhachhang, getQuanan, sendEmail } from "../../../../services/Datcho";
 import { useSnackbar } from 'notistack';
 import { getNguoiDung } from "../../../../services/Nguoidung";
 
@@ -12,6 +13,8 @@ const EditDatcho = () => {
     const [quanan, setQuanan] = useState([]);
     const [khachhang, setKhachhang] = useState([]);
     const [nguoidungs, setNguoidung] = useState([])
+    const [showPopup, setShowPopup] = useState(false); // Thêm state để kiểm soát popup
+    const [reason, setReason] = useState(""); // State để lưu lý do
     const navigate = useNavigate();
     const params = useParams();
     const id = params.id_datcho;
@@ -54,6 +57,11 @@ const EditDatcho = () => {
     const submit = async (value) => {
         console.log(value);
         try {
+            if (value.trang_thai === 2) {
+                setShowPopup(true); // Hiển thị popup khi trạng thái == 2
+                return;
+            }
+
             await editDatcho(id, {
                 ten_quan: value?.quan_an.split(",")[0],
                 ten_kh: value?.khach_hang,
@@ -64,16 +72,45 @@ const EditDatcho = () => {
                 so_luong_nguoi: value?.so_luong,
                 trang_thai: value?.trang_thai,
                 yeu_cau_khac: value?.yeu_cau,
-                //id_nguoidung: nguoidung.id_nguoidung,
                 id_quanan: value?.quan_an.split(",")[1]
             });
             enqueueSnackbar('Cập nhật thành công!', { variant: 'success' });
             navigate("/admin/dat-cho");
         } catch (error) {
             console.log(error);
-
             enqueueSnackbar('Có lỗi xảy ra!', { variant: 'error' });
         }
+    };
+    const handlePopupSubmit = async (event) => {
+
+        event.preventDefault();
+
+        setShowPopup(false); // Ẩn popup
+
+        try {
+            // Gọi editDatcho với lý do đã cung cấp
+            await editDatcho(id, {
+                ten_quan: datcho.ten_quan, // Giữ nguyên tên quán
+                ten_kh: datcho.ten_kh, // Giữ nguyên tên khách hàng
+                sdt_kh: datcho.sdt_kh, // Giữ nguyên số điện thoại
+                email_kh: datcho.email_kh, // Giữ nguyên email
+                ngay_dat: datcho.ngay_dat, // Giữ nguyên ngày đặt
+                thoi_gian: datcho.thoi_gian, // Giữ nguyên thời gian
+                so_luong_nguoi: datcho.so_luong_nguoi, // Giữ nguyên số lượng người
+                trang_thai: "2", // Đặt trạng thái là 2 (đã hủy)
+                yeu_cau_khac: datcho.yeu_cau_khac, // Giữ nguyên yêu cầu khác
+                // Chỉ cần cập nhật lý do hủy
+                ly_do_huy: reason // Thêm lý do hủy đơn nếu API hỗ trợ
+            });
+
+            enqueueSnackbar('Đơn hàng đã được hủy!', { variant: 'success' });
+            navigate("/admin/dat-cho");
+        } catch (error) {
+            console.log(error);
+            enqueueSnackbar('Có lỗi xảy ra khi hủy đơn!', { variant: 'error' });
+        }
+
+        await sendEmail(id, reason)
     };
 
     return (
@@ -260,6 +297,28 @@ const EditDatcho = () => {
                     </form>
                 </CardContent>
             </Card>
+            {/* Popup để nhập lý do hủy */}
+            <Dialog fullWidth maxWidth="md" sx={{ '& .MuiDialog-paper': { padding: 0, margin: 0, width: "500px" } }} open={showPopup} onClose={() => setShowPopup(false)}>
+                <DialogTitle fontSize={"25px"} >Lý do hủy đơn</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Lý do"
+                        fullWidth
+                        value={reason}
+                        onChange={(e) => setReason(e.target.value)}
+                        variant="outlined"
+                        margin="normal"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="contained" onClick={handlePopupSubmit} sx={{ marginRight: 0.5 }}>
+                        Xác nhận
+                    </Button>
+                    <Button variant="outlined" color="error" onClick={() => setShowPopup(false)} sx={{ marginRight: 2 }}>
+                        Hủy
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

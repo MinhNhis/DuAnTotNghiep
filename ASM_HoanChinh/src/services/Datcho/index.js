@@ -103,4 +103,15 @@ const paginator = async (page) => {
     return res
 }
 
-export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, getKhachhang,paginator }
+const sendEmail = async (id, reason) => {
+
+    const res = await request({
+        method: "POST",
+        path: `api/sendMail-dat-cho/${id}`,
+        data: {reason}
+    })
+
+    return res
+}
+
+export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan,sendEmail, getKhachhang,paginator }
