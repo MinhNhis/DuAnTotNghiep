@@ -16,16 +16,12 @@ import Visibility from "@mui/icons-material/Visibility";
 import { getNguoiDung, paginator } from "../../../services/Nguoidung";
 import { BASE_URL } from "../../../config/ApiConfig";
 import imgUser from '../../assets/images/user.png';
-
 import PaginationRounded from "../Paginator";
 import { useCookies } from "react-cookie";
-
-
 
 const DichVuTable = () => {
   const navigate = useNavigate();
   const [nguoidung, setNguoidung] = useState([]);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -47,16 +43,12 @@ const DichVuTable = () => {
 
   };
 
-
-
-
   const initNguoidung = async () => {
     if (cookies.role !== 0) {
       const result = await getNguoiDung()
       setNguoidung(result.data)
     } else return null
   }
-
   return (
     <>
       <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -100,7 +92,6 @@ const DichVuTable = () => {
               <TableCell>
                 <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5 }}>
                   {(currentPage - 1) * itemsPerPage + index + 1}
-
                 </Typography>
               </TableCell>
               <TableCell>
@@ -116,7 +107,11 @@ const DichVuTable = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Box>
                     <Typography variant="body1" sx={{ ml: 0.5 }}>
-                      <img src={value?.hinh_anh ? `${BASE_URL}/uploads/${value?.hinh_anh}` : imgUser} alt="image" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
+                      <img src={value?.hinh_anh
+                        ? (value.hinh_anh.startsWith('http')
+                          ? value.hinh_anh
+                          : `${BASE_URL}/uploads/${value.hinh_anh}`)
+                        : (value.hinh_anh || imgUser)} alt="image" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
                     </Typography>
                   </Box>
                 </Box>

@@ -79,4 +79,19 @@ const checkStatus = async ({orderId}) => {
     return res
 }
 
-export { getThanhtoan, getThanhtoanById, addThanhtoan, addMomo, checkStatus, updateThanhtoan}
+const sendMail = async ({orderId, transId, name, amount, email}) => {
+    const res = await request({
+        method: "POST",
+        path: "/api/callback",
+        data: {
+            orderId: orderId,
+            transId: transId,
+            name: name,
+            amount: amount,
+            email: email,
+        }
+    })
+    return res
+}
+
+export { getThanhtoan, getThanhtoanById, addThanhtoan, addMomo, checkStatus, updateThanhtoan, sendMail}

@@ -58,9 +58,13 @@ const ThanhToanTable = () => {
         }
     };
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    };
+
     return (
         <>
-            <Table aria-label="simple table" sx={{ mt: 3 }}>
+            <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap"}}>
                 <TableHead>
                     <TableRow>
                         <TableCell>
@@ -80,7 +84,7 @@ const ThanhToanTable = () => {
                         </TableCell>
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                                Tên khách hàng
+                                Khách hàng
                             </Typography>
                         </TableCell>
                         <TableCell>
@@ -165,7 +169,7 @@ const ThanhToanTable = () => {
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {tt.tong_tien}
+                                            {formatPrice(tt.tong_tien)}
                                         </Typography>
                                     </Box>
                                 </Box>

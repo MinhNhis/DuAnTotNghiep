@@ -100,16 +100,6 @@ const ExQuanAn = () => {
             </TableCell>
             <TableCell>
               <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Link Website
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                Link Facebook
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                 Hành động
               </Typography>
             </TableCell>
@@ -161,8 +151,8 @@ const ExQuanAn = () => {
                   {items.gio_hoat_dong}
                 </Typography>
               </TableCell>
-              <TableCell>{items.link_website}</TableCell>
-              <TableCell>{items.link_facebook}</TableCell>
+              {/* <TableCell>{items.link_website}</TableCell>
+              <TableCell>{items.link_facebook}</TableCell> */}
               <TableCell>
                 <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
                   <IconButton
@@ -217,16 +207,64 @@ const ExQuanAn = () => {
     <>
       <Grid aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
         {filteredQuanan.map((items, index) => (
-          <Grid item xs={12} sm={12} md={12} key={items.id_quanan}>
+          <Grid item xs={12} sm={12} md={12} key={items.id_quanan} sx={{ position: 'relative' }}>
             {items.hinh_anh && (
               <CardMedia
                 component="img"
                 height="400px"
                 image={`${BASE_URL}/uploads/${items.hinh_anh}`}
                 alt={items.ten_quan_an}
-                sx={{ borderRadius: "6px 6px 6px 6px", objectFit: 'cover' }}
+                sx={{ borderRadius: '6px', objectFit: 'cover' }}
               />
             )}
+
+            {/* CardActions với các nút */}
+            <CardActions
+              sx={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                padding: '8px'
+              }}
+            >
+              <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
+                <IconButton
+                  aria-label="edit"
+                  color="primary"
+                  sx={{
+                    width: "45px",
+                    height: "45px",
+                    marginBottom: '8px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 1)' 
+                    }
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Link>
+              <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
+                <IconButton
+                  aria-label="delete"
+                  color="error"
+                  sx={{
+                    width: "45px",
+                    height: "45px",
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(255, 255, 255, 1)'
+                    }
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Link>
+
+            </CardActions>
             <CardContent>
               <Typography variant="h4" sx={{ fontSize: "40px", fontWeight: "bold" }}>
                 {items.ten_quan_an}
@@ -264,21 +302,6 @@ const ExQuanAn = () => {
                   Facebook
                 </Button>
               )}
-            </CardActions>
-
-            <CardActions>
-              <Box mt={1} mb={2} display="flex" justifyContent="space-between" px={2}>
-                <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
-                  <IconButton aria-label="edit" color="primary" style={{ width: "45px", height: "45px" }}>
-                    <EditIcon />
-                  </IconButton>
-                </Link>
-                <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
-                  <IconButton aria-label="delete" color="danger" style={{ float: "left", width: "45px", height: "45px" }}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Link>
-              </Box>
             </CardActions>
           </Grid>
         ))}
