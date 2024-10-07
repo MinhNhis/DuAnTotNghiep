@@ -98,7 +98,11 @@ const Trangchu = () => {
 
                 const quanCoords = { lat: coords.lat, lng: coords.lng };
 
-                const distanceInKm = await khoangCach(userCoords, quanCoords);
+                const Km = await khoangCach(userCoords, quanCoords);
+                let distanceInKm = 0
+                if (Km) {
+                    distanceInKm = Km.toFixed(1)
+                }
                 return distanceInKm !== null ? { ...item, coords, distanceInKm } : null;
             });
 
@@ -167,7 +171,7 @@ const Trangchu = () => {
                                                 <img src={`${BASE_URL}/uploads/${element.hinh_anh}`} alt="" style={{ width: "100%" }} /><br />
                                                 <b>{element.ten_quan_an}</b><br />
                                                 {element.gio_hoat_dong} <br />
-                                                {element.distanceInKm.toFixed(1)} Km <br />
+                                                {element.distanceInKm} Km <br />
                                                 {element.dia_chi}
                                             </Popup>
                                         </Marker>
@@ -282,7 +286,7 @@ const Trangchu = () => {
                                                                             <i className="fas fa-star text-primary me-2"></i>
                                                                         </div>
                                                                         <div className='mb-2'>
-                                                                            {value.distanceInKm.toFixed(1)} Km
+                                                                            {value.distanceInKm} Km
                                                                         </div>
                                                                         <div className='mb-2'>
                                                                             Giờ hoạt động: {value.gio_hoat_dong}
