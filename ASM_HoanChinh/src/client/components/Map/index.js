@@ -209,6 +209,7 @@ const MapComponent = () => {
                                     { lat: center.lat, lng: center.lng },
                                 ]}
                                 obj={quan}
+                                boolend={true}
                             />
                         )}
                     </MapContainer>

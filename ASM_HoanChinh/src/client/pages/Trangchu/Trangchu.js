@@ -15,6 +15,7 @@ import geocodeAddress from '../../components/GeoLocation';
 import osm from "../../components/Map/osm-providers";
 import { makerIcon, makerIconBlue } from '../../components/Map';
 import Routing from '../../components/RoutingMap';
+import { getDanhgia } from '../../../services/Danhgia';
 
 
 const Trangchu = () => {
@@ -27,6 +28,7 @@ const Trangchu = () => {
     const [quanan5Km, setQuanan5Km] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isOnline, setIsOnline] = useState(navigator.onLine);
     const accounts = JSON.parse(localStorage.getItem("accounts"));
 
     useEffect(() => {
@@ -44,15 +46,29 @@ const Trangchu = () => {
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
-        loadMap();
+        const handleOnline = () => {
+            setIsOnline(true);
+            loadMap();
+        };
+
+        const handleOffline = () => {
+            setIsOnline(false);
+            alert("Không có kết nối internet. Vui lòng kiểm tra lại mạng.");
+        };
+        window.addEventListener('online', handleOnline);
+        window.addEventListener('offline', handleOffline);
+        if (navigator.onLine) {
+            setIsOnline(true);
+            loadMap();
+        } else {
+            setIsOnline(false);
+            alert("Không có kết nối internet. Vui lòng kiểm tra lại mạng.");
+        }
+        return () => {
+            window.removeEventListener('online', handleOnline);
+            window.removeEventListener('offline', handleOffline);
+        };
     }, []);
-
-    const initData = async (data) => {
-        setQuanan(data.data);
-
-        const resultGt = await getGioithieu();
-        setGioithieu(resultGt.data);
-    };
 
     const khoangCach = async (startCoords, endCoords) => {
         const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=false`;
@@ -75,7 +91,6 @@ const Trangchu = () => {
         }
     };
 
-
     const loadMap = async () => {
         setIsLoading(true);
         try {
@@ -86,33 +101,49 @@ const Trangchu = () => {
                 })
             ]);
 
+            const result = await getDanhgia();
             const quans = res.data;
+            const danhgia = result.data;
             const { latitude, longitude } = geoPosition.coords;
             const userCoords = { lat: latitude, lng: longitude };
 
             setUserLocation(userCoords);
 
-            const distancePromises = quans.map(async (item) => {
+            // Tính toán tất cả trong một vòng lặp duy nhất
+            const promises = quans.map(async (item, index) => {
+                const delay = index * 3000;
+                await new Promise(resolve => setTimeout(resolve, delay));
+
                 const coords = await geocodeAddress(item.dia_chi);
                 if (!coords) return null;
 
                 const quanCoords = { lat: coords.lat, lng: coords.lng };
-
                 const Km = await khoangCach(userCoords, quanCoords);
-                let distanceInKm = 0
-                if (Km) {
-                    distanceInKm = Km.toFixed(1)
-                }
-                return distanceInKm !== null ? { ...item, coords, distanceInKm } : null;
+                const distanceInKm = Km ? Km.toFixed(1) : 0;
+
+                // Tính sao trung bình với reduce
+                const { totalStars, count } = danhgia.reduce(
+                    (acc, e) => {
+                        if (e.id_quanan === item.id_quanan) {
+                            acc.totalStars += e.sao;
+                            acc.count++;
+                        }
+                        return acc;
+                    },
+                    { totalStars: 0, count: 0 }
+                );
+
+                const startTB = count > 0 ? totalStars / count : 0;
+
+                return distanceInKm !== null ? { ...item, coords, distanceInKm, startTB } : null;
             });
 
-            const results = await Promise.all(distancePromises);
+            const results = await Promise.all(promises);
             const fillQuan = results.filter(item => item !== null);
-
             setLocations(fillQuan);
 
-            // Lọc khoảng cách <= 20 km
-            const quan5Km = fillQuan.filter(quan => quan.distanceInKm <= 5);
+            // Lọc khoảng cách <= 5 km
+            const quan5Km = fillQuan.filter(quan => quan.distanceInKm <= 5).sort((a, b) => a.distanceInKm - b.distanceInKm);
             setQuanan5Km(quan5Km);
         } catch (error) {
             console.error("Error loading map data:", error);
@@ -120,6 +151,50 @@ const Trangchu = () => {
             setIsLoading(false);
         }
     };
+
+    const initData = async (data) => {
+        // Tb Sao
+        const res = await getDanhgia()
+        const danhgia = res.data
+        const quan = data.data
+        const dataKm = locations
+        const promise = quan.map(async (item, index) => {
+            const { totalStars, count } = danhgia.reduce(
+                (acc, e) => {
+                    if (e.id_quanan === item.id_quanan) {
+                        acc.totalStars += e.sao;
+                        acc.count++;
+                    }
+                    return acc;
+                },
+                { totalStars: 0, count: 0 }
+            );
+
+            const { distanceInKm } = dataKm.reduce(
+                (acc, e) => {
+                    if (e.id_quanan === item.id_quanan) {
+                        acc.distanceInKm = e.distanceInKm; 
+                    }
+                    return acc;
+                },
+                { distanceInKm: 0 }
+            );
+
+            const startTB = count > 0 ? totalStars / count : 0;
+            return { ...item, distanceInKm, startTB };
+        })
+
+        if (promise) {
+            const results = await Promise.all(promise);
+            const fillQuan = results.filter(item => item !== null).sort((a, b) => a.distanceInKm - b.distanceInKm);
+            setQuanan(fillQuan)
+        } else {
+            setQuanan(data.data)
+        }
+        const resultGt = await getGioithieu();
+        setGioithieu(resultGt.data);
+    };
+
     //Tìm kiếm Map
     const [timKiem, setTimKiem] = useState('');
     const [dstimkiem, setDstimkiem] = useState([]);
@@ -133,6 +208,17 @@ const Trangchu = () => {
         } else {
             setDstimkiem([]);
         }
+    };
+    const renderStars = (stars) => {
+        return [...Array(5)].map((_, i) => {
+            if (i < Math.floor(stars)) {
+                return <i key={i} className="fas fa-star text-primary me-2"></i>;
+            } else if (i < stars) {
+                return <i key={i} className="fas fa-star-half-alt text-primary me-2"></i>;
+            } else {
+                return <i key={i} className="far fa-star text-primary me-2"></i>;
+            }
+        });
     };
 
     return (
@@ -279,19 +365,16 @@ const Trangchu = () => {
                                                                 <div className='row g-5'>
                                                                     <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                         <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
-                                                                        <div className='mb-2'>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                        <div className='mb-1'>
+                                                                            {renderStars(value.startTB)}
                                                                         </div>
-                                                                        <div className='mb-2'>
+                                                                        <div className='mb-1'>
                                                                             {value.distanceInKm} Km
                                                                         </div>
-                                                                        <div className='mb-2'>
+                                                                        <div className='mb-1'>
                                                                             Giờ hoạt động: {value.gio_hoat_dong}
                                                                         </div>
-                                                                        <div className='mb-2' style={{
+                                                                        <div className='mb-1' style={{
                                                                             display: '-webkit-box',
                                                                             WebkitLineClamp: 1,
                                                                             WebkitBoxOrient: 'vertical',
@@ -301,7 +384,7 @@ const Trangchu = () => {
                                                                         }}>
                                                                             {value.dia_chi}
                                                                         </div>
-                                                                        <div className="row g-4 text-dark mb-5">
+                                                                        <div className="row g-4 text-dark mb-3">
                                                                             {
                                                                                 gioithieu.map((gt) => {
                                                                                     return (
@@ -333,7 +416,7 @@ const Trangchu = () => {
                                                 {
                                                     quanan.map((value, index) => {
                                                         return (
-                                                            <div className='col-lg-3' key={index} style={{ height: "auto" }}>
+                                                            <div className='col-lg-3 mb-3' key={index} style={{ height: "auto" }}>
                                                                 <div className='card'>
                                                                     <div className='row g-5'>
                                                                         <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -344,19 +427,16 @@ const Trangchu = () => {
                                                                 <div className='row g-5'>
                                                                     <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                         <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
-                                                                        <div className='mb-2'>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
-                                                                            <i className="fas fa-star text-primary me-2"></i>
+                                                                        <div className='mb-1'>
+                                                                            {renderStars(value.startTB)}
                                                                         </div>
-                                                                        <div className='mb-2'>
-                                                                            {/* {value.distanceInKm} Km */}
+                                                                        <div className='mb-1'>
+                                                                            {value.distanceInKm} Km
                                                                         </div>
-                                                                        <div className='mb-2'>
+                                                                        <div className='mb-1'>
                                                                             Giờ hoạt động: {value.gio_hoat_dong}
                                                                         </div>
-                                                                        <div className='mb-2' style={{
+                                                                        <div className='mb-1' style={{
                                                                             display: '-webkit-box',
                                                                             WebkitLineClamp: 1,
                                                                             WebkitBoxOrient: 'vertical',
@@ -366,7 +446,7 @@ const Trangchu = () => {
                                                                         }}>
                                                                             {value.dia_chi}
                                                                         </div>
-                                                                        <div className="row g-4 text-dark mb-5">
+                                                                        <div className="row g-4 text-dark mb-3">
                                                                             {
                                                                                 gioithieu.map((gt) => {
                                                                                     return (
@@ -395,34 +475,37 @@ const Trangchu = () => {
                                                     })
                                                 }
                                             </div>
-                                            <TableRow
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    marginTop: "20px",
-                                                    button: {
-                                                        backgroundColor: "#d4a762",
-                                                        color: "#fff",
-                                                        borderRadius: "50%",
-                                                        width: "20px",
-                                                        height: "20px",
-                                                        fontSize: "0.8rem",
-                                                        margin: "0 5px",
-                                                        "&.Mui-selected": {
-                                                            backgroundColor: "#b0853d",
-                                                        }
-                                                    },
-                                                }}
-                                            >
-                                                <PaginationRounded onDataChange={initData} paginator={paginator}
-                                                />
-                                            </TableRow>
+                                            {!isLoading ?
+                                                <TableRow
+                                                    sx={{
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        marginTop: "20px",
+                                                        button: {
+                                                            backgroundColor: "#d4a762",
+                                                            color: "#fff",
+                                                            borderRadius: "50%",
+                                                            width: "20px",
+                                                            height: "20px",
+                                                            fontSize: "0.8rem",
+                                                            margin: "0 5px",
+                                                            "&.Mui-selected": {
+                                                                backgroundColor: "#b0853d",
+                                                            }
+                                                        },
+                                                    }}
+                                                >
+                                                    <PaginationRounded onDataChange={initData} paginator={paginator}
+                                                    />
+                                                </TableRow>
+                                                : null}
+
                                         </>
                                         : <>
                                             {
                                                 quanan.map((value, index) => {
                                                     return (
-                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "350px" }}>
+                                                        <div className='col-lg-3 mb-3' key={index} style={{ height: "auto" }}>
                                                             <div className='card'>
                                                                 <div className='row g-5'>
                                                                     <div className="col-lg-12 wow " data-wow-delay="0.1s">
@@ -433,22 +516,19 @@ const Trangchu = () => {
                                                             <div className='row g-5'>
                                                                 <div className="col-lg-12 wow " data-wow-delay="0.3s">
                                                                     <h5 className="display-5 mb-1" style={{ fontSize: '20px', fontWeight: 'bold' }}><Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link></h5>
-                                                                    <div className='mb-2'>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                                        <i className="fas fa-star text-primary me-2"></i>
+                                                                    <div className='mb-1'>
+                                                                        {renderStars(value.startTB)}
                                                                     </div>
                                                                     <div className='mb-2'>
-                                                                        {/* {value.distanceInKm} Km */}
+                                                                        {value.distanceInKm} Km
                                                                     </div>
-                                                                    <div className='mb-2'>
+                                                                    <div className='mb-1'>
                                                                         Giờ hoạt động: {value.gio_hoat_dong}
                                                                     </div>
-                                                                    <div className='mb-2'>
+                                                                    <div className='mb-1'>
                                                                         {value.dia_chi}
                                                                     </div>
-                                                                    <div className="row g-4 text-dark mb-5">
+                                                                    <div className="row g-4 text-dark mb-3">
                                                                         {
                                                                             gioithieu.map((gt) => {
                                                                                 return (
@@ -476,28 +556,31 @@ const Trangchu = () => {
                                                     )
                                                 })
                                             }
-                                            <TableRow
-                                                sx={{
-                                                    display: "flex",
-                                                    justifyContent: "center",
-                                                    marginTop: "20px",
-                                                    button: {
-                                                        backgroundColor: "#d4a762",
-                                                        color: "#fff",
-                                                        borderRadius: "50%",
-                                                        width: "20px",
-                                                        height: "20px",
-                                                        fontSize: "0.8rem",
-                                                        margin: "0 5px",
-                                                        "&.Mui-selected": {
-                                                            backgroundColor: "#b0853d",
-                                                        }
-                                                    },
-                                                }}
-                                            >
-                                                <PaginationRounded onDataChange={initData} paginator={paginator}
-                                                />
-                                            </TableRow>
+                                            {!isLoading ?
+                                                <TableRow
+                                                    sx={{
+                                                        display: "flex",
+                                                        justifyContent: "center",
+                                                        marginTop: "20px",
+                                                        button: {
+                                                            backgroundColor: "#d4a762",
+                                                            color: "#fff",
+                                                            borderRadius: "50%",
+                                                            width: "20px",
+                                                            height: "20px",
+                                                            fontSize: "0.8rem",
+                                                            margin: "0 5px",
+                                                            "&.Mui-selected": {
+                                                                backgroundColor: "#b0853d",
+                                                            }
+                                                        },
+                                                    }}
+                                                >
+                                                    <PaginationRounded onDataChange={initData} paginator={paginator}
+                                                    />
+                                                </TableRow>
+                                                : null}
+
                                         </>
                                     }
 
