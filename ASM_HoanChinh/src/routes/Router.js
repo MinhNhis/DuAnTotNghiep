@@ -22,13 +22,18 @@ import ThanhToan from "../admin/views/thanhtoandki/index.js";
 import ThanhToanDKi from "../admin/views/thanhtoandki/Add/index.js";
 import Success from "../admin/views/thanhtoandki/Success/index.js";
 import Failed from "../admin/views/thanhtoandki/Failed/index.js";
+import DeleteBaiviet from "../admin/views/baiviet/Delete/index.js";
 
+//Bài viết
+const BaiViet = lazy(() => import("../admin/views/baiviet/index.js"));
+const AddBaiViet = lazy(() => import("../admin/views/baiviet/Add/index.js"))
+
+//Dịch vụ
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"))
 const AddDichVu = lazy(() => import("../admin/views/dichvu/Add/index.js"));
 const EditDichVu = lazy(() => import("../admin/views/dichvu/Edit/index.js"));
 
 /***** Giới thiệu*/
-
 const GioiThieu = lazy(() => import("../admin/views/gioithieu/index.js"));
 const AddGioiThieu = lazy(() => import("../admin/views/gioithieu/Add/index.js"));
 const EditGioiThieu = lazy(() => import("../admin/views/gioithieu/Edit/index.js"));
@@ -92,14 +97,12 @@ const AddQuanAn = lazy(() => import("../admin/views/quanan/Add/index.js"));
 const EditQuanAn = lazy(() => import("../admin/views/quanan/Edit/index.js"));
 const DeleteQuanAn = lazy(() => import("../admin/views/quanan/Delete/index.js"));
 const ListQuanAn = lazy(() => import("../admin/views/quanan/List/index.js"));
+
 /****Layouts*****/
 const FullLayout = lazy(() => import("../admin/layouts/FullLayout/FullLayout.js"));
-/****End Layouts*****/
 
 /*****Pages******/
 const Dashboard1 = lazy(() => import("../admin/views/dashboards/Dashboard1.js"));
-
-
 
 const Trangchu = lazy(() => import("../client/pages/Trangchu/Trangchu.js"))
 const Chitiet = lazy(() => import("../client/pages/Chitiet/Chitiet.js"))
@@ -124,14 +127,6 @@ const ThemeRoutes = [
     children: [
       { path: "", exact: true, element: <Trangchu /> },
       { path: "/chi-tiet/:id", element: <Chitiet /> },
-      // {
-      //   path: '/login',
-      //   element: <Login />
-      // },
-      // {
-      //   path: '/register',
-      //   element: <Register />
-      // },
       {
         path: '/danh-gia/:id',
         element: <Danhgia />
@@ -159,50 +154,6 @@ const ThemeRoutes = [
       },
     ]
   },
-  // {
-  //   path: '/login',
-  //   element: <Login />
-  // },
-  // {
-  //   path: '/register',
-  //   element: <Register />
-  // },
-  // // {
-  // //   path: 'chi-tiet/:id',
-  // //   element: <Chitiet />
-  // // },
-  // {
-  //   path: '/danh-gia/:id',
-  //   element: <Danhgia />
-  // },
-  // {
-  //   path: '/menu-phu',
-  //   element: <MenuPhu />
-  // },
-  // {
-  //   path: '/kham-pha',
-  //   element: <KhamPha />
-  // },
-  // {
-  //   path: '/dat-cho/:id',
-  //   element: <DatCho />
-  // },
-  // {
-  //   path: '/login',
-  //   element: <Login />
-  // },
-  // {
-  //   path: '/register',
-  //   element: <Register />
-  // },
-  // {
-  //   path: '/chi-tiet-don',
-  //   element: <ChiTietDon />
-  // },
-  // {
-  //   path: '/profile',
-  //   element: <Profile />
-  // },
   {
     path: "",
     element: <FullLayout />,
@@ -286,6 +237,9 @@ const ThemeRoutes = [
       { path: "admin/thanh-toan/success",exact: true, element: <Success />, },
       { path: "admin/thanh-toan/failed",exact: true, element: <Failed />, },
 
+      { path: "admin/bai-viet", element: <BaiViet/>},
+      { path: "admin/bai-viet/add", element: <AddBaiViet/>},
+      { path: "admin/bai-viet/delete/:id_baiviet", element: <DeleteBaiviet/>},
     ],
   },
 

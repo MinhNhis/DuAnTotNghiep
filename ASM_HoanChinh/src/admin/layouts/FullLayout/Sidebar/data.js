@@ -14,7 +14,7 @@ import HouseIcon from '@mui/icons-material/House';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import PaymentIcon from '@mui/icons-material/Payment';
-
+import ArticleIcon from '@mui/icons-material/Article';
 
 // Use the StarIcon in your component
 <StarIcon />
@@ -101,6 +101,12 @@ const Menuitems = [
     key: 2,
     icon: AccountCircleIcon,
     href: "admin/nguoi-dung",
+  },
+  {
+    title: "Bài viết",
+    key: 2,
+    icon: ArticleIcon,
+    href:"admin/bai-viet",
   },
   {
     title: "Thanh toán đăng kí",
