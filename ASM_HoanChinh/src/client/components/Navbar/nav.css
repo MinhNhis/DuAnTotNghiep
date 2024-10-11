@@ -1,3 +1,4 @@
+/* Style for user-icon */
 .user-icon {
     width: 45px;
     height: 45px;
@@ -10,6 +11,7 @@
     transform: scale(1.1);
 }
 
+/* Dropdown Menu */
 .dropdown-menu {
     margin-top: 10px;
     border-radius: 8px;
@@ -21,6 +23,91 @@
     background-color: #f8f9fa;
     color: #d4a762;
 }
-.icon{
+
+/* Icon font-size */
+.icon {
     font-size: 17px;
+}
+/* Responsive styles for mobile and tablet */
+
+/* Mobile styles (screens < 576px) */
+@media (max-width: 575.98px) {
+    .dropdown-menu {
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    .user-icon {
+        width: 30px;
+        height: 30px;
+        border: 2px solid #000;
+        transition: all 0.3s ease;
+    }
+    .icon {
+        font-size: 15px;
+    }
+    .navbar-collapse {
+        display: flex;
+        flex-direction: column;
+        align-items: center;  
+    }
+
+    .navbar-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 10px;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .btn {
+        width: 150px;
+        font-size: 14px;
+        margin-left: 50px;
+    }
+
+    .btn-container {
+        display: flex;
+        justify-content: center;
+        width: 100%; /* Đảm bảo chiếm đủ chiều ngang */
+    }
+}
+
+
+/* Tablet styles (screens between 576px and 991.98px) */
+@media (min-width: 576px) and (max-width: 991.98px) {
+    .navbar-nav {
+        display: flex;
+        justify-content: space-between;
+        padding: 0;
+    }
+    .navbar-nav .nav-link {
+        padding: 10px;
+        font-size: 16px;
+    }
+    .btn-search {
+        margin-right: 10px;
+    }
+    .icon {
+        font-size: 15px;
+    }
+    .btn {
+        width: 100px;
+        font-size: 14px;
+      }
+}
+
+/* Desktop styles (screens > 992px) */
+@media (min-width: 992px) {
+    .navbar-nav .nav-link {
+        padding: 0 20px;
+    }
+    .btn-search {
+        display: inline-flex;
+    }
 }

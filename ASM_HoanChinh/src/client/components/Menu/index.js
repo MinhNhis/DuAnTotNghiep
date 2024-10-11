@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TableRow } from "@mui/material";
+import './style.css'
 
 import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
