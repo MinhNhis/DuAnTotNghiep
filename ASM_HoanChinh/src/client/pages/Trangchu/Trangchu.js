@@ -90,14 +90,6 @@ const Trangchu = () => {
         const listbaiviets = await baiviet();
         setBaiViet(listbaiviets.data.slice(0, 3));
     };
-
-    const initData = async (data) => {
-        setQuanan(data.data);
-
-        const resultGt = await getGioithieu();
-        setGioithieu(resultGt.data);
-    };
-
     const khoangCach = async (startCoords, endCoords) => {
         const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=false`;
 
