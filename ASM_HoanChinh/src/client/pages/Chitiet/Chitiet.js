@@ -153,7 +153,7 @@ const Gioithieu = () => {
             })
 
             if (fillDatcho.length === 0) {
-                await addDatcho({
+                const res = await addDatcho({
                     ten_quan: quanan.ten_quan_an,
                     ten_kh: value?.ten_kh,
                     sdt_kh: value?.sdt,
@@ -206,39 +206,73 @@ const Gioithieu = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
 
-
     const [selectedMenuItems, setSelectedMenuItems] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
-
+    const [menuOrder, setMenuOrders] = useState([])
+    const [fillMenu, setFillMenu] = useState([]);
+    const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
 
     const handleCheckboxChange = (event) => {
         if (event && event.target) {
             const menuItemId = parseInt(event.target.value);
             const isChecked = event.target.checked;
 
-            setSelectedMenuItems(prev => {
+            setSelectedMenuItems((prev) => {
                 const newSelected = { ...prev };
+
                 if (isChecked) {
-                    newSelected[menuItemId] = 1; // Set default quantity to 1
+                    newSelected[menuItemId] = 1;
                 } else {
-                    delete newSelected[menuItemId]; // Remove item if unchecked
+                    delete newSelected[menuItemId];
                 }
+
+                return newSelected;
+            });
+
+            setMenuOrders((prev) => {
+                const newSelected = [...(prev || [])];
+
+                if (isChecked) {
+                    if (!newSelected.includes(menuItemId)) {
+                        newSelected.push(menuItemId);
+                    }
+                } else {
+                    const index = newSelected.indexOf(menuItemId);
+                    if (index > -1) {
+                        newSelected.splice(index, 1);
+                    }
+                }
+
+                if (newSelected.length > 0) {
+                    const updatedFillMenu = fillmenu.map((item) => {
+                        const chon = newSelected.includes(item.id_menu) ? 1 : 0;
+                        return { ...item, chon };
+                    });
+
+                    setFillMenu(updatedFillMenu);
+                }
+
+                const selectedItems = fillmenu.filter(item => newSelected.includes(item.id_menu));
+                console.log("Selected Items: ", selectedItems);
+
                 return newSelected;
             });
         }
     };
 
     const handleQuantityChange = (id_menu, change) => {
-        setSelectedMenuItems(prev => {
-            const newQuantity = (prev[id_menu] || 1) + change;
-            if (newQuantity < 1) return prev; // Prevent negative quantities
+        setSelectedMenuItems((prev) => {
+            const newQuantity = (prev[id_menu] || 0) + change;
+            if (newQuantity < 0) {
+                return prev;
+            }
             return { ...prev, [id_menu]: newQuantity };
         });
     };
 
     useEffect(() => {
         const total = Object.entries(selectedMenuItems).reduce((acc, [id_menu, quantity]) => {
-            const menuItem = menu.find(item => item.id_menu === parseInt(id_menu));
+            const menuItem = menu.find((item) => item.id_menu === parseInt(id_menu));
             return acc + (menuItem ? menuItem.gia * quantity : 0);
         }, 0);
         setTotalPrice(total);
@@ -669,37 +703,40 @@ const Gioithieu = () => {
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
 
-                                                    <div className="mb-4 d-flex align-items-center">
-                                                        <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1">SL:</label>
+                                                    {selectedMenuItems[value.id_menu] !== undefined && (
+                                                        <div className="mb-4 d-flex align-items-center">
+                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1">SL:</label>
 
-                                                        <button
-                                                            className="btn btn-outline-secondary"
-                                                            onClick={() => handleQuantityChange(value.id_menu, -1)}
-                                                            disabled={!selectedMenuItems[value.id_menu]}
-                                                            style={{ paddingBottom: "1px", paddingTop: "1px" }}
-                                                        >
-                                                            -
-                                                        </button>
+                                                            <button
+                                                                className="btn btn-outline-secondary"
+                                                                onClick={() => handleQuantityChange(value.id_menu, -1)}
+                                                                disabled={selectedMenuItems[value.id_menu] <= 0}
+                                                                style={{ paddingBottom: "1px", paddingTop: "1px" }}
+                                                            >
+                                                                -
+                                                            </button>
 
-                                                        <input
-                                                            type="number"
-                                                            className="form-control mx-2"
-                                                            id={`quantity_${value.id_menu}`}
-                                                            min="1"
-                                                            value={selectedMenuItems[value.id_menu] || 1}
-                                                            readOnly
-                                                            style={{ paddingBottom: "1px", paddingTop: "1px", width: "50px", textAlign: "center", borderRadius: "4px" }}
-                                                        />
+                                                            <input
+                                                                type="text"
+                                                                className="form-control mx-2"
+                                                                id={`quantity_${value.id_menu}`}
+                                                                value={selectedMenuItems[value.id_menu]}
+                                                                onChange={(e) => {
+                                                                    const newQuantity = parseInt(e.target.value) || 0;
+                                                                    handleQuantityChange(value.id_menu, newQuantity - (selectedMenuItems[value.id_menu] || 0));
+                                                                }}
+                                                                style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
+                                                            />
 
-                                                        <button
-                                                            className="btn btn-outline-secondary"
-                                                            onClick={() => handleQuantityChange(value.id_menu, 1)}
-                                                            disabled={!selectedMenuItems[value.id_menu]}
-                                                            style={{ paddingBottom: "1px", paddingTop: "1px" }}
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
+                                                            <button
+                                                                className="btn btn-outline-secondary"
+                                                                onClick={() => handleQuantityChange(value.id_menu, 1)}
+                                                                style={{ paddingBottom: "1px", paddingTop: "1px" }}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </div>
                                             ) : null;
                                         })}
