@@ -8,13 +8,13 @@ import './style.css';
 import { makerIcon } from "../Map";
 import { BASE_URL } from "../../../config/ApiConfig";
 
-const Routing = ({ waypoints, obj }) => {
+const Routing = ({ waypoints, obj, boolend }) => {
     const map = useMapEvents({
         click() {
             map.locate();
         },
         locationfound(e) {
-
+            // Handle location found if needed
         },
     });
     const routingControlRef = useRef(null);
@@ -49,16 +49,22 @@ const Routing = ({ waypoints, obj }) => {
                             icon: makerIcon
                         });
                         const popup = `
-                                <div>
-                                    <img src="${BASE_URL}/uploads/${obj.hinh_anh}" alt="" style="width: 100%;" />
-                                    <b>${obj.ten_quan_an}</b> </br>
-                                    <span>${obj.gio_hoat_dong}</span></br>
-                                    <span>${(obj.distanceInKm)} Km </span></br>
-                                    <span>${obj.dia_chi}</span>
-                                </div>
+                            <div>
+                                <img src="${BASE_URL}/uploads/${obj.hinh_anh}" alt="" style="width: 100%;" />
+                                <b>${obj.ten_quan_an}</b> </br>
+                                <span>${obj.gio_hoat_dong}</span></br>
+                                <span>${(obj.distanceInKm)} Km </span></br>
+                                <span>${obj.dia_chi}</span>
+                            </div>
                         `;
 
-                        marker.bindPopup(popup).openPopup();
+                        marker.bindPopup(popup);
+                        if (boolend) {
+                            setTimeout(() => {
+                                marker.openPopup();
+                            }, 3000);
+                        }
+
                         return marker;
                     }
                 }
@@ -78,9 +84,10 @@ const Routing = ({ waypoints, obj }) => {
                 }
             }
         };
-    }, [waypoints, map]);
+    }, [waypoints, map, boolend]);
 
     return null;
 };
+
 
 export default Routing;

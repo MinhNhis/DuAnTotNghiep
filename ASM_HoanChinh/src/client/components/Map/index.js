@@ -27,7 +27,7 @@ export const makerIconBlue = new L.Icon({
     popupAnchor: [0, -45]
 });
 
-const UpdateCenter = ({ center }) => {
+export const UpdateCenter = ({ center }) => {
     const map = useMap();
     map.setView(center, map.getZoom());
     return null;
@@ -65,18 +65,56 @@ const MapComponent = () => {
         }
 
     }, [id]);
+    const khoangCach = async (startCoords, endCoords) => {
+        const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=false`;
+
+        try {
+            const response = await fetch(osrmUrl);
+            const data = await response.json();
+
+            if (data.routes.length > 0) {
+                const distanceInMeters = data.routes[0].distance;
+                const distanceInKm = distanceInMeters / 1000;
+                return distanceInKm;
+            } else {
+                console.error("No route found");
+                return null;
+            }
+        } catch (error) {
+            console.error("Error calculating driving distance:", error);
+            return null;
+        }
+    };
 
     const initData = async () => {
-        const res = await getQuanan();
+        const [res, geoPosition] = await Promise.all([
+            getQuanan(),
+            new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            })
+        ]);
         const quanan = res.data;
+        const { latitude, longitude } = geoPosition.coords;
+        const userCoords = { lat: latitude, lng: longitude };
 
         const geocodePromises = quanan.map(async (item) => {
             const coords = await geocodeAddress(item.dia_chi);
-            return { ...item, coords };
+            if (!coords) return null;
+
+            const quanCoords = { lat: coords.lat, lng: coords.lng };
+
+            const km = await khoangCach(userCoords, quanCoords);
+            let distanceInKm = 0
+            if (km) {
+                 distanceInKm = km.toFixed(1)
+            }
+            return distanceInKm !== null ? { ...item, coords, distanceInKm } : null;
         });
 
         const results = await Promise.all(geocodePromises);
-        setLocations(results.filter(item => item.coords));   
+        const quananKM = results.filter(item => item !== null);
+        setLocations(quananKM);
+        setQuan(quananKM);
     };
 
     useEffect(() => {
@@ -138,7 +176,7 @@ const MapComponent = () => {
                 <DialogActions>
                     <CloseIcon onClick={handleClose} />
                 </DialogActions>
-                <DialogContent style={{ display: open ? 'block' : 'none' , width: "100%"}}>
+                <DialogContent style={{ display: open ? 'block' : 'none', width: "100%" }}>
                     <MapContainer
                         center={center}
                         zoom={ZOOM_LEVEL}
@@ -171,6 +209,7 @@ const MapComponent = () => {
                                     { lat: center.lat, lng: center.lng },
                                 ]}
                                 obj={quan}
+                                boolend={true}
                             />
                         )}
                     </MapContainer>
