@@ -5,6 +5,7 @@ import { TableRow } from '@mui/material';
 
 import './style.css';
 import { getQuanan, paginator, searchQuanan } from '../../../services/Quanan';
+import { baiviet } from '../../../services/Baiviet';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { getGioithieu } from '../../../services/Gioithieu';
 import Menu from '../../components/Menu';
@@ -28,6 +29,7 @@ const Trangchu = () => {
     const [gioithieu, setGioithieu] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const accounts = JSON.parse(localStorage.getItem("accounts"));
+    const [baiviets, setBaiViet] = useState([]);
 
     useEffect(() => {
         if (navigator.geolocation) {
@@ -45,7 +47,13 @@ const Trangchu = () => {
             console.log("Geolocation is not supported by this browser.");
         }
         loadMap();
+        BaiViet();
     }, []);
+
+    const BaiViet = async (data) => {
+        const listbaiviets = await baiviet();
+        setBaiViet(listbaiviets.data.slice(0, 3));
+    };
 
     const initData = async (data) => {
         setQuanan(data.data);
@@ -528,54 +536,42 @@ const Trangchu = () => {
                             <h1 className="display-5 mb-5">Các bài viết nổi bật </h1>
                         </div>
                         <div className="row gx-4 justify-content-center">
-                            <div className="col-md-6 col-lg-4 wow " data-wow-delay="0.1s">
-                                <div className="blog-item">
-                                    <div className="overflow-hidden rounded">
-                                        <img src="img/blog-1.jpg" className="img-fluid w-100" alt="" />
-                                    </div>
-                                    <div className="blog-content mx-4 d-flex rounded bg-light">
-                                        <div className="text-dark bg-primary rounded-start">
-                                            <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
-                                                <p className="fw-bold mb-0">16</p>
-                                                <p className="fw-bold mb-0">Sep</p>
+                            {baiviets.length > 0 ? (
+                                baiviets.map((baiviet, index) => (
+                                    <div className="col-md-6 col-lg-4 wow " data-wow-delay="0.1s">
+                                        <div className="blog-item">
+                                            <div className="overflow-hidden rounded">
+                                                <img src={`${BASE_URL}/uploads/${baiviet?.hinh_anh}`} style={{ width: "100%", height: "380px" }} alt="" />
+                                            </div>
+                                            <div className="blog-content mx-4 d-flex rounded bg-light">
+                                                <div className="text-dark bg-primary rounded-start">
+                                                    <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
+                                                        <p className="fw-bold mb-0">{new Date(baiviet.ngay_dang).getDate()}</p>
+                                                        <p className="fw-bold mb-0">
+                                                            {new Date(baiviet.ngay_dang).toLocaleString('en-US', { month: 'short' })}
+                                                        </p>
+
+                                                    </div>
+                                                </div>
+                                                <a href="/" className="h5 lh-base my-auto h-150 p-3"
+                                                    style={{
+                                                        ml: 0.5,
+                                                        fontSize: "15px",
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 3,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        whiteSpace: 'normal',
+                                                    }}
+                                                >{baiviet.tieu_de}</a>
                                             </div>
                                         </div>
-                                        <a href="/" className="h5 lh-base my-auto h-100 p-3">How to get more test in your food from</a>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="col-md-6 col-lg-4 wow " data-wow-delay="0.3s">
-                                <div className="blog-item">
-                                    <div className="overflow-hidden rounded">
-                                        <img src="img/blog-2.jpg" className="img-fluid w-100" alt="" />
-                                    </div>
-                                    <div className="blog-content mx-4 d-flex rounded bg-light">
-                                        <div className="text-dark bg-primary rounded-start">
-                                            <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
-                                                <p className="fw-bold mb-0">16</p>
-                                                <p className="fw-bold mb-0">Sep</p>
-                                            </div>
-                                        </div>
-                                        <a href="/" className="h5 lh-base my-auto h-100 p-3">How to get more test in your food from</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-md-6 col-lg-4 wow " data-wow-delay="0.5s">
-                                <div className="blog-item">
-                                    <div className="overflow-hidden rounded">
-                                        <img src="img/blog-3.jpg" className="img-fluid w-100" alt="" />
-                                    </div>
-                                    <div className="blog-content mx-4 d-flex rounded bg-light">
-                                        <div className="text-dark bg-primary rounded-start">
-                                            <div className="h-100 p-3 d-flex flex-column justify-content-center text-center">
-                                                <p className="fw-bold mb-0">16</p>
-                                                <p className="fw-bold mb-0">Sep</p>
-                                            </div>
-                                        </div>
-                                        <a href="/" className="h5 lh-base my-auto h-100 p-3">How to get more test in your food from</a>
-                                    </div>
-                                </div>
-                            </div>
+                                ))
+                            ) : (
+                                ""
+                            )}
                         </div>
                     </div>
                 </div>

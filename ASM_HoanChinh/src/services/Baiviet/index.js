@@ -42,7 +42,7 @@ const getBaivietById = async (id_baiviet) => {
   return res;
 };
 
-const updatebaiviet = async (id, { tieu_de, noi_dung, hinh_anh, ngay_dang }) => {
+const updatebaiviet = async (id_baiviet, { tieu_de, noi_dung, hinh_anh, ngay_dang }) => {
   const formData = new FormData();
 
   formData.append("tieu_de", tieu_de);
@@ -52,7 +52,7 @@ const updatebaiviet = async (id, { tieu_de, noi_dung, hinh_anh, ngay_dang }) => 
 
   const res = await request({
     method: "PUT",
-    path: `api/baiviets/${id}`,
+    path: `api/baiviets/${id_baiviet}`,
     data: formData
   })
   return res
@@ -67,4 +67,12 @@ const deletebaiviet = async (id_baiviet) => {
   return res;
 };
 
-export { baiviet, addbaiviet, deletebaiviet, updatebaiviet, getBaivietById };
+const paginator = async (page) => {
+  const res = await request({
+      method: "GET",
+      path: `/api/paginator-baiviet?page=${page}&limit=5`
+  })
+  return res
+}
+
+export { baiviet, addbaiviet, deletebaiviet, updatebaiviet, getBaivietById, paginator };
