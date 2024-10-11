@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { editDatcho, getDatcho } from "../../../services/Datcho";
+import { editDatcho, getDatcho, sendEmail } from "../../../services/Datcho";
 import { useForm } from "react-hook-form";
 import {
     Button,
@@ -45,13 +45,45 @@ const Profile = () => {
         try {
             const resultDon = await getDatcho();
             setDon(resultDon.data);
+
+            // Gọi autoCancelExpiredBookings ngay sau khi lấy danh sách đặt chỗ
+            await autoCancelExpiredBookings(resultDon.data);
+
             const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
             setnguoidung(resultNguoiDung.data);
         } catch (error) {
-            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", {
-                variant: "error",
-            });
+            enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", { variant: "error" });
         }
+    };
+
+    const autoCancelExpiredBookings = async (bookings) => {
+        const currentDate = new Date();
+
+        for (const booking of bookings) {
+            const bookingDate = new Date(booking.ngay_dat);
+            const expirationDate = new Date(bookingDate);
+            expirationDate.setDate(expirationDate.getDate() + 1);
+
+            // Kiểm tra nếu đơn đã hết hạn và chỉ cập nhật nếu trạng thái là 0 (Đang chờ xử lý)
+            if (expirationDate < currentDate && booking.trang_thai === 0) {
+                try {
+                    // Cập nhật trạng thái hủy đơn đặt chỗ
+                    await editDatcho(booking.id_datcho, {
+                        ...booking,
+                        trang_thai: 2 // Chỉ cập nhật trạng thái thành "Đã hủy"
+                    });
+
+                    // Gửi email thông báo với lý do hủy là "Hết hạn"
+                    await sendEmail(booking.id_datcho, "Hết hạn");
+
+                    enqueueSnackbar(`Đơn đặt chỗ tại ${booking.ten_quan} đã được hủy vì hết hạn!`, { variant: "warning" });
+                } catch (error) {
+                    console.error("Lỗi khi tự động hủy đơn đặt chỗ:", error);
+                    enqueueSnackbar("Có lỗi khi tự động hủy đơn đặt chỗ!", { variant: "error" });
+                }
+            }
+        }
+
     };
 
     const handleClickOpen = (id) => {
@@ -454,7 +486,7 @@ const Profile = () => {
                                         : value?.trang_thai === 1
                                             ? "badge-success"
                                             : "badge-danger"
-                                        }`}
+                                    }`}
                                 >
                                     {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                     {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
