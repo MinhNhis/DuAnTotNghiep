@@ -114,4 +114,17 @@ const sendEmail = async (id, reason) => {
     return res
 }
 
-export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan,sendEmail, getKhachhang,paginator }
+const sendEmailToQuan = async (id, id_chuquan, reason) => {
+
+    const res = await request({
+        method: "POST",
+        path: `api/sendMail-dat-cho-user/${id}/${id_chuquan}`,
+        data: {
+            reason
+        }
+    })
+
+    return res
+}
+
+export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan,sendEmail,sendEmailToQuan, getKhachhang,paginator }

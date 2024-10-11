@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { editDatcho, getDatcho, sendEmail } from "../../../services/Datcho";
+import { editDatcho, getDatcho, sendEmail, sendEmailToQuan } from "../../../services/Datcho";
 import { useForm } from "react-hook-form";
 import {
     Button,
@@ -22,6 +22,7 @@ import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
 import { changPassword } from "../../../services/Auth";
 import { useNavigate } from "react-router-dom";
+import { getQuanan } from "../../../services/Quanan";
 
 const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -30,6 +31,7 @@ const Profile = () => {
 
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
+    const [quans, setQuans] = useState([]);
     const [nguoidung, setnguoidung] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
@@ -45,6 +47,9 @@ const Profile = () => {
         try {
             const resultDon = await getDatcho();
             setDon(resultDon.data);
+
+            const resultQuan = await getQuanan();
+            setQuans(resultQuan.data)
 
             // Gọi autoCancelExpiredBookings ngay sau khi lấy danh sách đặt chỗ
             await autoCancelExpiredBookings(resultDon.data);
@@ -99,6 +104,8 @@ const Profile = () => {
     const onHuydon = async () => {
         try {
             const datcho = dondatcho.find((e) => e.id_datcho === id);
+            const quan = quans.filter((e) => e.id_quanan === datcho.id_quanan)
+
             await editDatcho(id, {
                 ten_quan: datcho?.quan_an,
                 ten_kh: datcho?.khach_hang,
@@ -111,6 +118,9 @@ const Profile = () => {
                 id_nguoidung: datcho?.id_nguoidung,
             });
             setOpen(false);
+            quan.map(async (value) => {
+                await sendEmailToQuan(datcho.id_datcho, value.created_user, "Khách hàng đã hủy đơn")
+            })
             setId(null);
             enqueueSnackbar("Hủy thành công!", { variant: "success" });
             initData();
@@ -486,7 +496,7 @@ const Profile = () => {
                                         : value?.trang_thai === 1
                                             ? "badge-success"
                                             : "badge-danger"
-                                    }`}
+                                        }`}
                                 >
                                     {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                     {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
