@@ -90,6 +90,24 @@ const Trangchu = () => {
         const listbaiviets = await baiviet();
         setBaiViet(listbaiviets.data.slice(0, 3));
     };
+
+    const isOpen = (openTime, closeTime) => {
+        const now = new Date();
+
+        // Chuyển đổi giờ từ dạng HH:MM thành giờ và phút
+        const [openHour, openMinute] = openTime.split(':').map(Number);
+        const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+
+        // Setting giờ mở và đóng cho ngày hôm nay
+        const openingTime = new Date(now);
+        const closingTime = new Date(now);
+
+        openingTime.setHours(openHour, openMinute, 0);
+        closingTime.setHours(closeHour, closeMinute, 0);
+
+        return now >= openingTime && now <= closingTime;
+    };
+
     const khoangCach = async (startCoords, endCoords) => {
         const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=false`;
 
@@ -321,9 +339,11 @@ const Trangchu = () => {
                                                     alt={value.ten_quan_an}
                                                     style={{ width: "100%" }}
                                                 />
-                                                <div className="card-body">
+                                                <div className="card-body" style={{
+                                                    color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red' // Thay đổi màu tại đây
+                                                }} >
                                                     <h5 className="card-title">{value.ten_quan_an}</h5>
-                                                    <div><strong>Giờ hoạt động:</strong> {value?.gio_hoat_dong}</div>
+                                                    <div ><strong></strong> {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'Đang mở cửa' : 'Đã đóng cửa'}</div>
                                                     <p style={{
                                                         width: "100%",
                                                         whiteSpace: "normal",
@@ -379,7 +399,11 @@ const Trangchu = () => {
                                                                     </h5>
                                                                     <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                                     <div className='mb-1'>{value.distanceInKm} Km</div>
-                                                                    <div className='mb-1'>Giờ hoạt động: {value.gio_hoat_dong}</div>
+                                                                    <div className='mb-1' style={{
+                                                                        color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red' // Thay đổi màu tại đây
+                                                                    }}>
+                                                                        {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'Đang mở cửa' : 'Đã đóng cửa'}
+                                                                    </div>
                                                                     <div className='mb-1' style={{
                                                                         display: '-webkit-box',
                                                                         WebkitLineClamp: 1,
@@ -435,7 +459,11 @@ const Trangchu = () => {
                                                                     </h5>
                                                                     <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                                     <div className='mb-1'>{value.distanceInKm} Km</div>
-                                                                    <div className='mb-1'>Giờ hoạt động: {value.gio_hoat_dong}</div>
+                                                                    <div className='mb-1' style={{
+                                                                        color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red' // Thay đổi màu tại đây
+                                                                    }}>
+                                                                        {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'Đang mở cửa' : 'Đã đóng cửa'}
+                                                                    </div>
                                                                     <div className='mb-1' style={{
                                                                         display: '-webkit-box',
                                                                         WebkitLineClamp: 1,
@@ -470,6 +498,7 @@ const Trangchu = () => {
                                                                     </div>
                                                                 </div>
                                                             </div>
+
                                                         )
                                                     })
                                                 }
@@ -516,7 +545,11 @@ const Trangchu = () => {
                                                                     </h5>
                                                                     <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                                     <div className='mb-1'>{value.distanceInKm} Km</div>
-                                                                    <div className='mb-1'>Giờ hoạt động: {value.gio_hoat_dong}</div>
+                                                                    <div className='mb-1' style={{
+                                                                        color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red' // Thay đổi màu tại đây
+                                                                    }}>
+                                                                        {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'Đang mở cửa' : 'Đã đóng cửa'}
+                                                                    </div>
                                                                     <div className='mb-1' style={{
                                                                         display: '-webkit-box',
                                                                         WebkitLineClamp: 1,

@@ -38,7 +38,8 @@ const AddQuanAn = () => {
         setValue("ten_quan_an", result.data.ten_quan_an || "");
         setValue("dia_chi", result.data.dia_chi || "");
         setValue("dien_thoai", result.data.dien_thoai || "");
-        setValue("gio_hoat_dong", result.data.gio_hoat_dong || "");
+        setValue("gio_mo_cua", result.data.gio_mo_cua || "");
+        setValue("gio_dong_cua", result.data.gio_dong_cua || "");
         setValue("link_website", result.data.link_website || "");
         setValue("link_facebook", result.data.link_facebook || "");
         setValue("so_luong_cho", result.data.so_luong_cho || "");
@@ -49,28 +50,29 @@ const AddQuanAn = () => {
             const checkAddressExists = async (address) => {
                 if (!address) return false;
                 try {
-                  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
-                  const response = await fetch(url);
-                  if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                  }
-                  const data = await response.json();
-                  return data.length > 0;
+                    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    return data.length > 0;
                 } catch (error) {
-                  console.error("Error checking address:", error);
-                  return false;
+                    console.error("Error checking address:", error);
+                    return false;
                 }
-              };
-              const addressExists = await checkAddressExists(value?.dia_chi);
-              if (!addressExists) {
+            };
+            const addressExists = await checkAddressExists(value?.dia_chi);
+            if (!addressExists) {
                 enqueueSnackbar('Địa chỉ không tồn tại trên bản đồ!', { variant: 'error' });
                 return;
-              }
+            }
             await editQuanan(id, {
                 ten_quan_an: value?.ten_quan_an,
                 dia_chi: value?.dia_chi,
                 dien_thoai: value?.dien_thoai,
-                gio_hoat_dong: value?.gio_hoat_dong,
+                gio_mo_cua: value?.gio_mo_cua,
+                gio_dong_cua: value?.gio_dong_cua,
                 link_website: value?.link_website,
                 hinh_anh: value?.hinh_anh[0],
                 so_luong_cho: value?.so_luong_cho,
@@ -186,50 +188,28 @@ const AddQuanAn = () => {
                                         )}
                                     </div>
                                 </div>
+
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Giờ hoạt động</label>
+                                        <label className="form-label">Giờ mở cửa</label>
                                         <TextField
                                             type="text"
-                                            fullWidth variant="outlined"
+                                            fullWidth
+                                            variant="outlined"
                                             min={0}
-                                            name="gio_hoat_dong"
-                                            id="gio_hoat_dong"
+                                            name="gio_mo_cua"
+                                            id="gio_mo_cua"
                                             placeholder="Giờ hoạt động"
-                                            {...register("gio_hoat_dong", {
+                                            {...register("gio_mo_cua", {
                                                 required: {
                                                     value: true,
                                                     message: "Giờ hoạt động không được bỏ trống",
                                                 },
                                             })}
                                         />
-                                        {formState?.errors?.gio_hoat_dong && (
+                                        {formState?.errors?.gio_mo_cua && (
                                             <small className="text-danger">
-                                                {formState?.errors?.gio_hoat_dong?.message}
-                                            </small>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div className="mb-3">
-                                        <label className="form-label">Link Website</label>
-                                        <TextField
-                                            type="text"
-                                            fullWidth variant="outlined"
-                                            min={0}
-                                            name="link_website"
-                                            id="link_website"
-                                            placeholder="Link Website"
-                                            {...register("link_website", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Link Website không được bỏ trống",
-                                                },
-                                            })}
-                                        />
-                                        {formState?.errors?.link_website && (
-                                            <small className="text-danger">
-                                                {formState?.errors?.link_website?.message}
+                                                {formState?.errors?.gio_mo_cua?.message}
                                             </small>
                                         )}
                                     </div>
@@ -259,6 +239,34 @@ const AddQuanAn = () => {
                                         )}
                                     </div>
                                 </div>
+
+                                <div className="col-6">
+                                    <div className="mb-3">
+                                        <label className="form-label">Giờ đóng cửa</label>
+                                        <TextField
+                                            type="text"
+                                            fullWidth
+                                            variant="outlined"
+                                            min={0}
+                                            name="gio_dong_cua"
+                                            id="gio_dong_cua"
+                                            placeholder="Giờ đóng cửa"
+                                            {...register("gio_dong_cua", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Giờ hoạt động không được bỏ trống",
+                                                },
+                                            })}
+                                        />
+                                        {formState?.errors?.gio_dong_cua && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.gio_dong_cua?.message}
+                                            </small>
+                                        )}
+                                    </div>
+                                </div>
+
+
 
                                 <div className="col-6">
                                     <div className="mb-3">
