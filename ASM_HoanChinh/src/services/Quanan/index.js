@@ -18,10 +18,12 @@ const getQuananById = async (id) => {
     return res
 }
 
-const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
+    data.append("lat", lat);
+    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
     data.append("gio_hoat_dong", gio_hoat_dong);
     data.append("link_website", link_website);
@@ -40,10 +42,12 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_
     return res
 }
 
-const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_hoat_dong, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
+    data.append("lat", lat);
+    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
     data.append("gio_hoat_dong", gio_hoat_dong);
     data.append("link_website", link_website);
@@ -83,7 +87,7 @@ const paginator = async (page) => {
     return res
 }
 
-const searchQuanan = async(keyword) =>{
+const searchQuanan = async (keyword) => {
     const res = await request({
         method: 'GET',
         path: `/api/search-quanan?keyword=${keyword}`
@@ -92,4 +96,4 @@ const searchQuanan = async(keyword) =>{
     return res
 }
 
-export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan}
+export { paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan }
