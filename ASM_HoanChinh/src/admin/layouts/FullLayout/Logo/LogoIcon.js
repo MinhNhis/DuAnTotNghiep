@@ -1,7 +1,10 @@
 import React from "react";
-import logoicn from "../../../assets/images/logo-dark.svg";
 const LogoIcon = (props) => {
-  return <img alt="Logo" src={logoicn} {...props} />;
+  return (
+      <h1 className="text-primary fw-bold ">
+        Food<span className="text-dark">S</span>
+      </h1>
+  )
 };
 
 export default LogoIcon;
