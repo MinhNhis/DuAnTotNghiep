@@ -18,10 +18,12 @@ const getQuananById = async (id) => {
     return res
 }
 
-const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai,gio_mo_cua,gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
+    data.append("lat", lat);
+    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
     data.append("gio_mo_cua", gio_mo_cua);
     data.append("gio_dong_cua", gio_dong_cua);
@@ -41,10 +43,12 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai,gio_mo_cua
     return res
 }
 
-const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
+    data.append("lat", lat);
+    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
     data.append("gio_mo_cua", gio_mo_cua);
     data.append("gio_dong_cua", gio_dong_cua);

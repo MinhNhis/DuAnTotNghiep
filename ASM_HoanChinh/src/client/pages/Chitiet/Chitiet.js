@@ -23,12 +23,6 @@ import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
-import MapComponent from "../../components/Map";
-import osm from "../../components/Map/osm-providers";
-import { makerIcon, makerIconBlue } from "../../components/Map";
-import { UpdateCenter } from "../../components/Map";
-import geocodeAddress from "../../components/GeoLocation";
-import Routing from "../../components/RoutingMap";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -285,92 +279,6 @@ const Gioithieu = () => {
     // an bot
 
     //Baner Map
-    const [center, setCenter] = useState({ lat: 10.0452, lng: 105.7469 });
-    const ZOOM_LEVEL = 12;
-    const [locations, setLocations] = useState([]);
-    const [userLocation, setUserLocation] = useState(null);
-    const [quan, setQuan] = useState([]);
-
-    useEffect(() => {
-        initMap();
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation({ lat: latitude, lng: longitude });
-                    setCenter({ lat: latitude, lng: longitude });
-                },
-                (error) => {
-                    console.error("Error getting location:", error);
-                }
-            );
-        } else {
-            console.log("Geolocation is not supported by this browser.");
-        }
-
-    }, [id]);
-    const khoangCach = async (startCoords, endCoords) => {
-        const osrmUrl = `http://router.project-osrm.org/route/v1/driving/${startCoords.lng},${startCoords.lat};${endCoords.lng},${endCoords.lat}?overview=false`;
-
-        try {
-            const response = await fetch(osrmUrl);
-            const data = await response.json();
-
-            if (data.routes.length > 0) {
-                const distanceInMeters = data.routes[0].distance;
-                const distanceInKm = distanceInMeters / 1000;
-                return distanceInKm;
-            } else {
-                console.error("No route found");
-                return null;
-            }
-        } catch (error) {
-            console.error("Error calculating driving distance:", error);
-            return null;
-        }
-    };
-
-    const initMap = async () => {
-        const [res, geoPosition] = await Promise.all([
-            getQuanan(),
-            new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject);
-            })
-        ]);
-        const quanan = res.data;
-        const { latitude, longitude } = geoPosition.coords;
-        const userCoords = { lat: latitude, lng: longitude };
-
-        const geocodePromises = quanan.map(async (item) => {
-            const coords = await geocodeAddress(item.dia_chi);
-            if (!coords) return null;
-
-            const quanCoords = { lat: coords.lat, lng: coords.lng };
-
-            const km = await khoangCach(userCoords, quanCoords);
-            let distanceInKm = 0
-            if (km) {
-                distanceInKm = km.toFixed(1)
-            }
-            return distanceInKm !== null ? { ...item, coords, distanceInKm } : null;
-        });
-
-        const results = await Promise.all(geocodePromises);
-        const quananKM = results.filter(item => item !== null);
-        setLocations(quananKM);
-        setQuan(quananKM);
-    };
-
-    useEffect(() => {
-        const locationQuan = locations.filter((e) => e.id_quanan === Number(id));
-        locationQuan.forEach((e) => {
-            if (e && e.coords) {
-                setCenter({ lat: e.coords.lat, lng: e.coords.lng });
-                setQuan(e)
-            }
-        });
-    }, [locations, id]);
 
     return (
         <>
@@ -378,38 +286,7 @@ const Gioithieu = () => {
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
                     <div class="col-12 ">
-                        <MapContainer
-                            center={center}
-                            zoom={ZOOM_LEVEL}
-                            style={{ height: "500px", width: "100%", border: "10px", borderRadius: "10px" }}
-                        >
-                            <TileLayer url={osm.maptiler.url} attribution={osm.maptiler.attribution} />
-                            <UpdateCenter center={center} />
-                            {userLocation && (
-                                <Marker position={[userLocation.lat, userLocation.lng]} icon={makerIconBlue}>
-                                    <Popup>
-                                        <b>Vị trí của bạn</b><br />
-                                    </Popup>
-                                </Marker>
-                            )}
-                            {locations.map((element, index) => (
-                                <Marker key={index} position={[element.coords.lat, element.coords.lng]} icon={makerIcon}>
-                                    <Popup>
-                                        <b>{element.ten_quan_an}</b><br />{element.dia_chi}
-                                    </Popup>
-                                </Marker>
-                            ))}
-                            {userLocation && center && (
-                                <Routing
-                                    waypoints={[
-                                        { lat: userLocation.lat, lng: userLocation.lng },
-                                        { lat: center.lat, lng: center.lng },
-                                    ]}
-                                    obj={quan}
-                                    boolend={true}
-                                />
-                            )}
-                        </MapContainer>
+                        
                     </div>
                 </div>
                 <div className="container">
@@ -975,7 +852,7 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            {!mapRef.current ? <MapComponent /> : null}
+                                            
                                         </div>
                                         <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>

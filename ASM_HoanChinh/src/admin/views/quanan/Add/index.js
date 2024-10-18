@@ -6,6 +6,7 @@ import { Card, CardContent, Divider, Box, Typography, TextField, Button, Select,
 import { addQuanan } from "../../../../services/Quanan";
 import { getGioithieu } from "../../../../services/Gioithieu";
 import { useSnackbar } from 'notistack';
+import useGeolocation from "../../../../client/components/Map/useGeolocation";
 
 const AddQuanAn = () => {
   const { register, handleSubmit, formState } = useForm();
@@ -13,7 +14,7 @@ const AddQuanAn = () => {
   const [account, setAccounts] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-
+  const location = useGeolocation();
 
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -48,9 +49,12 @@ const AddQuanAn = () => {
         enqueueSnackbar('Địa chỉ không tồn tại trên bản đồ!', { variant: 'error' });
         return;
       }
+      
       await addQuanan({
         ten_quan_an: value?.ten_quan_an,
         dia_chi: value?.dia_chi,
+        lat: location?.latitude,
+        lng: location?.longitude,
         dien_thoai: value?.dien_thoai,
         gio_mo_cua: value?.gio_mo_cua,
         gio_dong_cua: value?.gio_dong_cua,

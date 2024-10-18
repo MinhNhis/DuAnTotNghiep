@@ -6,6 +6,7 @@ import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuIte
 import { editQuanan, getQuananById } from "../../../../services/Quanan";
 import { getGioithieu } from "../../../../services/Gioithieu";
 import { useSnackbar } from 'notistack';
+import useGeolocation from "../../../../client/components/Map/useGeolocation";
 
 const AddQuanAn = () => {
     const params = useParams();
@@ -15,6 +16,7 @@ const AddQuanAn = () => {
     const { control, register, handleSubmit, setValue, formState } = useForm();
     const [gioithieu, setGioiThieu] = useState([]);
     const { enqueueSnackbar } = useSnackbar();
+    const location = useGeolocation();
 
     useEffect(() => {
         const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -29,7 +31,6 @@ const AddQuanAn = () => {
         const result_gioithieu = await getGioithieu();
         setGioiThieu(result_gioithieu.data);
         const selectedGioithieu = result_gioithieu.data.find((e) => e.id_gioithieu === result.data.id_gioithieu);
-        console.log(selectedGioithieu);
 
         if (selectedGioithieu) {
             setValue('id_gioithieu', selectedGioithieu.id_gioithieu);
@@ -66,27 +67,30 @@ const AddQuanAn = () => {
             if (!addressExists) {
                 enqueueSnackbar('Địa chỉ không tồn tại trên bản đồ!', { variant: 'error' });
                 return;
-            }
-            await editQuanan(id, {
-                ten_quan_an: value?.ten_quan_an,
-                dia_chi: value?.dia_chi,
-                dien_thoai: value?.dien_thoai,
-                gio_mo_cua: value?.gio_mo_cua,
-                gio_dong_cua: value?.gio_dong_cua,
-                link_website: value?.link_website,
-                hinh_anh: value?.hinh_anh[0],
-                so_luong_cho: value?.so_luong_cho,
-                link_facebook: value?.link_facebook,
-                id_gioithieu: value?.id_gioithieu,
-                created_user: account?.id_nguoidung,
-                updated_user: account?.id_nguoidung
-            });
-            enqueueSnackbar('Cập nhật quán ăn thành công!', { variant: 'success' });
-            navigate("/admin/quanan");
+              } else {
+                  await editQuanan(id, {
+                      ten_quan_an: value?.ten_quan_an,
+                      dia_chi: value?.dia_chi,
+                      lat: location?.latitude,
+                      lng: location?.longitude,
+                      dien_thoai: value?.dien_thoai,
+                      gio_mo_cua: value?.gio_mo_cua,
+                      gio_dong_cua: value?.gio_dong_cua,
+                      link_website: value?.link_website,
+                      hinh_anh: value?.hinh_anh[0],
+                      so_luong_cho: value?.so_luong_cho,
+                      link_facebook: value?.link_facebook,
+                      id_gioithieu: value?.id_gioithieu,
+                      created_user: account?.id_nguoidung,
+                      updated_user: account?.id_nguoidung
+                  });
+                  enqueueSnackbar('Cập nhật quán ăn thành công!', { variant: 'success' });
+                  navigate("/admin/quanan");
+              }
+
         } catch (error) {
             enqueueSnackbar('Có lỗi xảy ra khi cập nhật quán ăn!', { variant: 'error' });
         }
-        console.log(value);
     };
 
     const navigate = useNavigate();
@@ -188,7 +192,6 @@ const AddQuanAn = () => {
                                         )}
                                     </div>
                                 </div>
-
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Giờ mở cửa</label>
@@ -308,10 +311,10 @@ const AddQuanAn = () => {
                                         name="images"
                                         id="images"
                                         {...register("hinh_anh", {
-                                            required: {
-                                                value: true,
-                                                message: "Hình ảnh không được bỏ trống"
-                                            }
+                                            // required: {
+                                            //     value: true,
+                                            //     message: "Hình ảnh không được bỏ trống"
+                                            // }
                                         })}
                                     />
                                     {formState?.errors?.hinh_anh && (
