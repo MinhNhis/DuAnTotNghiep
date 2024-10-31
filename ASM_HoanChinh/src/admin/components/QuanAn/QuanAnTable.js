@@ -29,7 +29,7 @@ const ExQuanAn = () => {
   const [quanan, setQuanan] = useState([]);
   const [accounts, setAccounts] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 8;
 
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
