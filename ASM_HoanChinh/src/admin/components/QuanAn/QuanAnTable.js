@@ -93,11 +93,11 @@ const ExQuanAn = () => {
                   Điện Thoại
                 </Typography>
               </TableCell>
-              <TableCell>
+              {/* <TableCell>
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                   Giờ Hoạt Động
                 </Typography>
-              </TableCell>
+              </TableCell> */}
               <TableCell>
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                   Hành động
@@ -146,7 +146,7 @@ const ExQuanAn = () => {
                       {items.dien_thoai}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                       {items.gio_mo_cua}
                     </Typography>
@@ -155,7 +155,7 @@ const ExQuanAn = () => {
                     <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
                       {items.gio_dong_cua}
                     </Typography>
-                  </TableCell>
+                  </TableCell> */}
                   {/* <TableCell>{items.link_website}</TableCell>
               <TableCell>{items.link_facebook}</TableCell> */}
                   <TableCell>

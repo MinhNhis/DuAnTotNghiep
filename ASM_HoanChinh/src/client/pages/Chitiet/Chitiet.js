@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
 import { getQuanan, getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
@@ -23,15 +22,16 @@ import { addDatcho, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
+import Map from "../../components/Map";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
     const navigate = useNavigate()
     const params = useParams();
     const id = params.id;
-    const mapRef = useRef(null)
 
     const [quanan, setQuanan] = useState({});
+    const [quananMap, setQuananMap] = useState([]);
     const [gioithieu, setGioithieu] = useState([]);
     const [danhgia, setDanhgia] = useState([]);
     const [nguoidg, setNguoidanhgia] = useState([]);
@@ -58,6 +58,12 @@ const Gioithieu = () => {
     const initData = async () => {
         const resultQa = await getQuananById(id);
         setQuanan(resultQa.data);
+
+        // Quán trên Map
+        const resQuan = await getQuanan();
+        const fill = resQuan.data.filter((e)=> e.id_quanan === resultQa.data.id_quanan)
+        setQuananMap(fill);
+        /*--------------------------------*/
 
         const resultGt = await getGioithieu();
         setGioithieu(resultGt.data);
@@ -276,17 +282,13 @@ const Gioithieu = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
 
-    // an bot
-
-    //Baner Map
-
     return (
         <>
             <div className="container-fluid py-1">
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
                     <div class="col-12 ">
-                        
+                        <Map quanan={quananMap} sizeData={1}/>
                     </div>
                 </div>
                 <div className="container">

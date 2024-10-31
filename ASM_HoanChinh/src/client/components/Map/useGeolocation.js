@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 
 export default function useGeolocation() {
   const [position, setPosition] = useState({
-    latitude: null,  // null để có thể phân biệt trạng thái ban đầu
+    latitude: null,  
     longitude: null,
-    loading: true,   // Thêm trạng thái loading để theo dõi khi nào có tọa độ
-    error: null,     // Thêm trạng thái error để lưu thông tin lỗi (nếu có)
+    loading: true,   
+    error: null, 
   });
 
   useEffect(() => {

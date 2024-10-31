@@ -188,7 +188,7 @@ const AddQuanAn = () => {
                           name="gio_mo_cua"
                           id="gio_mo_cua"
                           placeholder="Giờ hoạt động"
-                          {...register("Giờ mở cửa", {
+                          {...register("gio_mo_cua", {
                             required: {
                               value: true,
                               message: "Giờ hoạt động không được bỏ trống",
@@ -207,7 +207,7 @@ const AddQuanAn = () => {
                     <div className="mb-3">
                       <label className="form-label">Giờ đóng cửa</label>
                       <TextField
-                          type="text"
+                          type="time"
                           fullWidth
                           variant="outlined"
                           min={0}
@@ -333,9 +333,8 @@ const AddQuanAn = () => {
                         </small>
                     )}
                   </div>
-                </div>
-                <div className="row">
-                  <div className="col-12">
+
+                  <div className="col-6">
                     <div className="mb-3">
                       <label className="form-label">Giới thiệu</label>
                       <Select

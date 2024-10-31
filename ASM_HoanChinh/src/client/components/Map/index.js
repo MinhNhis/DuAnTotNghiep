@@ -11,38 +11,49 @@ import useGeolocation from "./useGeolocation";
 import { getQuanan } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
 
-const Map = () => {
+const Map = ({ quanan, sizeData }) => {
     const mapRef = useRef();
     const userMarkerRef = useRef();
     const locationRef = useRef();
     const [speed, setSpeed] = useState(50);
-    const [quanan, setQuanAn] = useState([]);
-    const [routeColorIndex, setRouteColorIndex] = useState(0);
+    const [color, setColor] = useState(0);
     const speedRef = useRef(speed);
-    const [userPosition, setUserPosition] = useLocalStorage("USER_MARKER", {
-        latitude: 0,
-        longitude: 0,
-    });
     const [nearbyMarkers, setNearbyMarkers] = useLocalStorage("NEARBY_MARKERS", []);
     const [routesInfo, setRoutesInfo] = useState([]);
     const [routingControl, setRoutingControl] = useState(null);
     const location = useGeolocation();
     locationRef.current = location;
-
-    const defaultIcon = L.icon({
+    const [userPosition, setUserPosition] = useLocalStorage("USER_MARKER", {
+        latitude: 0,
+        longitude: 0,
+    });
+    const userLocationIcon = L.icon({
         iconUrl: require('leaflet/dist/images/marker-icon.png'),
         shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+        iconSize: [25, 40],
+        iconAnchor: [17, 45],
+        popupAnchor: [0, -45]
     });
 
+    const makerIconOff = new L.Icon({
+        iconUrl: require('../../../admin/assets/images/marker.png'),
+        iconSize: [23, 37],
+        iconAnchor: [17, 45],
+        popupAnchor: [0, -45]
+    })
+
+    const makerIconOn = new L.Icon({
+        iconUrl: require('../../../admin/assets/images/marker-blue.png'),
+        iconSize: [40, 45],
+        iconAnchor: [17, 45],
+        popupAnchor: [0, -45]
+    })
     const routeColors = ["blue", "red", "green", "purple", "orange", "yellow"];
 
     useEffect(() => {
-        initData();
-    }, []);
-
-    useEffect(() => {
-        loadMap();
-    }, [quanan]);
+        
+        loadMap()
+    }, [quanan, sizeData]);
 
     useEffect(() => {
         speedRef.current = speed;
@@ -50,8 +61,10 @@ const Map = () => {
     }, [speed]);
 
     useEffect(() => {
-        userLocation();
-    }, [location, userPosition.latitude, userPosition.longitude]);
+        setTimeout(() => {
+            userLocation();
+        }, 2000)
+    }, [location]);
 
     // useEffect(() => {
     //     if (!mapRef.current) {
@@ -63,7 +76,7 @@ const Map = () => {
     //         }).addTo(mapRef.current);
 
     //         nearbyMarkers.forEach(({ latitude, longitude }) => {
-    //             L.marker([latitude, longitude], { icon: defaultIcon })
+    //             L.marker([latitude, longitude], { icon: userLocationIcon })
     //                 .addTo(mapRef.current)
     //                 .bindPopup(`lat: ${latitude}, long: ${longitude}`);
     //         });
@@ -78,7 +91,7 @@ const Map = () => {
     //             }
 
     //             // Tạo marker mới cho vị trí được click
-    //             L.marker([latitude, longitude], { icon: defaultIcon })
+    //             L.marker([latitude, longitude], { icon: userLocationIcon })
     //                 .addTo(mapRef.current)
     //                 .bindPopup(`lat: ${latitude.toFixed(2)}, long: ${longitude.toFixed(2)}`);
 
@@ -94,7 +107,7 @@ const Map = () => {
     //                 ],
     //                 createMarker: (i, n) => {
     //                     if (i === n - 1) {
-    //                         return L.marker([latitude, longitude], { icon: defaultIcon }).addTo(mapRef.current);
+    //                         return L.marker([latitude, longitude], { icon: userLocationIcon }).addTo(mapRef.current);
     //                     }
     //                 },
     //                 lineOptions: {
@@ -118,17 +131,31 @@ const Map = () => {
     //         });
     //     }
     // }, [userPosition, nearbyMarkers, setNearbyMarkers]);
+    const userLocation = () => {
+        setUserPosition({ ...userPosition });
 
-    const initData = async () => {
-        const resQuan = await getQuanan();
-        setQuanAn(resQuan.data);
+        if (userMarkerRef.current) {
+            mapRef.current.removeLayer(userMarkerRef.current);
+        }
+
+        if (location.latitude && location.longitude) {
+            userMarkerRef.current = L.marker([location.latitude, location.longitude], { icon: userLocationIcon })
+                .addTo(mapRef.current)
+                .bindPopup("Vị trí của bạn");
+
+            const el = userMarkerRef.current.getElement();
+            if (el) {
+                el.style.filter = "hue-rotate(120deg)";
+            }
+
+            mapRef.current.setView([location.latitude, location.longitude], 16);
+        }
     };
-
-    const khoangCach = async (lat1, lon1, lat2, lon2) => {
-        const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=false`;
+    const khoangCach = async (lat1, lon1, lat2, lon2, retries = 3) => {
+        const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&alternatives=true&steps=true`;
 
         try {
-            const response = await fetch(url);
+            const response = await fetch(url, { timeout: 1000 });
             const data = await response.json();
 
             if (data.routes && data.routes.length > 0) {
@@ -136,13 +163,32 @@ const Map = () => {
                 const distance = route.distance / 1000;
                 return distance;
             } else {
-                console.log("Không tìm thấy tuyến đường.");
                 return null;
             }
         } catch (error) {
-            console.error("Lỗi khi gọi OSRM API:", error);
-            return null;
+            if (retries > 0) {
+                console.warn("Lỗi khi gọi OSRM API, thử lại...", retries);
+                return await khoangCach(lat1, lon1, lat2, lon2, retries - 1);
+            } else {
+                console.error("Lỗi khi gọi OSRM API sau nhiều lần thử:", error);
+                return null;
+            }
         }
+    };
+
+
+    const isOpen = (openTime, closeTime) => {
+        const now = new Date();
+        const [openHour, openMinute] = openTime.split(':').map(Number);
+        const [closeHour, closeMinute] = closeTime.split(':').map(Number);
+
+        const openingTime = new Date(now);
+        const closingTime = new Date(now);
+
+        openingTime.setHours(openHour, openMinute, 0);
+        closingTime.setHours(closeHour, closeMinute, 0);
+
+        return now >= openingTime && now <= closingTime;
     };
 
     const loadMap = async () => {
@@ -160,28 +206,39 @@ const Map = () => {
                 const popupContent = `
                     <a href="/chi-tiet/${quan.id_quanan}" style="color: black; text-decoration: none;">
                         <div style="width: 200px; text-align: center;">
-                            <img src="${BASE_URL}/uploads/${quan.hinh_anh}" alt="${quan.ten_quan_an}" loading="lazy" style="width: 100%; height: 100px;  border-radius: 10px; object-fit: cover;" />
-                            <h6 style="margin: 10px 0;">${quan.ten_quan_an}</h6>
-                            <p style="font-size: 12px;">${quan.dia_chi}</p>
+                            <img src="${BASE_URL}/uploads/${quan.hinh_anh}" alt="${quan.ten_quan_an}" loading="lazy" style="width: 100%; height: 100px; border-radius: 10px; object-fit: cover;" />
+                            <h6 style="margin: 5px 0;">${quan.ten_quan_an}</h6>
+                            <div className='mb-1' style="color: ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? 'green' : 'red'}; margin: 3px 0;">
+                                ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${quan.gio_mo_cua} - ${quan.gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
+                            </div>
+                            <p style="font-size: 12px; margin: 3px 0;">${quan.dia_chi}</p>
                         </div>
-                    </a>   
+                    </a>
                 `;
 
-                const marker = L.marker([quan.lat, quan.lng], { icon: defaultIcon })
+                const marker = L.marker([quan.lat, quan.lng], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
                     .addTo(mapRef.current)
                     .bindPopup(popupContent)
                     .on('click', () => calculateRoute(quan.lat, quan.lng, quan));
-
-                const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
-                if (distance && distance <= 10) {
+                if (location.latitude && location.longitude) {
+                    const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
+                    if (sizeData === 1) {
+                        calculateRoute(quan.lat, quan.lng, quan)
+                    } else {
+                        if (distance && distance <= 10) {
+                            calculateRoute(quan.lat, quan.lng, quan);
+                        }
+                    }
+                } else {
                     calculateRoute(quan.lat, quan.lng, quan);
                 }
+
+
             } else {
                 console.error(`Quán ăn ${quan.ten_quan_an} không có vị trí hợp lệ.`);
             }
         }
     };
-
 
     const calculateRoute = (latitude, longitude, quan) => {
         const currentLocation = locationRef.current;
@@ -197,17 +254,20 @@ const Map = () => {
             mapRef.current.removeControl(routingControl);
         }
 
+        const routingContainer = document.querySelector('.leaflet-routing-container');
+
         const newRoutingControl = L.Routing.control({
             waypoints: [
                 L.latLng(currentLocation.latitude, currentLocation.longitude),
                 L.latLng(latitude, longitude)
             ],
             router: L.Routing.osrmv1({
+                language: 'vi',
                 serviceUrl: 'https://router.project-osrm.org/route/v1'
             }),
             createMarker: (i, n) => {
                 if (i === n - 1) {
-                    return L.marker([latitude, longitude], { icon: defaultIcon }).addTo(mapRef.current);
+                    return L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff }).addTo(mapRef.current);
                 }
             },
             lineOptions: {
@@ -234,29 +294,38 @@ const Map = () => {
                 <a href="/chi-tiet/${quan.id_quanan}" style="color: black; text-decoration: none;">
                     <div style="width: 200px; text-align: center;">
                         <img src="${BASE_URL}/uploads/${quan.hinh_anh}" alt="${quan.ten_quan_an}" loading="lazy" style="width: 100%; height: 100px; border-radius: 10px; object-fit: cover;" />
-                        <h6 style="margin: 10px 0;">${quan.ten_quan_an}</h6>
-                        <p style="font-size: 12px;">${quan.dia_chi}</p>
+                        <h6 style="margin: 5px 0;">${quan.ten_quan_an}</h6>
+                        <div className='mb-1' style="color: ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? 'green' : 'red'}; margin: 3px 0;">
+                            ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${quan.gio_mo_cua}- ${quan.gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
+                        </div>
+                        <p style="font-size: 12px;; margin: 0;">${quan.dia_chi}</p>
                         <p> ${distanceKm.toFixed(2)} Km, Thời gian: ${hours} giờ ${minutes} phút</p>
                     </div>
                 </a>
             `;
 
-            const marker = L.marker([latitude, longitude], { icon: defaultIcon })
+            const marker = L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
                 .addTo(mapRef.current)
-                marker.bindPopup(popupContent)
-                marker.openPopup();
+            marker.bindPopup(popupContent)
+            marker.openPopup();
 
             setNearbyMarkers((prevMarkers) => [...prevMarkers, { latitude, longitude }]);
             setRoutesInfo((prevRoutes) => [
                 ...prevRoutes,
-                { latitude, longitude, distanceKm, marker, hinh_anh: quan.hinh_anh, ten_quan_an: quan.ten_quan_an, dia_chi: quan.dia_chi, id_quanan: quan.id_quanan },
+                { latitude, longitude, distanceKm, marker, hinh_anh: quan.hinh_anh, ten_quan_an: quan.ten_quan_an, dia_chi: quan.dia_chi, gio_mo_cua: quan.gio_mo_cua, gio_dong_cua: quan.gio_dong_cua, id_quanan: quan.id_quanan },
             ]);
         });
+
+        if (sizeData === 1) {
+            if (routingContainer) {
+                routingContainer.style.display = (sizeData === 1) ? 'block' : 'none';
+            }
+        } else return
     };
 
     const updatePopups = () => {
         routesInfo.forEach((route) => {
-            const { distanceKm, marker, hinh_anh, ten_quan_an, dia_chi, id_quanan } = route;
+            const { distanceKm, marker, hinh_anh, ten_quan_an, dia_chi, gio_mo_cua, gio_dong_cua, id_quanan } = route;
 
             const currentSpeed = speedRef.current;
             const timeHours = distanceKm / currentSpeed;
@@ -268,8 +337,11 @@ const Map = () => {
                 <a href="/chi-tiet/${id_quanan}" style="color: black; text-decoration: none;">
                     <div style="width: 200px; text-align: center;">
                         <img src="${BASE_URL}/uploads/${hinh_anh}" alt="${ten_quan_an}" loading="lazy" style="width: 100%; height: 100px; border-radius: 10px; object-fit: cover;" />
-                        <h6 style="margin: 10px 0;">${ten_quan_an}</h6>
-                        <p style="font-size: 12px;">${dia_chi}</p>
+                        <h6 style="margin: 5px 0;">${ten_quan_an}</h6>
+                        <div className='mb-1' style=" color: ${isOpen(gio_mo_cua, gio_dong_cua) ? 'green' : 'red'}; margin: 3px 0;">
+                            ${isOpen(gio_mo_cua, gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${gio_mo_cua}- ${gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
+                        </div>
+                        <p style="font-size: 12px; margin: 0;">${dia_chi}</p>
                         <p>${distanceKm.toFixed(2)} Km, Thời gian: ${hours} giờ ${minutes} phút</p>
                     </div>
                 </a>
@@ -280,29 +352,6 @@ const Map = () => {
                 marker.openPopup();
             }
         });
-    };
-
-
-
-    const userLocation = () => {
-        setUserPosition({ ...userPosition });
-
-        if (userMarkerRef.current) {
-            mapRef.current.removeLayer(userMarkerRef.current);
-        }
-
-        if (location.latitude && location.longitude) {
-            userMarkerRef.current = L.marker([location.latitude, location.longitude], { icon: defaultIcon })
-                .addTo(mapRef.current)
-                .bindPopup("Vị trí của bạn");
-
-            const el = userMarkerRef.current.getElement();
-            if (el) {
-                el.style.filter = "hue-rotate(120deg)";
-            }
-
-            mapRef.current.setView([location.latitude, location.longitude], 16);
-        }
     };
 
     return (
