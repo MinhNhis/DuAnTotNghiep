@@ -1,13 +1,16 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography, Button, TextField } from "@mui/material";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 import { addbaiviet } from "../../../../services/Baiviet";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from 'notistack';
 
 const AddBaiViet = () => {
-  const { register, handleSubmit, formState } = useForm();
+  const { register, handleSubmit, control, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -89,27 +92,24 @@ const AddBaiViet = () => {
             </div>
             <div className="col-6">
               <div className="mb-3">
-                <label htmlFor="noi_dung" className="form-label">
-                  Nội dung
-                </label>
-                <TextField
-                  type="text"
-                  fullWidth
-                  multiline
-                  rows={6}
-                  variant="outlined"
-                  label="Nội dung"
-                  {...register("noi_dung", {
-                    required: {
-                      value: true,
-                      message: "Nội dung không được bỏ trống",
-                    },
-                  })}
+                <label htmlFor="noi_dung" className="form-label">Nội dung</label>
+                <Controller
+                  name="noi_dung"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: { value: true, message: "Nội dung không được bỏ trống" } }}
+                  render={({ field }) => (
+                    <ReactQuill
+                    style={{
+                      height : "120px",
+                    }}
+                      value={field.value}
+                      onChange={(content) => field.onChange(content)}  // Cập nhật giá trị nội dung
+                    />
+                  )}
                 />
                 {formState?.errors?.noi_dung && (
-                  <small className="text-danger">
-                    {formState?.errors?.noi_dung?.message}
-                  </small>
+                  <small className="text-danger">{formState?.errors?.noi_dung?.message}</small>
                 )}
               </div>
             </div>

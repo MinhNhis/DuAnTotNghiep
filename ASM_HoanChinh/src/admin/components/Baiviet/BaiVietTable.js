@@ -19,7 +19,7 @@ import PaginationRounded from "../Paginator";
 const BaiVietTable = () => {
   const [baiviets, setBaiviet] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   useEffect(() => {
     initData();
@@ -120,7 +120,7 @@ const BaiVietTable = () => {
                         width: '200px',
                       }}
                     >
-                      {baiviet.noi_dung}
+                      <p dangerouslySetInnerHTML={{ __html: baiviet.noi_dung }}></p>
                     </Typography>
 
                   </Box>

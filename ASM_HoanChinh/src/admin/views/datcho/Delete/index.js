@@ -46,14 +46,14 @@ const DeleteDatcho = () => {
                         style={{ width: "100px" }}
                         onClick={submit}
                     >
-                        Delete
+                        Xóa
                     </Button>
                     <Button 
                         variant="outlined"
                         onClick={handleCancel} 
                         style={{ width: "100px" }}
                     >
-                        Cancel
+                        Hủy
                     </Button>
                 </CardActions>
             </Card>

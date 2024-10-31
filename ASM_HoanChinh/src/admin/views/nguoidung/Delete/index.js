@@ -3,33 +3,28 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  Card,
-  CardContent,
-  CardActions,
-  Box,
-  Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Button,
-  TextField
+  Box,
+  TextField,
 } from "@mui/material";
-import {
-  deleteNguoiDung,
-  getNguoiDungById,
-} from "../../../../services/Nguoidung";
+import { deleteNguoiDung, getNguoiDungById } from "../../../../services/Nguoidung";
 import { useSnackbar } from "notistack";
-import { useForm } from "react-hook-form";
+import { useCookies } from "react-cookie";
 
 const DeleteNguoiDung = () => {
-  const { register, handleSubmit, formState } = useForm()
-  const [nguoidung, setNguoidung] = useState({});
-  const [reason, setReason] = useState("");
   const navigate = useNavigate();
   const params = useParams();
-  const id = params.id;
+  const [reason, setReason] = useState("");
+  const [nguoidung, setNguoidung] = useState({});
+  const [open, setOpen] = useState(true);
   const { enqueueSnackbar } = useSnackbar();
-
-  const handleCancle = () => {
-    navigate("/admin/nguoi-dung");
-  };
+  const [cookies] = useCookies(["token", "role"]);
+  const id = params.id;
 
   useEffect(() => {
     initData();
@@ -42,6 +37,11 @@ const DeleteNguoiDung = () => {
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    navigate("/admin/nguoi-dung");
   };
 
   const submit = async () => {
@@ -64,33 +64,18 @@ const DeleteNguoiDung = () => {
   };
 
   return (
-    <div>
-      <Card
-        variant="outlined"
-        sx={{
-          maxWidth: 700,
-          margin: "20px auto",
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <CardContent sx={{ padding: "30px", textAlign: "center" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginBottom: 2,
-            }}
-          >
-            <WarningIcon sx={{ fontSize: 40, color: "warning.main" }} />
-          </Box>
-          <Typography variant="h5" gutterBottom>
-            Bạn có chắc chắn muốn xóa ?
-          </Typography>
-          <Typography variant="body1" color="textSecondary">
-            Người dùng: {nguoidung.ten_nguoi_dung}
-          </Typography>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+          <WarningIcon sx={{ fontSize: 40, color: "warning.main", marginRight: 1 }} />
+          Bạn có chắc chắn muốn xóa?
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText align="center">
+          Người dùng: {nguoidung.ten_nguoi_dung}
+        </DialogContentText>
+        <DialogContentText align="center">
           <TextField
             label="Lý do"
             variant="outlined"
@@ -100,28 +85,27 @@ const DeleteNguoiDung = () => {
             onChange={(e) => setReason(e.target.value)}
             sx={{ width: "50%", marginTop: 1 }}
           />
-        </CardContent>
-        <CardActions sx={{ justifyContent: "center", padding: "5px" }}>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<DeleteIcon />}
-            sx={{ marginRight: 2 }}
-            style={{ width: "100px" }}
-            onClick={submit}
-          >
-            Delete
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={handleCancle}
-            style={{ width: "100px" }}
-          >
-            Cancel
-          </Button>
-        </CardActions>
-      </Card>
-    </div>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: "center" }}>
+        <Button
+          variant="contained"
+          color="error"
+          startIcon={<DeleteIcon />}
+          onClick={submit}
+          sx={{ width: "100px" }}
+        >
+          Xóa
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleClose}
+          sx={{ width: "100px" }}
+        >
+          Hủy
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

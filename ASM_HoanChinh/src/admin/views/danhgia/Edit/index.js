@@ -284,7 +284,7 @@ const EditDanhGia = () => {
                                     onClick={handleSubmit(onSubmit)}
                                     style={{ flex: 1 }}
                                 >
-                                    {`Cập Nhật`}
+                                    {`Sửa`}
                                 </button>
 
                                 <button

@@ -18,18 +18,14 @@ const getQuananById = async (id) => {
     return res
 }
 
-const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, so_luong_cho, created_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
-    data.append("lat", lat);
-    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
-    data.append("gio_mo_cua", gio_mo_cua);
-    data.append("gio_dong_cua", gio_dong_cua);
+    data.append("gio_hoat_dong", gio_hoat_dong);
     data.append("link_website", link_website);
     data.append("link_facebook", link_facebook);
-    data.append("id_gioithieu", id_gioithieu);
     data.append("created_user", created_user);
     data.append("so_luong_cho", so_luong_cho);
     // Gửi 1 ảnh
@@ -43,18 +39,14 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai,
     return res
 }
 
-const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, dien_thoai, gio_hoat_dong, link_website, link_facebook, so_luong_cho, created_user, updated_user }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
-    data.append("lat", lat);
-    data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
-    data.append("gio_mo_cua", gio_mo_cua);
-    data.append("gio_dong_cua", gio_dong_cua);
+    data.append("gio_hoat_dong", gio_hoat_dong);
     data.append("link_website", link_website);
     data.append("link_facebook", link_facebook);
-    data.append("id_gioithieu", id_gioithieu);
     data.append("so_luong_cho", so_luong_cho);
     data.append("created_user", created_user);
     data.append("updated_user", updated_user);
@@ -69,12 +61,16 @@ const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_t
     return res
 }
 
-const deleteQuanan = async (id) => {
+const deleteQuanan = async (id, {id_nguoidung, reason, role}) => {
 
     const res = await request({
         method: "DELETE",
         path: `api/quanans/${id}`,
-        data: null
+        data: { 
+            reason: reason,
+            id_nguoidung: id_nguoidung,
+            role: role,
+        }
     })
 
     return res
@@ -83,7 +79,7 @@ const deleteQuanan = async (id) => {
 const paginator = async (page) => {
     const res = await request({
         method: "GET",
-        path: `/api/paginator-quanan?page=${page}&limit=8`
+        path: `/api/paginator-quanan?page=${page}&limit=4`
     })
 
     return res
@@ -98,4 +94,14 @@ const searchQuanan = async(keyword) =>{
     return res
 }
 
-export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan}
+
+const getTiennghi = async () => {
+    const res = await request({
+        method: "GET",
+        path: "/api/tiennghis"
+    });
+
+    return res
+}
+
+export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan, getTiennghi}

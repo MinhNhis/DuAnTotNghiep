@@ -1,14 +1,17 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+
 import { getBaivietById, updatebaiviet } from "../../../../services/Baiviet";
 import { useSnackbar } from 'notistack';
 
 const UpdateBaiViet = () => {
     const params = useParams();
     const id = params.id_baiviet;
-    const { register, handleSubmit, setValue, formState } = useForm();
+    const { register, handleSubmit, setValue, control, formState } = useForm();
     const { enqueueSnackbar } = useSnackbar();
     const navigate = useNavigate();
 
@@ -93,26 +96,24 @@ const UpdateBaiViet = () => {
                             </div>
                             <div className="col-6">
                                 <div className="mb-3">
-                                    <label htmlFor="noi_dung" className="form-label">
-                                        Nội dung
-                                    </label>
-                                    <TextField
-                                        type="text"
-                                        fullWidth
-                                        multiline
-                                        rows={6}
-                                        variant="outlined"
-                                        {...register("noi_dung", {
-                                            required: {
-                                                value: true,
-                                                message: "Nội dung không được bỏ trống",
-                                            },
-                                        })}
+                                    <label htmlFor="noi_dung" className="form-label">Nội dung</label>
+                                    <Controller
+                                        name="noi_dung"
+                                        control={control}
+                                        defaultValue=""
+                                        rules={{ required: { value: true, message: "Nội dung không được bỏ trống" } }}
+                                        render={({ field }) => (
+                                            <ReactQuill
+                                                style={{
+                                                    height: "120px",
+                                                }}
+                                                value={field.value}
+                                                onChange={(content) => field.onChange(content)}
+                                            />
+                                        )}
                                     />
                                     {formState?.errors?.noi_dung && (
-                                        <small className="text-danger">
-                                            {formState?.errors?.noi_dung?.message}
-                                        </small>
+                                        <small className="text-danger">{formState?.errors?.noi_dung?.message}</small>
                                     )}
                                 </div>
                             </div>
@@ -122,7 +123,7 @@ const UpdateBaiViet = () => {
                                 <Button
                                     color="primary"
                                     variant="contained"
-                                    sx={{ width: "100px" }}
+                                    sx={{ width: "100px"}}
                                     onClick={handleSubmit(onSubmit)}
                                 >
                                     Cập nhật
@@ -131,7 +132,7 @@ const UpdateBaiViet = () => {
                                 <Button
                                     color="error"
                                     variant="contained"
-                                    sx={{ width: "100px" }}
+                                    sx={{ width: "100px", marginRight: 115}}
                                     onClick={handleCancel}
                                 >
                                     Hủy
