@@ -39,10 +39,10 @@ const DeleteDanhGia = () => {
                 </CardContent>
                 <CardActions sx={{ justifyContent: 'center', padding: '20px' }}>
                     <Button variant="contained" color="error" startIcon={<DeleteIcon />} sx={{ marginRight: 2 }} style={{ width: "100px" }} onClick={submit}>
-                        Delete
+                        Xóa
                     </Button>
                     <Button variant="outlined" onClick={handleCancle} style={{ width: "100px" }}>
-                        Cancel
+                        Hủy
                     </Button>
                 </CardActions>
             </Card>

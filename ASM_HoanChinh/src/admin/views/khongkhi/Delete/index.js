@@ -49,14 +49,14 @@ const DeleteKhongkhi = () => {
               onClick={handleDelete}
               sx={{ width: "100px" }}
           >
-            Delete
+            Xóa
           </Button>
           <Button
               variant="outlined"
               onClick={handleClose}
               sx={{ width: "100px" }}
           >
-            Cancel
+            Hủy
           </Button>
         </DialogActions>
       </Dialog>

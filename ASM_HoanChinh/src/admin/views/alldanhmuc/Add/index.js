@@ -81,7 +81,7 @@ const AddAllDanhmuc = () => {
                                     sx={{ width: "100px", marginRight: 2 }}
                                     onClick={handleSubmit(onSubmit)}
                                 >
-                                    {`Add`}
+                                    {`Thêm`}
                                 </Button>
 
                                 <Button
@@ -90,7 +90,7 @@ const AddAllDanhmuc = () => {
                                     color="error"
                                     onClick={handleCancle}
                                 >
-                                    {`Cancle`}
+                                    {`Hủy`}
                                 </Button>
                             </div>
                         </div>
