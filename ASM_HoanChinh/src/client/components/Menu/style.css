@@ -33,7 +33,23 @@
         margin-bottom: 10px;
         border: 1px solid #ddd;
     }
+.dropdown-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+}
 
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
     .card-img-top {
         height: 100px;
         object-fit: cover;
@@ -59,7 +75,7 @@
     .mb-1 {
         font-size: 13px;
     }
-    
+
     .nav-pills {
         display: none;
     }
