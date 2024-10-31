@@ -8,91 +8,202 @@ import { getDanhmuc } from "../../../services/Danhmuc";
 import { getQuanan } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
+import { getAllDanhmuc } from "../../../services/Alldanhmuc";
 
 const Menu = () => {
+    const [alldanhmuc, setAllDanhmuc] = useState([]);
     const [danhmuc, setDanhmuc] = useState([]);
-    const [menu, setMenu] = useState([]);
+    const [menu, setMenus] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
+    const [subCategories, setSubCategories] = useState([]);
+
 
     const initQuanan = async () => {
         const res = await getQuanan();
-        setQuanan(res.data)
-    }
+        setQuanan(res.data);
+    };
+
+    const initAllDanhmuc = async () => {
+        const res = await getAllDanhmuc();
+        if (res && res.data) {
+            setAllDanhmuc(res.data);
+        } else {
+            setError("Failed to load categories");
+        }
+    };
 
     const initDanhmuc = async () => {
         const res = await getDanhmuc();
         if (res && res.data) {
             setDanhmuc(res.data);
         } else {
-            setError('Failed to load categories');
+            setError("Failed to load categories");
         }
     };
 
     const initPage = async (data) => {
         try {
-            setMenu(data.data);
+            setMenus(data.data);
         } catch (error) {
-            setError('Failed to load menus');
+            setError("Failed to load menus");
         }
     };
     const AllMenu = async () => {
         const res = await paginator(1);
-        setMenu(res.data);
-    }
+        setMenus(res.data);
+    };
+
+    // const initData = async () => {
+    //     try {
+    //         const result = await getMenus();
+    //         let filteredMenus = result.data;
+
+    //         if (selectedCategory) {
+    //             const categoryToFilter = alldanhmuc.find(cat => cat.id_alldanhmuc === selectedCategory);
+    //             if (categoryToFilter) {
+    //                 const idAlldanhmuc = categoryToFilter.id_alldanhmuc;
+
+    //                 filteredMenus = result.data.filter(item => {
+    //                     const category = danhmuc.find(cat => cat.id_danhmuc === item.id_danhmuc);
+    //                     return category && category.id_alldanhmuc === idAlldanhmuc;
+    //                 });
+    //             }
+    //         }
+    //         setMenu(filteredMenus);
+    //     } catch (error) {
+    //         setError("Failed to load menus");
+    //     }
+    // };
+
 
     const initData = async () => {
+        if (!selectedSubCategory) {
+            setMenus([]);
+            return;
+        }
+
         try {
-
             const result = await getMenus();
-            let filteredMenus = result.data;
-
-            if (selectedCategory) {
-                const categoryName = danhmuc.find((category) => category.id_danhmuc === selectedCategory)?.danh_muc;
-                if (categoryName) {
-                    filteredMenus = result.data.filter(item => {
-                        const category = danhmuc.find(cat => cat.id_danhmuc === item.id_danhmuc);
-                        return category && category.danh_muc.toLowerCase() === categoryName.toLowerCase();
-                    });
-                }
-                setMenu(filteredMenus);
-            }
-
-
+            const filteredMenus = result.data.filter(item => item.id_danhmuc === selectedSubCategory);
+            setMenus(filteredMenus);
         } catch (error) {
-            setError('Failed to load menus');
+            setError("Failed to load menus");
         }
     };
 
     useEffect(() => {
+        initData();
+    }, [])
+
+    useEffect(() => {
+        AllMenu();
+        initAllDanhmuc();
         initDanhmuc();
         initQuanan();
-        initData();
-
     }, [selectedCategory]);
+
 
     const handleCategoryClick = (categoryId) => {
         if (categoryId === null) {
             setIsAllSelected(true);
             setSelectedCategory(null);
+            setSelectedSubCategory(null);
+            setMenus([]); // Clear menus
             AllMenu();
         } else {
             setIsAllSelected(false);
-            setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
+            setSelectedCategory(categoryId);
+            setSelectedSubCategory(null); // Reset subcategory selection
+            const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
+            setSubCategories(filteredSubCategories);
+
         }
+
     };
 
-    const filteredDanhmuc = danhmuc.filter((danhmuc, index, self) =>
-        index === self.findIndex((t) => t.danh_muc.toLowerCase() === danhmuc.danh_muc.toLowerCase())
-    );
+
+
+    const handleSubCategoryClick = async (subCategoryId) => {
+        setSelectedSubCategory(subCategoryId);
+
+        try {
+            const result = await getMenus(); // Assuming getMenus fetches all menus
+            const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
+            setMenus(filteredMenus);
+        } catch (error) {
+            setError("Failed to load menus");
+        }
+
+    };
+
+
+    useEffect(() => {
+        if (selectedCategory) {
+            const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
+            setSubCategories(filteredSubCategories);
+        }
+    }, [selectedCategory]);
 
     if (error) return <p>{error}</p>;
 
     const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(price);
     };
+
+    const checkDanhmuc = (id) => {
+        try {
+            let count = 0;
+            if (!Array.isArray(alldanhmuc)) {
+                return;
+            }
+            danhmuc.forEach(muc => {
+                if (id === muc.id_alldanhmuc) {
+                    count++;
+                }
+            });
+            return count
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+        }
+    };
+
+
+       const filterAndMergeCategories = (categories, subCategories) => {
+        const categoryMap = new Map();
+
+        // Create a map of unique categories
+        categories.forEach(category => {
+            if (!categoryMap.has(category.ten_danhmuc)) {
+                categoryMap.set(category.ten_danhmuc, { ...category, children: [] });
+            }
+        });
+
+        // Add subcategories to their respective parent categories
+        subCategories.forEach(subCategory => {
+            categories.forEach(category => {
+                if (subCategory.parentId === category.id_alldanhmuc) {
+                    if (!categoryMap.get(category.ten_danhmuc).children.some(child => child.id === subCategory.id)) {
+                        categoryMap.get(category.ten_danhmuc).children.push(subCategory);
+                    }
+                }
+            });
+        });
+
+        // Convert map to an array of unique categories
+        return Array.from(categoryMap.values());
+    };
+
+    const filteredCategories = filterAndMergeCategories(alldanhmuc, subCategories);
+
+
+
 
     return (
         <div className="tab-class text-center">
@@ -101,6 +212,7 @@ const Menu = () => {
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
                 <div className="tab-class text-center">
+
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
                         <li className="nav-item p-2">
                             <button
@@ -110,58 +222,91 @@ const Menu = () => {
                                 <span style={{ width: '150px' }}>All</span>
                             </button>
                         </li>
-                        {filteredDanhmuc.map((danhmuc, index) => (
+
+                        {filteredCategories.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2">
-                                <a
-                                    className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_danhmuc ? 'active' : ''}`}
-                                    onClick={() => handleCategoryClick(danhmuc.id_danhmuc)}
-                                >
-                                    <span className="text-dark" style={{ width: '150px' }}>{danhmuc.danh_muc}</span>
-                                </a>
+                                {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
+                                    <a
+                                        className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
+                                        onClick={() => handleCategoryClick(danhmuc.id_alldanhmuc)}
+                                    >
+                                        <span className="text-dark" style={{ width: '150px' }}>{danhmuc.ten_danhmuc}</span>
+                                    </a>
+                                ) : null}
+                                {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
+                                    <ul className="dropdown-menu show">
+                                        {subCategories.map((subCategory, subIndex) => (
+                                            <li key={subIndex} className="dropdown-item" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
+                                                {subCategory.danh_muc}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </li>
                         ))}
+
+
                     </ul>
+
+
                     <div className="tab-content">
-                        <div id="tab-1" className="tab-pane fade show p-0 active">
-                            <div className="row g-4">
+                        <div id="tab-1" className="tab-pane fade show p-0 active" >
+                            <div className="row g-4" >
                                 {selectedCategory && menu.length === 0 && (
                                     <div className="col-12 text-center">
-                                        <p className="text-muted">Không có món ăn nào trong danh mục này.</p>
+                                        <p className="text-muted">
+                                            Không có món ăn nào trong danh mục này.
+                                        </p>
                                     </div>
                                 )}
-                                {menu.map((menuItem, index) => (
-                                    <div key={index} className="col-lg-3 col-md-4 wow " data-wow-delay="0.1s">
-                                        <div className="event-img position-relative d-flex align-items-center">
-                                            <Link to={`/chi-tiet/${menuItem.id_quanan}`}>
-                                                {menuItem.hinh_anh && (
-                                                    <img
-                                                        src={`${BASE_URL}/uploads/${menuItem.hinh_anh}`}
-                                                        className=" rounded w-80 h-80 me-3"
-                                                        alt=""
-                                                        style={{ width: "150px", height: "100px" }}
-                                                    />
-                                                )}
-                                            </Link>
-                                            <div className="d-flex flex-column">
-                                                <h5 className="mb-1 " style={{
-                                                    whiteSpace: 'nowrap',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    width: '150px'
-                                                }}>{menuItem.ten_menu}</h5>
-                                                <p className="mb-0 ">Giá: {formatPrice(menuItem.gia)}</p>
-                                                <p className="mb-0 text-dark">Quán:
-                                                    {
-                                                        quanan.map(value => {
-                                                            return (value.id_quanan === menuItem.id_quanan ? <> {value.ten_quan_an}</> : "")
-
-                                                        })
-                                                    }
-                                                </p>
+                                {menu.length > 0 && (
+                                    <div className="row" style={{marginLeft: '25px'}}>
+                                        {menu.map((menuItem, index) => (
+                                            <div
+                                                key={index}
+                                                className="col-lg-4 col-md-4 wow mb-2"
+                                                data-wow-delay="0.1s"
+                                              
+                                            >
+                                                <div className="event-img position-relative d-flex align-items-start" style={{ paddingTop: '20px' }}>
+                                                    <Link to={`/chi-tiet/${menuItem.id_quanan}`}>
+                                                        {menuItem.hinh_anh && (
+                                                            <img
+                                                                src={`${BASE_URL}/uploads/${menuItem.hinh_anh}`}
+                                                                className="rounded w-80 h-80 me-3"
+                                                                alt=""
+                                                                style={{ width: "150px", height: "100px" }}
+                                                            />
+                                                        )}
+                                                    </Link>
+                                                    <div className="d-flex flex-column justify-content-between" style={{ height: '100%' }}>
+                                                        <h5
+                                                            className="mb-1 text-start"
+                                                            style={{
+                                                                whiteSpace: "nowrap",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                width: "150px",
+                                                            }}
+                                                        >
+                                                            {menuItem.ten_menu}
+                                                        </h5>
+                                                        <div className="d-flex flex-column mb-0">
+                                                            <p className="mb-0 text-start" >
+                                                                Giá: {formatPrice(menuItem.gia)}
+                                                            </p>
+                                                            <p className="mb-0 text-dark">
+                                                                Quán: {quanan.find(value => value.id_quanan === menuItem.id_quanan)?.ten_quan_an || ''}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
+                                )}
+
+
                                 <TableRow
                                     sx={{
                                         display: "flex",
@@ -177,11 +322,13 @@ const Menu = () => {
                                             margin: "0 5px",
                                             "&.Mui-selected": {
                                                 backgroundColor: "#b0853d",
-                                            }
+                                            },
                                         },
                                     }}
                                 >
-                                    <PaginationRounded onDataChange={initPage} paginator={paginator}
+                                    <PaginationRounded
+                                        onDataChange={initPage}
+                                        paginator={paginator}
                                     />
                                 </TableRow>
                             </div>
@@ -194,6 +341,3 @@ const Menu = () => {
 };
 
 export default Menu;
-
-
-
