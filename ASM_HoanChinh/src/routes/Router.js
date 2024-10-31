@@ -69,6 +69,13 @@ const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"))
 const AddDanhmuc = lazy(() => import("../admin/views/danhmuc/Add/index.js"));
 const EditDanhmuc = lazy(() => import("../admin/views/danhmuc/Edit/index.js"));
 const DeleteDanhmuc = lazy(() => import("../admin/views/danhmuc/Delete/index.js"));
+
+// tất cả danh mục
+const AllDanhmuc = lazy(() => import("../admin/views/alldanhmuc/index.js"))
+const AddAllDanhmuc = lazy(() => import("../admin/views/alldanhmuc/Add/index.js"));
+const EditAllDanhmuc = lazy(() => import("../admin/views/alldanhmuc/Edit/index.js"));
+const DeleteAllDanhmuc = lazy(() => import("../admin/views/alldanhmuc/Delete/index.js"));
+
 /***** Người dùng*/
 const NguoiDung = lazy(() => import("../admin/views/nguoidung/index.js"));
 const AddNguoiDung = lazy(() => import("../admin/views/nguoidung/Add/index.js"));
@@ -254,6 +261,13 @@ const ThemeRoutes = [
       { path: "admin/danhmuc/add", exact: true, element: <AddDanhmuc /> },
       { path: "admin/danhmuc/edit/:id_danhmuc", exact: true, element: <EditDanhmuc /> },
       { path: "admin/danhmuc/delete/:id_danhmuc", exact: true, element: <DeleteDanhmuc /> },
+
+      { path: "admin/alldanhmuc", exact: true, element: <AllDanhmuc /> },
+      { path: "admin/alldanhmuc/add", exact: true, element: <AddAllDanhmuc /> },
+      { path: "admin/alldanhmuc/edit/:id_alldanhmuc", exact: true, element: <EditAllDanhmuc /> },
+      { path: "admin/alldanhmuc/delete/:id_alldanhmuc", exact: true, element: <DeleteAllDanhmuc /> },
+
+
 
       { path: "admin/danhgia", exact: true, element: <DanhGia /> },
       { path: "admin/danhgia/add", exact: true, element: <AddDanhGia /> },
