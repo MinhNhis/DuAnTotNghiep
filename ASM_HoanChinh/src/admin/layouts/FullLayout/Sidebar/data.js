@@ -83,6 +83,12 @@ const Menuitems = [
         icon: RestaurantMenuOutlinedIcon,
         href: "admin/danhmuc",
       },
+
+      {
+        title: " Tất Cả Danh mục",
+        icon: RestaurantMenuOutlinedIcon,
+        href: "admin/alldanhmuc",
+      },
       {
         title: "Đơn đặt chỗ",
         icon: ShoppingCartIcon,
