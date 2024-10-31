@@ -9,7 +9,7 @@ import { useSnackbar } from "notistack";
 const DeleteAllDanhmuc = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const id = params.id;
+  const id = params.id_alldanhmuc;
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(true);
 

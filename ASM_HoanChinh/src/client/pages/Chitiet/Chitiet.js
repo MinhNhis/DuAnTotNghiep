@@ -151,7 +151,7 @@ const Gioithieu = () => {
                     return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
                 }
             })
-
+            // Lương///
             if (fillDatcho.length === 0) {
                 const res = await addDatcho({
                     ten_quan: quanan.ten_quan_an,
@@ -208,9 +208,11 @@ const Gioithieu = () => {
 
     const [selectedMenuItems, setSelectedMenuItems] = useState({});
     const [totalPrice, setTotalPrice] = useState(0);
-    const [menuOrder, setMenuOrders] = useState([])
+    const [menuOrders, setMenuOrders] = useState([]);
+    const [selectedItems, setSelectedItems] = useState([]);
     const [fillMenu, setFillMenu] = useState([]);
     const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
+    const [Loadmenu, setLoadMenu] = useState(6);
 
     const handleCheckboxChange = (event) => {
         if (event && event.target) {
@@ -229,36 +231,37 @@ const Gioithieu = () => {
                 return newSelected;
             });
 
-            setMenuOrders((prev) => {
-                const newSelected = [...(prev || [])];
+            const newSelected = [...menuOrders];
 
-                if (isChecked) {
-                    if (!newSelected.includes(menuItemId)) {
-                        newSelected.push(menuItemId);
-                    }
-                } else {
-                    const index = newSelected.indexOf(menuItemId);
-                    if (index > -1) {
-                        newSelected.splice(index, 1);
-                    }
+            if (isChecked) {
+                if (!newSelected.includes(menuItemId)) {
+                    newSelected.push(menuItemId);
                 }
-
-                if (newSelected.length > 0) {
-                    const updatedFillMenu = fillmenu.map((item) => {
-                        const chon = newSelected.includes(item.id_menu) ? 1 : 0;
-                        return { ...item, chon };
-                    });
-
-                    setFillMenu(updatedFillMenu);
+            } else {
+                const index = newSelected.indexOf(menuItemId);
+                if (index > -1) {
+                    newSelected.splice(index, 1);
                 }
+            }
 
-                const selectedItems = fillmenu.filter(item => newSelected.includes(item.id_menu));
-                console.log("Selected Items: ", selectedItems);
+            const allSelectedItems = getAllSelectedItems(newSelected);
+            // console.log("Tất cả mục đã chọn: ", allSelectedItems);
+            setSelectedItems(allSelectedItems);
 
-                return newSelected;
+            const updatedFillMenu = fillmenu.map((item) => {
+                const chon = newSelected.includes(item.id_menu) ? 1 : 0;
+                return { ...item, chon };
             });
+
+            setFillMenu(updatedFillMenu);
+            setMenuOrders(newSelected);
         }
     };
+
+    const getAllSelectedItems = (selectedIds) => {
+        return fillmenu.filter(item => selectedIds.includes(item.id_menu));
+    };
+
 
     const handleQuantityChange = (id_menu, change) => {
         setSelectedMenuItems((prev) => {
@@ -268,6 +271,10 @@ const Gioithieu = () => {
             }
             return { ...prev, [id_menu]: newQuantity };
         });
+    };
+
+    const handleLoadMenu = () => {
+        setLoadMenu((prevCount) => prevCount + 3);
     };
 
     useEffect(() => {
@@ -555,7 +562,7 @@ const Gioithieu = () => {
                                 <h1 className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
-                                        {menu.map((value) => {
+                                        {menu.slice(0, Loadmenu).map((value) => {
                                             return value.id_quanan === quanan.id_quanan ? (
                                                 <div className="col-4" key={value.id_menu}>
                                                     <img
@@ -568,7 +575,8 @@ const Gioithieu = () => {
                                                             borderRadius: "5px"
                                                         }}
                                                     />
-                                                    <h5 className="text-dark mt-1">{value.ten_menu}</h5>
+                                                    {value.ten_menu.length > 12 ? `${value.ten_menu.substring(0, 12)}...` : value.ten_menu}
+
                                                     <h6 className="text-secondary mt-1">{formatPrice(value.gia)}</h6>
 
                                                     <div className="form-check mb-2">
@@ -620,9 +628,36 @@ const Gioithieu = () => {
                                             ) : null;
                                         })}
                                     </div>
-                                    <p>Tổng tiền dự tính: {formatPrice(totalPrice)}</p>
+                                    {Loadmenu < menu.filter((mn) => mn.id_quanan === quanan.id_quanan).length && (
+                                        <Grid container justifyContent="center">
+                                            <Button
+                                                variant="outlined"
+                                                className="glow-button"
+                                                onClick={handleLoadMenu}
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    color: '#996600',
+                                                    border: '2px solid #996600',
+                                                    borderRadius: '20px',
+                                                    padding: '8px 16px',
+                                                    fontSize: '12px',
+                                                    fontWeight: 'bold',
+                                                    textTransform: 'uppercase',
+                                                    borderRadius: '5px',
+                                                    cursor: 'pointer',
+                                                    position: 'relative',
+                                                    overflow: 'hidden',
+                                                    transition: 'all 0.3s ease',
+                                                }}
+                                            >
+                                                Xem thêm
+                                            </Button>
+                                        </Grid>
+                                    )}
+                                    <p style={{ marginTop: "20px" }}>Tổng tiền dự tính: {formatPrice(totalPrice)}</p>
                                 </CardContent>
                             </Card>
+
                         </div>
 
                     </div>
@@ -854,7 +889,7 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
-                                            
+
                                         </div>
                                         <div className="col-sm-6">
                                             <i class="fas fa-map-marker-alt me-2"></i>
@@ -994,7 +1029,26 @@ const Gioithieu = () => {
                                                     </Grid>
                                                     {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (
                                                         <Grid item xs={12} display="center" justifyContent="center">
-                                                            <Button variant="outlined" style={{ color: 'black', borderColor: 'black', borderWidth: '2px', borderRadius: "50px" }} onClick={handleLoadMore}>
+                                                            <Button
+                                                                variant="outlined"
+                                                                className="glow-button"
+                                                                onClick={handleLoadMore}
+                                                                style={{
+                                                                    backgroundColor: 'transparent',
+                                                                    color: '#996600',
+                                                                    border: '2px solid #996600',
+                                                                    borderRadius: '20px',
+                                                                    padding: '8px 16px',
+                                                                    fontSize: '12px',
+                                                                    fontWeight: 'bold',
+                                                                    textTransform: 'uppercase',
+                                                                    borderRadius: '5px',
+                                                                    cursor: 'pointer',
+                                                                    position: 'relative',
+                                                                    overflow: 'hidden',
+                                                                    transition: 'all 0.3s ease',
+                                                                }}
+                                                            >
                                                                 Xem thêm
                                                             </Button>
                                                         </Grid>

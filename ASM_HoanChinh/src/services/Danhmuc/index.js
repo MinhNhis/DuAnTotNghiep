@@ -16,7 +16,7 @@ const getDanhmucById = async (id_danhmuc) => {
     });
     return res;
 }
-const addDanhmuc = async ({ danh_muc, created_user }) => {
+const addDanhmuc = async ({ danh_muc, created_user,id_alldanhmuc }) => {
 
     const res = await request({
         method: "POST",
@@ -24,20 +24,22 @@ const addDanhmuc = async ({ danh_muc, created_user }) => {
         data: {
             danh_muc: danh_muc,
             created_user: created_user,
-            updated_user: null
+            updated_user: null,
+            id_alldanhmuc: id_alldanhmuc
         }
     })
     return res;
 }
 
-const updateDanhmuc = async (id_danhmuc, { danh_muc, created_user, updated_user }) => {
+const updateDanhmuc = async (id_danhmuc, { danh_muc, created_user, updated_user,id_alldanhmuc }) => {
     const res = await request({
         method: "PUT",
         path: `api/danhmuc/${id_danhmuc}`,
         data: {
             danh_muc: danh_muc,
             created_user: created_user,
-            updated_user: updated_user
+            updated_user: updated_user,
+            id_alldanhmuc: id_alldanhmuc
         }
     })
     return res;
