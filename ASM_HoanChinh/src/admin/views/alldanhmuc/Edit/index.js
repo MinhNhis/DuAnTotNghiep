@@ -10,7 +10,7 @@ const EditAllDanhmuc = () => {
   const { control, register, handleSubmit, formState, setValue } = useForm();
   const [alldanhmuc, setAllDanhmuc] = useState({});
   const params = useParams();
-  const id = params.id;
+  const id = params.id_alldanhmuc;
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -28,7 +28,7 @@ const EditAllDanhmuc = () => {
   const onSubmit = async (value) => {
     try {
       await updateAllDanhmuc(id, {
-        ten_danhmuc: value?.danhmuc,
+        ten_danhmuc: value?.ten_danhmuc,
         created_user: accounts?.id_nguoidung,
         updated_user: accounts?.id_nguoidung
       });
@@ -78,16 +78,16 @@ const EditAllDanhmuc = () => {
                       fullWidth
                     />
                   )}
-                  {...register("danhmuc", {
+                  {...register("ten_danhmuc", {
                     required: {
                       value: true,
                       message: "Danh mục không được bỏ trống",
                     },
                   })}
                 />
-                {formState?.errors?.danhmuc && (
+                {formState?.errors?.ten_danhmuc && (
                   <small className="text-danger">
-                    {formState?.errors?.danhmuc?.message}
+                    {formState?.errors?.ten_danhmuc?.message}
                   </small>
                 )}
               </div>
