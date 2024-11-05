@@ -57,29 +57,6 @@ const Menu = () => {
         setMenus(res.data);
     };
 
-    // const initData = async () => {
-    //     try {
-    //         const result = await getMenus();
-    //         let filteredMenus = result.data;
-
-    //         if (selectedCategory) {
-    //             const categoryToFilter = alldanhmuc.find(cat => cat.id_alldanhmuc === selectedCategory);
-    //             if (categoryToFilter) {
-    //                 const idAlldanhmuc = categoryToFilter.id_alldanhmuc;
-
-    //                 filteredMenus = result.data.filter(item => {
-    //                     const category = danhmuc.find(cat => cat.id_danhmuc === item.id_danhmuc);
-    //                     return category && category.id_alldanhmuc === idAlldanhmuc;
-    //                 });
-    //             }
-    //         }
-    //         setMenu(filteredMenus);
-    //     } catch (error) {
-    //         setError("Failed to load menus");
-    //     }
-    // };
-
-
     const initData = async () => {
         if (!selectedSubCategory) {
             setMenus([]);
@@ -97,27 +74,23 @@ const Menu = () => {
 
     useEffect(() => {
         initData();
-    }, [])
-
-    useEffect(() => {
         AllMenu();
         initAllDanhmuc();
         initDanhmuc();
         initQuanan();
     }, [selectedCategory]);
 
-
     const handleCategoryClick = (categoryId) => {
         if (categoryId === null) {
             setIsAllSelected(true);
             setSelectedCategory(null);
             setSelectedSubCategory(null);
-            setMenus([]); // Clear menus
+            setMenus([]);
             AllMenu();
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
-            setSelectedSubCategory(null); // Reset subcategory selection
+            setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
 
@@ -131,7 +104,7 @@ const Menu = () => {
         setSelectedSubCategory(subCategoryId);
 
         try {
-            const result = await getMenus(); // Assuming getMenus fetches all menus
+            const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
             setMenus(filteredMenus);
         } catch (error) {
@@ -175,34 +148,6 @@ const Menu = () => {
     };
 
 
-       const filterAndMergeCategories = (categories, subCategories) => {
-        const categoryMap = new Map();
-
-        // Create a map of unique categories
-        categories.forEach(category => {
-            if (!categoryMap.has(category.ten_danhmuc)) {
-                categoryMap.set(category.ten_danhmuc, { ...category, children: [] });
-            }
-        });
-
-        // Add subcategories to their respective parent categories
-        subCategories.forEach(subCategory => {
-            categories.forEach(category => {
-                if (subCategory.parentId === category.id_alldanhmuc) {
-                    if (!categoryMap.get(category.ten_danhmuc).children.some(child => child.id === subCategory.id)) {
-                        categoryMap.get(category.ten_danhmuc).children.push(subCategory);
-                    }
-                }
-            });
-        });
-
-        // Convert map to an array of unique categories
-        return Array.from(categoryMap.values());
-    };
-
-    const filteredCategories = filterAndMergeCategories(alldanhmuc, subCategories);
-
-
 
 
     return (
@@ -216,14 +161,15 @@ const Menu = () => {
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
                         <li className="nav-item p-2">
                             <button
-                                className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary text-dark' : 'bg-light'}`}
+                                className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary' : 'bg-light'}`}
                                 onClick={() => handleCategoryClick(null)}
                             >
-                                <span style={{ width: '150px' }}>All</span>
+                                <span className="text-dark" style={{ width: '150px' }}>All</span>
                             </button>
                         </li>
 
-                        {filteredCategories.map((danhmuc, index) => (
+
+                        {alldanhmuc.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2">
                                 {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
                                     <a
@@ -244,8 +190,6 @@ const Menu = () => {
                                 )}
                             </li>
                         ))}
-
-
                     </ul>
 
 
@@ -260,13 +204,13 @@ const Menu = () => {
                                     </div>
                                 )}
                                 {menu.length > 0 && (
-                                    <div className="row" style={{marginLeft: '25px'}}>
+                                    <div className="row" style={{ marginLeft: '25px' }}>
                                         {menu.map((menuItem, index) => (
                                             <div
                                                 key={index}
                                                 className="col-lg-4 col-md-4 wow mb-2"
                                                 data-wow-delay="0.1s"
-                                              
+
                                             >
                                                 <div className="event-img position-relative d-flex align-items-start" style={{ paddingTop: '20px' }}>
                                                     <Link to={`/chi-tiet/${menuItem.id_quanan}`}>
