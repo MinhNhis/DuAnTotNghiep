@@ -67,7 +67,7 @@ const Login = () => {
         if (data.success) {
           const date = new Date();
           date.setHours(date.getHours() + 1);
-          setUserLogin(data.user); // Lưu thông tin người dùng trong state
+          setUserLogin(data.user);
           setCookie("token", "dummy_token", { path: "/", expires: date });
           setCookie("role", data.user.vai_tro, { path: "/", expires: date });
           enqueueSnackbar("Đăng nhập với Google thành công!", {
@@ -82,14 +82,14 @@ const Login = () => {
         console.error(error);
       });
   };
+  
   const handleShowForgotPasswordForm = () => {
     setShowForgotPasswordForm(true);
     navigate("/forgot-password");
   };
 
-
   return (
-    <div className="modal-content mt-5">
+    <div className="modal-content custom-modal mt-5">
       <div className="modal-header">
         <Link
           to={"/"}
@@ -106,87 +106,86 @@ const Login = () => {
             nối với chúng tôi.
           </p>
         </div>
-          {!showForgotPasswordForm ? (
-        <div className="form-content">
-          <h2>ĐĂNG NHẬP</h2>
-          <form action="#">
-            <div className="input-field mb-3">
-              <input
-                type="text"
-                required
-                className="form-control"
-                {...register("email", {
-                  required: "Email không được bỏ trống",
-                  pattern: {
-                    value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,4}$/,
-                    message: "Email không hợp lệ",
-                  },
-                })}
+        {!showForgotPasswordForm ? (
+          <div className="form-content">
+            <h2>ĐĂNG NHẬP</h2>
+            <form onSubmit={handleSubmit(submit)}>
+              <div className="input-field mb-3">
+                <input
+                  type="text"
+                  required
+                  className="form-control"
+                  {...register("email", {
+                    required: "Email không được bỏ trống",
+                    pattern: {
+                      value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z.-]+\.[a-zA-Z]{2,4}$/,
+                      message: "Email không hợp lệ",
+                    },
+                  })}
+                />
+                <label>Email</label>
+              </div>
+              {formState?.errors?.email && (
+                <small className="text-danger">
+                  {formState?.errors?.email?.message}
+                </small>
+              )}
+              <div className="input-field mb-3 mt-3">
+                <input
+                  type="password"
+                  required
+                  className="form-control"
+                  {...register("mat_khau", {
+                    required: {
+                      value: true,
+                      message: "Mật khẩu không được bỏ trống",
+                    },
+                    minLength: {
+                      value: 6,
+                      message: "Mật khẩu phải ít nhất 6 kí tự",
+                    },
+                  })}
+                />
+                <label>Mật Khẩu</label>
+              </div>
+              {formState?.errors?.mat_khau && (
+                <small className="text-danger">
+                  {formState?.errors?.mat_khau?.message}
+                </small>
+              )}
+              <div className="mb-3">
+                <Link to="#" onClick={handleShowForgotPasswordForm} id="signup-link">
+                  Quên mật khẩu ?
+                </Link>
+              </div>
+              <button
+                type="submit"
+                className="btn btn-primary mt-3"
+              >
+                Đăng Nhập
+              </button>
+            </form>
+            <div className="d-flex justify-content-center mt-3">
+              <GoogleLogin
+                style={{ width: '100%', height: '50px' }}
+                onSuccess={handleGoogleLogin}
+                onError={() => {
+                  enqueueSnackbar("Đăng nhập Google thất bại", {
+                    variant: "error",
+                  });
+                }}
               />
-              <label>Email</label>
             </div>
-            {formState?.errors?.email && (
-              <small className="text-danger">
-                {formState?.errors?.email?.message}
-              </small>
-            )}
-            <div className="input-field mb-3 mt-3">
-              <input
-                type="password"
-                required
-                className="form-control"
-                {...register("mat_khau", {
-                  required: {
-                    value: true,
-                    message: "Mật khẩu không được bỏ trống",
-                  },
-                  minLength: {
-                    value: 6,
-                    message: "Mật khẩu phải ít nhất 6 kí tự",
-                  },
-                })}
-              />
-              <label>Mật Khẩu</label>
-            </div>
-            {formState?.errors?.mat_khau && (
-              <small className="text-danger">
-                {formState?.errors?.mat_khau?.message}
-              </small>
-            )}
-            <div className="mb-3">
-              <Link to="#" onClick={handleShowForgotPasswordForm} id="signup-link">
-                Quên mật khẩu ?
+            <div className="bottom-link mt-3">
+              Bạn chưa có tài khoản?
+              <Link to={"/register"} id="signup-link">
+                Đăng ký
               </Link>
             </div>
-            <button
-              type="submit"
-              className="btn btn-primary mt-3"
-              onClick={handleSubmit(submit)}
-            >
-              Đăng Nhập
-            </button>
-          </form>
-          <div className="d-flex justify-content-center mt-3">
-            <GoogleLogin
-              style={{ width: '100%', height: '50px' }}
-              onSuccess={handleGoogleLogin}
-              onError={() => {
-                enqueueSnackbar("Đăng nhập Google thất bại", {
-                  variant: "error",
-                });
-              }}
-            />
           </div>
-          <div className="bottom-link mt-3">
-            Bạn chưa có tài khoản?
-            <Link to={"/register"} id="signup-link">
-              Đăng ký
-            </Link>
-          </div>
-        </div>
-          ) : (
-              <ForgotPassword />
-          )}
+        ) : (
+          <ForgotPassword />
+        )}
       </div>
     </div>
   );

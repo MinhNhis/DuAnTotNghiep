@@ -1,0 +1,44 @@
+.select__control {
+    border: 1px solid #adb5bd !important;
+    /* Màu viền của Bootstrap */
+    border-radius: 4px !important;
+    /* Độ bo tròn của Bootstrap */
+    background-color: #fff !important;
+    /* Nền trắng như Bootstrap */
+    padding: 0px 8px !important;
+    /* Giảm padding để trông gọn hơn */
+    height: 56px !important;
+    /* Căn chỉnh chiều cao */
+    box-shadow: none !important;
+    /* Loại bỏ shadow mặc định */
+}
+.select__value-container {
+    max-height: 56px !important; /* Giới hạn chiều cao của container giá trị */
+    overflow-y: auto !important; /* Kích hoạt thanh cuộn bên trong container */
+}
+.select__placeholder {
+    color: #6c757d !important;
+    /* Màu placeholder giống Bootstrap */
+    font-size: 0.875rem !important;
+    /* Kích thước chữ placeholder */
+}
+
+.select__multi-value {
+    background-color: #e9ecef !important;
+    /* Màu nền của các tag khi chọn */
+}
+
+.select__multi-value__label {
+    color: #495057 !important;
+    /* Màu chữ của tag */
+}
+
+.select__indicator-separator {
+    display: none !important;
+    /* Ẩn thanh ngăn cách icon */
+}
+
+.select__indicator {
+    color: #6c757d !important;
+    /* Màu của icon giống Bootstrap */
+}
