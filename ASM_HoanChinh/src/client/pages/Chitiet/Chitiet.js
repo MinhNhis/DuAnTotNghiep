@@ -594,8 +594,8 @@ const Gioithieu = () => {
                                                     </div>
 
                                                     {selectedMenuItems[value.id_menu] !== undefined && (
-                                                        <div className="mb-4 d-flex align-items-center">
-                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1">SL:</label>
+                                                        <div className="mb-4 d-flex align-items-center" >
+                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1 " ></label>
 
                                                             <button
                                                                 className="btn btn-outline-secondary"
@@ -638,16 +638,14 @@ const Gioithieu = () => {
                                                 className="glow-button"
                                                 onClick={handleLoadMenu}
                                                 style={{
-                                                    backgroundColor: 'transparent',
-                                                    color: '#996600',
-                                                    border: '2px solid #996600',
+                                                    backgroundColor: '#d4a762',
+                                                    color: 'white',
+                                                    border: '2px solid #d4a762',
                                                     borderRadius: '20px',
                                                     padding: '8px 16px',
                                                     fontSize: '12px',
                                                     fontWeight: 'bold',
-                                                    textTransform: 'uppercase',
-                                                    borderRadius: '5px',
-                                                    cursor: 'pointer',
+                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
                                                     position: 'relative',
                                                     overflow: 'hidden',
                                                     transition: 'all 0.3s ease',
@@ -1037,16 +1035,14 @@ const Gioithieu = () => {
                                                                 className="glow-button"
                                                                 onClick={handleLoadMore}
                                                                 style={{
-                                                                    backgroundColor: 'transparent',
-                                                                    color: '#996600',
-                                                                    border: '2px solid #996600',
+                                                                    backgroundColor: '#d4a762',
+                                                                    color: 'white',
+                                                                    border: '2px solid #d4a762',
                                                                     borderRadius: '20px',
                                                                     padding: '8px 16px',
                                                                     fontSize: '12px',
                                                                     fontWeight: 'bold',
-                                                                    textTransform: 'uppercase',
-                                                                    borderRadius: '5px',
-                                                                    cursor: 'pointer',
+                                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
                                                                     position: 'relative',
                                                                     overflow: 'hidden',
                                                                     transition: 'all 0.3s ease',

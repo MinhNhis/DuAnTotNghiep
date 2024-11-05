@@ -116,7 +116,7 @@ const EditMenu = () => {
                       </small>
                     )}
                   </div>
-                  <div className="mn-3">
+                  <div className="mb-3">
                     <label className="form-lablr">Danh mục</label>
                     <Controller
                       name="danh_muc"
@@ -128,7 +128,7 @@ const EditMenu = () => {
                           fullWidth
                           variant="outlined"
                         >
-                          <MenuItem selected value={"-1"}>
+                          <MenuItem  selected value={"-1"} disabled={true}>
                             Danh mục
                           </MenuItem>
                           {danhmuc.map((value, index) => {
@@ -208,7 +208,7 @@ const EditMenu = () => {
                           variant="outlined"
                           fullWidth
                         >
-                          <MenuItem selected value={"-1"}>
+                          <MenuItem selected value={"-1"} disabled={true}>
                             Quán ăn
                           </MenuItem>
                           {quanan.map((value, index) => {

@@ -17,7 +17,7 @@ const AllDanhmuc  = () => {
         <Card variant="outlined">
             <CardContent>
                 <Typography variant="h3" sx={{ fontWeight: "bold" }}>DANH SÁCH  TẤT CẢ DANH MỤC</Typography>
-                    <Button variant="contained" sx={{width: '150px', marginLeft: '940px' }} onClick={handleAddAllDanhmuc}>Thêm Danh mục</Button>
+                    <Button variant="contained" sx={{width: '150px', marginLeft: '940px' }} onClick={handleAddAllDanhmuc}>Thêm Danh Mục</Button>
                 <Box sx={{ overflow: { xs: "auto", sm: "unset", }, fontWeight: "bold" }}>
                     <Alldanhmuc />
                 </Box>
