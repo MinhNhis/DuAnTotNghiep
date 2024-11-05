@@ -3,7 +3,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import DeleteDichVu from "../admin/views/dichvu/Delete/index.js";
-import DeleteGioithieu from "../admin/views/gioithieu/Delete/index.js";
 import Datcho from "../admin/views/datcho/index.js";
 import AddDatcho from "../admin/views/datcho/Add/index.js";
 import DeleteDatcho from "../admin/views/datcho/Delete/index.js";
@@ -33,11 +32,6 @@ const UpdateBaiViet = lazy(() => import("../admin/views/baiviet/Update/index.js"
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"));
 const AddDichVu = lazy(() => import("../admin/views/dichvu/Add/index.js"));
 const EditDichVu = lazy(() => import("../admin/views/dichvu/Edit/index.js"));
-
-/***** Giới thiệu*/
-const GioiThieu = lazy(() => import("../admin/views/gioithieu/index.js"));
-const AddGioiThieu = lazy(() => import("../admin/views/gioithieu/Add/index.js"));
-const EditGioiThieu = lazy(() => import("../admin/views/gioithieu/Edit/index.js"));
 
 //kehoach
 const KeHoach = lazy(() => import("../admin/views/kehoach/index.js"));
@@ -96,8 +90,6 @@ const EditLKH = lazy(() => import("../admin/views/loaikhachhang/Edit/index.js"))
 // Đánh Giá
 const DanhGia = lazy(() => import("../admin/views/danhgia/index.js"))
 const AddDanhGia = lazy(() => import("../admin/views/danhgia/Add/index.js"));
-const EditDanhGia = lazy(() => import("../admin/views/danhgia/Edit/index.js"));
-const DeleteDanhgia = lazy(() => import("../admin/views/danhgia/Delete/index.js"));
 
 //Quán Ăn
 const QuanAn = lazy(() => import("../admin/views/quanan/index.js"));
@@ -179,11 +171,6 @@ const ThemeRoutes = [
       { path: "admin/dich-vu/delete/:id", exact: true, element: <DeleteDichVu /> },
       { path: "admin/dich-vu", element: <DichVu />, },
 
-      { path: "admin/gioi-thieu/add", exact: true, element: <AddGioiThieu /> },
-      { path: "admin/gioi-thieu/edit/:id", exact: true, element: <EditGioiThieu /> },
-      { path: "admin/gioi-thieu/delete/:id", exact: true, element: <DeleteGioithieu /> },
-      { path: "admin/gioi-thieu", element: <GioiThieu />, },
-
       { path: "admin/ke-hoach/add", exact: true, element: <AddKeHoach /> },
       { path: "admin/ke-hoach/edit/:id_kehoach", exact: true, element: <UpdateKeHoach /> },
       { path: "admin/ke-hoach/delete/:id_kehoach", exact: true, element: <DeleteKeHoach /> },
@@ -219,12 +206,8 @@ const ThemeRoutes = [
       { path: "admin/alldanhmuc/edit/:id_alldanhmuc", exact: true, element: <EditAllDanhmuc /> },
       { path: "admin/alldanhmuc/delete/:id_alldanhmuc", exact: true, element: <DeleteAllDanhmuc /> },
 
-
-
       { path: "admin/danhgia", exact: true, element: <DanhGia /> },
       { path: "admin/danhgia/add", exact: true, element: <AddDanhGia /> },
-      { path: "admin/danhgia/edit/:id_danhgia", exact: true, element: <EditDanhGia /> },
-      { path: "admin/danhgia/delete/:id_danhgia", exact: true, element: <DeleteDanhgia /> },
 
       { path: "admin/quanan", exact: true, element: <QuanAn /> },
       { path: "admin/quanan/add", exact: true, element: <AddQuanAn /> },

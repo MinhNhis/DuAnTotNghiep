@@ -18,7 +18,7 @@ const getQuananById = async (id) => {
     return res
 }
 
-const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user }) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta, created_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
@@ -29,7 +29,6 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai,
     data.append("gio_dong_cua", gio_dong_cua);
     data.append("link_website", link_website);
     data.append("link_facebook", link_facebook);
-    data.append("id_gioithieu", id_gioithieu);
     data.append("created_user", created_user);
     data.append("so_luong_cho", so_luong_cho);
     data.append("mo_ta", mo_ta);
@@ -80,7 +79,7 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai,
     return res
 }
 
-const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, id_gioithieu, so_luong_cho, created_user, updated_user }) => {
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta, created_user, updated_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
@@ -91,7 +90,6 @@ const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_t
     data.append("gio_dong_cua", gio_dong_cua);
     data.append("link_website", link_website);
     data.append("link_facebook", link_facebook);
-    data.append("id_gioithieu", id_gioithieu);
     data.append("so_luong_cho", so_luong_cho);
     data.append("mo_ta", mo_ta);
     data.append("created_user", created_user);

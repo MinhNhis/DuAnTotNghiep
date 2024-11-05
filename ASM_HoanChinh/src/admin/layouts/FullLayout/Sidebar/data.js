@@ -28,7 +28,6 @@ const Menuitems = [
   {
     title: "Giới thiệu",
     icon: AboutIcon,
-    href: "admin/gioi-thieu",
     children: [
       {
         title: "Dịch vụ",

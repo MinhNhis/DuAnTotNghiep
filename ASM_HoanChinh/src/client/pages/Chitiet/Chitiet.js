@@ -5,16 +5,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { getQuanan, getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
-import {
-    getBaidoxe,
-    getCacDichvu,
-    getGioithieu,
-    getKehoach,
-    getKhongkhi,
-    getTiennghi,
-} from "../../../services/Gioithieu";
-import { getDichvu } from "../../../services/Dichvu";
-import { getLKH } from "../../../services/Khachhang";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
@@ -32,21 +22,12 @@ const Gioithieu = () => {
 
     const [quanan, setQuanan] = useState({});
     const [quananMap, setQuananMap] = useState([]);
-    const [gioithieu, setGioithieu] = useState([]);
     const [danhgia, setDanhgia] = useState([]);
     const [nguoidg, setNguoidanhgia] = useState([]);
     const [menu, setMenu] = useState([]);
     const [datcho, setDatcho] = useState([]);
-
-    const [cacdichvu, setCacdichvu] = useState([]);
-    const [dichvu, setDichvu] = useState([]);
     const accounts = JSON.parse(localStorage.getItem("accounts"))
     const { enqueueSnackbar } = useSnackbar();
-    const [baidoxe, setBaidoxe] = useState([]);
-    const [kehoach, setKehoach] = useState([]);
-    const [loaikhachhang, setLoaikhachhang] = useState([]);
-    const [tiennghi, setTiennghi] = useState([]);
-    const [khongkhi, setKhongkhi] = useState([]);
     const [stars, setStar] = useState(0);
     const [visibleCount, setVisibleCount] = useState(2);
 
@@ -61,12 +42,9 @@ const Gioithieu = () => {
 
         // Quán trên Map
         const resQuan = await getQuanan();
-        const fill = resQuan.data.filter((e)=> e.id_quanan === resultQa.data.id_quanan)
+        const fill = resQuan.data.filter((e) => e.id_quanan === resultQa.data.id_quanan)
         setQuananMap(fill);
         /*--------------------------------*/
-
-        const resultGt = await getGioithieu();
-        setGioithieu(resultGt.data);
 
         const resultDg = await getDanhgia();
         setDanhgia(resultDg.data);
@@ -80,27 +58,6 @@ const Gioithieu = () => {
         const resultDatcho = await getDatcho();
         const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
         setDatcho(filteredDatcho);
-
-        const resultCacdv = await getCacDichvu();
-        setCacdichvu(resultCacdv.data);
-
-        const resultDv = await getDichvu();
-        setDichvu(resultDv.data);
-
-        const resultBdx = await getBaidoxe();
-        setBaidoxe(resultBdx.data);
-
-        const resultKh = await getKehoach();
-        setKehoach(resultKh.data);
-
-        const resultLoaikh = await getLKH();
-        setLoaikhachhang(resultLoaikh.data);
-
-        const resultTn = await getTiennghi();
-        setTiennghi(resultTn.data);
-
-        const resultKk = await getKhongkhi();
-        setKhongkhi(resultKk.data);
     };
 
 
@@ -295,7 +252,7 @@ const Gioithieu = () => {
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
                     <div class="col-12 ">
-                        <Map quanan={quananMap} sizeData={1}/>
+                        <Map quanan={quananMap} sizeData={1} />
                     </div>
                 </div>
                 <div className="container">
@@ -309,13 +266,7 @@ const Gioithieu = () => {
 
                     </div>
                     <p className="mb-4">
-                        {gioithieu.map((value) => {
-                            return value.id_gioithieu === quanan.id_gioithieu ? (
-                                <div className="text-dark">{value.gioi_thieu}</div>
-                            ) : (
-                                ""
-                            );
-                        })}
+                        {/* Mô Tả */}
                     </p>
                     <div className="row mt-3 mb-3" style={{ borderRadius: "10px", backgroundColor: '#fffcf8' }} >
                         <div className="col-lg-6 mb-3">
@@ -723,161 +674,134 @@ const Gioithieu = () => {
                                     <h4 className="mb-3" style={{ fontWeight: "bold" }}>
                                         Giới thiệu
                                     </h4>
-                                    {gioithieu.map((value) => {
-                                        return value.id_gioithieu === quanan.id_gioithieu ? (
-                                            <div className="row">
-                                                <div className="col-6">
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Các tùy chọn dịch vụ
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {cacdichvu.map((cdv, index) => {
-                                                                return cdv.id_cacdichvu ===
-                                                                    value.id_tuychondichvu ? (
-                                                                    <div key={index}>{cdv.tuy_chon_dv}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Không khí
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {khongkhi.map((kk, index) => {
+                                    <div className="row">
+                                        <div className="col-6">
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Không khí
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {khongkhi.map((kk, index) => {
                                                                 return kk.id_khongkhi === value.id_khongkhi ? (
                                                                     <div key={index}>{kk.khong_khi}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Dịch vụ
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {dichvu.map((dv, index) => {
+                                                            })} */}
+                                                </div>
+                                            </div>
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Dịch vụ
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {dichvu.map((dv, index) => {
                                                                 return dv.id_dichvu === value.id_dichvu ? (
                                                                     <div key={index}>{dv.dich_vu}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Tiện nghi
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {tiennghi.map((tn, index) => {
+                                                            })} */}
+                                                </div>
+                                            </div>
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Tiện nghi
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {tiennghi.map((tn, index) => {
                                                                 return tn.id_tiennghi === value.id_tiennghi ? (
                                                                     <div key={index}>{tn.tien_nghi}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
+                                                            })} */}
                                                 </div>
-                                                <div className="col-6">
+                                            </div>
+                                        </div>
+                                        <div className="col-6">
 
 
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Kế hoạch
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {kehoach.map((kh, index) => {
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Kế hoạch
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {kehoach.map((kh, index) => {
                                                                 return kh.id_kehoach === value.id_kehoach ? (
                                                                     <div key={index}>{kh.ke_hoach}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Bãi đỗ xe
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {baidoxe.map((bdx, index) => {
+                                                            })} */}
+                                                </div>
+                                            </div>
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Bãi đỗ xe
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {baidoxe.map((bdx, index) => {
                                                                 return bdx.id_baidoxe === value.id_baidoxe ? (
                                                                     <div key={index}>{bdx.bai_do_xe}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="mb-2 text-dark"
-                                                        style={{ fontWeight: "bold" }}
-                                                    >
-                                                        Loại khách hàng
-                                                    </p>
-                                                    <div
-                                                        className="row g-4 text-dark"
-                                                        style={{ whiteSpace: "nowrap" }}
-                                                    >
-                                                        <div className="col-sm-4">
-                                                            {loaikhachhang.map((loaikh, index) => {
+                                                            })} */}
+                                                </div>
+                                            </div>
+                                            <p
+                                                className="mb-2 text-dark"
+                                                style={{ fontWeight: "bold" }}
+                                            >
+                                                Loại khách hàng
+                                            </p>
+                                            <div
+                                                className="row g-4 text-dark"
+                                                style={{ whiteSpace: "nowrap" }}
+                                            >
+                                                <div className="col-sm-4">
+                                                    {/* {loaikhachhang.map((loaikh, index) => {
                                                                 return loaikh.id_loaikh === value.id_loaikh ? (
                                                                     <div key={index}>{loaikh.khach_hang}</div>
                                                                 ) : (
                                                                     ""
                                                                 );
-                                                            })}
-                                                        </div>
-                                                    </div>
+                                                            })} */}
                                                 </div>
                                             </div>
-                                        ) : (
-                                            ""
-                                        );
-                                    })}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

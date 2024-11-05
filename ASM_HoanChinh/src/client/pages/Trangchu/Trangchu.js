@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import './style.css';
 import { getQuanan, paginator } from '../../../services/Quanan/index';
 import PaginationRounded from "../../../admin/components/Paginator";
-import { getGioithieu } from '../../../services/Gioithieu';
 import { baiviet } from '../../../services/Baiviet';
 import { getDanhgia } from '../../../services/Danhgia';
 import Menu from '../../components/Menu/index'
@@ -15,7 +14,6 @@ const Map = lazy(() => import('../../components/Map/index'))
 const Trangchu = () => {
     const [quanan, setQUanan] = useState([]);
     const [quananMap, setQuananMap] = useState([]);
-    const [gioithieu, setGioithieu] = useState([]);
     const [baiviets, setBaiViet] = useState([]);
     const [quanan5Km, setQUanan5Km] = useState([]);
     const [locationUser, setLocationUser] = useState(null);
@@ -27,9 +25,6 @@ const Trangchu = () => {
        
     }, [quanan])
     const initData2 = async () => {
-        const resGt = await getGioithieu();
-        setGioithieu(resGt.data);
-
         const resQuan = await getQuanan();
         setQuananMap(resQuan.data);
         const quanan = resQuan.data;
@@ -186,26 +181,7 @@ const Trangchu = () => {
                                                     {value.dia_chi}
                                                 </div>
                                                 <div className="text-dark mb-3">
-                                                    {
-                                                        gioithieu.map((gt) => {
-                                                            return (
-                                                                gt.id_gioithieu === value.id_gioithieu ? (
-                                                                    <div className='gt'
-                                                                        style={{
-                                                                            display: '-webkit-box',
-                                                                            WebkitLineClamp: 2,
-                                                                            WebkitBoxOrient: 'vertical',
-                                                                            overflow: 'hidden',
-                                                                            textOverflow: 'ellipsis',
-                                                                            whiteSpace: 'normal'
-                                                                        }}
-                                                                        key={gt.id_gioithieu}>
-                                                                        {gt.gioi_thieu}
-                                                                    </div>
-                                                                ) : ''
-                                                            );
-                                                        })
-                                                    }
+                                                    {/* Mô tả */}
                                                 </div>
                                             </div>
                                         </div>
