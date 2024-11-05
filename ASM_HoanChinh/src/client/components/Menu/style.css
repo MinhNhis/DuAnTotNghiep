@@ -1,5 +1,5 @@
 /* Small devices (mobile, dưới 576px) */
-@media (max-width: 576px) {
+/* @media (max-width: 576px) {
     .container-fluid {
         padding: 0;
     }
@@ -82,9 +82,9 @@
             display: none;
         }
     }
-}
+} */
 /* Tablet (577px - 768px) */
-@media (min-width: 577px) and (max-width: 768px) {
+/* @media (min-width: 577px) and (max-width: 768px) {
     .map-container {
         height: 450px;
     }
@@ -109,10 +109,10 @@
     .img-fluid.rounded {
         height: 120px;
     }
-}
+} */
 
 /* Desktop (từ 769px trở lên) */
-@media (min-width: 769px) {
+/* @media (min-width: 769px) {
     .map-container {
         height: 500px;
     }
@@ -133,4 +133,22 @@
         display: inline-flex;
         justify-content: center;
     }
+} */
+.dropdown-menu {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1;
 }
