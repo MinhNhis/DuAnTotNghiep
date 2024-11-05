@@ -180,8 +180,17 @@ const Trangchu = () => {
                                                 }}>
                                                     {value.dia_chi}
                                                 </div>
-                                                <div className="text-dark mb-3">
-                                                    {/* Mô tả */}
+                                                <div className="mb-3 text-dark"
+                                                    style={{
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'normal'
+                                                    }}
+                                                >
+                                                    {value.mo_ta}
                                                 </div>
                                             </div>
                                         </div>
