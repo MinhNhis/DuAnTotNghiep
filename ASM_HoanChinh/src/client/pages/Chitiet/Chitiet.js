@@ -672,128 +672,72 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row">
                                         <div className="col-6">
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Không khí
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Không khí</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {khongkhi.map((kk, index) => {
-                                                                return kk.id_khongkhi === value.id_khongkhi ? (
-                                                                    <div key={index}>{kk.khong_khi}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.khongkhis?.length > 0 ? (
+                                                        quanan.khongkhis.map((khongkhi, index) =>
+                                                        (<div key={khongkhi.id_khongkhi}>
+                                                            {khongkhi.khong_khi} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Dịch vụ
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Dịch vụ</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {dichvu.map((dv, index) => {
-                                                                return dv.id_dichvu === value.id_dichvu ? (
-                                                                    <div key={index}>{dv.dich_vu}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.dichvus?.length > 0 ? (
+                                                        quanan.dichvus.map((dichvu, index) =>
+                                                        (<div key={dichvu.id_dichvu}>
+                                                            {dichvu.dich_vu} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Tiện nghi
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Tiện nghi</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {tiennghi.map((tn, index) => {
-                                                                return tn.id_tiennghi === value.id_tiennghi ? (
-                                                                    <div key={index}>{tn.tien_nghi}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.tiennghis?.length > 0 ? (
+                                                        quanan.tiennghis.map((tiennghi, index) =>
+                                                        (<div key={tiennghi.id_tiennghi}>
+                                                            {tiennghi.tien_nghi} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-6">
-
-
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Kế hoạch
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Kế hoạch</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {kehoach.map((kh, index) => {
-                                                                return kh.id_kehoach === value.id_kehoach ? (
-                                                                    <div key={index}>{kh.ke_hoach}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.kehoachs?.length > 0 ? (
+                                                        quanan.kehoachs.map((kehoach, index) =>
+                                                        (<div key={kehoach.id_kehoach}>
+                                                            {kehoach.ke_hoach} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Bãi đỗ xe
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Bãi đỗ xe</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {baidoxe.map((bdx, index) => {
-                                                                return bdx.id_baidoxe === value.id_baidoxe ? (
-                                                                    <div key={index}>{bdx.bai_do_xe}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.baidoxes?.length > 0 ? (
+                                                        quanan.baidoxes.map((baidoxe, index) =>
+                                                        (<div key={baidoxe.id_baidoxe}>
+                                                            {baidoxe.bai_do_xe} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Loại khách hàng
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Loại khách hàng</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {loaikhachhang.map((loaikh, index) => {
-                                                                return loaikh.id_loaikh === value.id_loaikh ? (
-                                                                    <div key={index}>{loaikh.khach_hang}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.loaikhs?.length > 0 ? (
+                                                        quanan.loaikhs.map((loaikh, index) =>
+                                                        (<div key={loaikh.id_loaikh}>
+                                                            {loaikh.khach_hang} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
