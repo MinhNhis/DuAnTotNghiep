@@ -33,7 +33,7 @@ const Gioithieu = () => {
 
     useEffect(() => {
         initData();
-        handleCheckboxChange();
+        // handleCheckboxChange();
     }, []);
 
     const initData = async () => {
@@ -171,64 +171,67 @@ const Gioithieu = () => {
     const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
     const [Loadmenu, setLoadMenu] = useState(6);
 
-    const handleCheckboxChange = (event) => {
-        if (event && event.target) {
-            const menuItemId = parseInt(event.target.value);
-            const isChecked = event.target.checked;
+    // const handleCheckboxChange = (event) => {
+    //     if (event && event.target) {
+    //         const menuItemId = parseInt(event.target.value);
+    //         const isChecked = event.target.checked;
 
-            setSelectedMenuItems((prev) => {
-                const newSelected = { ...prev };
+    //         setSelectedMenuItems((prev) => {
+    //             const newSelected = { ...prev };
 
-                if (isChecked) {
-                    newSelected[menuItemId] = 1;
-                } else {
-                    delete newSelected[menuItemId];
-                }
+    //             if (isChecked) {
+    //                 newSelected[menuItemId] = 1;
+    //             } else {
+    //                 delete newSelected[menuItemId];
+    //             }
 
-                return newSelected;
-            });
+    //             return newSelected;
+    //         });
 
-            const newSelected = [...menuOrders];
+    //         const newSelected = [...menuOrders];
 
-            if (isChecked) {
-                if (!newSelected.includes(menuItemId)) {
-                    newSelected.push(menuItemId);
-                }
-            } else {
-                const index = newSelected.indexOf(menuItemId);
-                if (index > -1) {
-                    newSelected.splice(index, 1);
-                }
-            }
+    //         if (isChecked) {
+    //             if (!newSelected.includes(menuItemId)) {
+    //                 newSelected.push(menuItemId);
+    //             }
+    //         } else {
+    //             const index = newSelected.indexOf(menuItemId);
+    //             if (index > -1) {
+    //                 newSelected.splice(index, 1);
+    //             }
+    //         }
 
-            const allSelectedItems = getAllSelectedItems(newSelected);
-            // console.log("Tất cả mục đã chọn: ", allSelectedItems);
-            setSelectedItems(allSelectedItems);
+    //         const allSelectedItems = getAllSelectedItems(newSelected);
+    //         // console.log("Tất cả mục đã chọn: ", allSelectedItems);
+    //         setSelectedItems(allSelectedItems);
 
-            const updatedFillMenu = fillmenu.map((item) => {
-                const chon = newSelected.includes(item.id_menu) ? 1 : 0;
-                return { ...item, chon };
-            });
+    //         const updatedFillMenu = fillmenu.map((item) => {
+    //             const chon = newSelected.includes(item.id_menu) ? 1 : 0;
+    //             return { ...item, chon };
+    //         });
 
-            setFillMenu(updatedFillMenu);
-            setMenuOrders(newSelected);
-        }
-    };
+    //         setFillMenu(updatedFillMenu);
+    //         setMenuOrders(newSelected);
+    //     }
+    // };
 
-    const getAllSelectedItems = (selectedIds) => {
-        return fillmenu.filter(item => selectedIds.includes(item.id_menu));
-    };
+    // const getAllSelectedItems = (selectedIds) => {
+    //     return fillmenu.filter(item => selectedIds.includes(item.id_menu));
+    // };
 
 
-    const handleQuantityChange = (id_menu, change) => {
-        setSelectedMenuItems((prev) => {
-            const newQuantity = (prev[id_menu] || 0) + change;
-            if (newQuantity < 0) {
-                return prev;
-            }
-            return { ...prev, [id_menu]: newQuantity };
-        });
-    };
+    // const handleQuantityChange = (id_menu, change) => {
+    //     setSelectedMenuItems((prev) => {
+    //         const newQuantity = (prev[id_menu] || 0) + change;
+    //         if (newQuantity < 0) {
+    //             return prev;
+    //         }
+    //         console.log({ ...prev, [id_menu]: newQuantity });
+
+    //         return { ...prev, [id_menu]: newQuantity };
+    //     });
+    // };
+
 
     const handleLoadMenu = () => {
         setLoadMenu((prevCount) => prevCount + 3);
@@ -245,6 +248,7 @@ const Gioithieu = () => {
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
+    console.log(fillMenu);
 
     return (
         <>
@@ -536,7 +540,7 @@ const Gioithieu = () => {
                                                             type="checkbox"
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
-                                                            onChange={handleCheckboxChange}
+                                                        //onChange={handleCheckboxChange}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
@@ -547,7 +551,7 @@ const Gioithieu = () => {
 
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, -1)}
+                                                                //onClick={() => handleQuantityChange(value.id_menu, -1)}
                                                                 disabled={selectedMenuItems[value.id_menu] <= 0}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
@@ -559,16 +563,10 @@ const Gioithieu = () => {
                                                                 className="form-control mx-2"
                                                                 id={`quantity_${value.id_menu}`}
                                                                 value={selectedMenuItems[value.id_menu]}
-                                                                onChange={(e) => {
-                                                                    const newQuantity = parseInt(e.target.value) || 0;
-                                                                    handleQuantityChange(value.id_menu, newQuantity - (selectedMenuItems[value.id_menu] || 0));
-                                                                }}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
                                                             />
 
-                                                            <button
-                                                                className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, 1)}
+                                                            <button className="btn btn-outline-secondary"
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 +
@@ -593,7 +591,7 @@ const Gioithieu = () => {
                                                     padding: '8px 16px',
                                                     fontSize: '12px',
                                                     fontWeight: 'bold',
-                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                     position: 'relative',
                                                     overflow: 'hidden',
                                                     transition: 'all 0.3s ease',
@@ -963,7 +961,7 @@ const Gioithieu = () => {
                                                                     padding: '8px 16px',
                                                                     fontSize: '12px',
                                                                     fontWeight: 'bold',
-                                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                                     position: 'relative',
                                                                     overflow: 'hidden',
                                                                     transition: 'all 0.3s ease',
