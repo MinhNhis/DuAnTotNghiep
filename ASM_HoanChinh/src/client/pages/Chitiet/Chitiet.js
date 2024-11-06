@@ -33,7 +33,6 @@ const Gioithieu = () => {
 
     useEffect(() => {
         initData();
-        // handleCheckboxChange();
     }, []);
 
     const initData = async () => {
@@ -163,13 +162,30 @@ const Gioithieu = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
 
-    const [selectedMenuItems, setSelectedMenuItems] = useState({});
+    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [menuOrders, setMenuOrders] = useState([]);
-    const [selectedItems, setSelectedItems] = useState([]);
     const [fillMenu, setFillMenu] = useState([]);
     const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
     const [Loadmenu, setLoadMenu] = useState(6);
+    const [check, setCheck] = useState(false);
+
+    const handleCheckboxChange = (e, menuId) => {
+        setSelectedMenuItems(prevState => ({
+            ...prevState,
+            [menuId]: prevState[menuId] ? 0 : 1 // Khởi tạo số lượng là 1 khi chọn mục
+        }));
+    };
+
+    const handleQuantityChange = (menuId, amount) => {
+        setSelectedMenuItems(prevState => {
+            const newQuantity = (prevState[menuId] || 0) + amount;
+            return {
+                ...prevState,
+                [menuId]: newQuantity > 0 ? newQuantity : 0 // Không để số lượng âm
+            };
+        });
+    };
+console.log(selectedMenuItems);
 
     // const handleCheckboxChange = (event) => {
     //     if (event && event.target) {
@@ -248,7 +264,6 @@ const Gioithieu = () => {
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
-    console.log(fillMenu);
 
     return (
         <>
@@ -509,7 +524,6 @@ const Gioithieu = () => {
 
                                 </CardContent>
                             </Card>
-
                         </div>
 
                         <div className="col-lg-6 mb-3">
@@ -540,19 +554,18 @@ const Gioithieu = () => {
                                                             type="checkbox"
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
-                                                        //onChange={handleCheckboxChange}
+                                                            checked={selectedMenuItems[value.id_menu] !== undefined}
+                                                            onChange={(e) => handleCheckboxChange(e, value.id_menu)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
 
                                                     {selectedMenuItems[value.id_menu] !== undefined && (
-                                                        <div className="mb-4 d-flex align-items-center" >
-                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1 " ></label>
-
+                                                        <div className="mb-4 d-flex align-items-center">
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                //onClick={() => handleQuantityChange(value.id_menu, -1)}
-                                                                disabled={selectedMenuItems[value.id_menu] <= 0}
+                                                                onClick={() => handleQuantityChange(value.id_menu, -1)}
+                                                                disabled={selectedMenuItems[value.id_menu] <= 1}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 -
@@ -563,10 +576,13 @@ const Gioithieu = () => {
                                                                 className="form-control mx-2"
                                                                 id={`quantity_${value.id_menu}`}
                                                                 value={selectedMenuItems[value.id_menu]}
+                                                                readOnly
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
                                                             />
 
-                                                            <button className="btn btn-outline-secondary"
+                                                            <button
+                                                                className="btn btn-outline-secondary"
+                                                                onClick={() => handleQuantityChange(value.id_menu, 1)}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 +
