@@ -28,7 +28,6 @@ const ExDanhmuc = () => {
 
   const initData = () => {
     getDanhmuc().then((result) => {
-      console.log(result);
       if (result && Array.isArray(result.data)) {
         setDanhmuc(result.data);
       } else {

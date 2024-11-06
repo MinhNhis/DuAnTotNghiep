@@ -202,7 +202,7 @@ const Gioithieu = () => {
             }
 
             const allSelectedItems = getAllSelectedItems(newSelected);
-            console.log("Tất cả mục đã chọn: ", allSelectedItems);
+            // console.log("Tất cả mục đã chọn: ", allSelectedItems);
             setSelectedItems(allSelectedItems);
 
             const updatedFillMenu = fillmenu.map((item) => {
