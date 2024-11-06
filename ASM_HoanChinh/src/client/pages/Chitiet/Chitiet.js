@@ -33,7 +33,6 @@ const Gioithieu = () => {
 
     useEffect(() => {
         initData();
-        handleCheckboxChange();
     }, []);
 
     const initData = async () => {
@@ -163,72 +162,92 @@ const Gioithieu = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
 
-    const [selectedMenuItems, setSelectedMenuItems] = useState({});
+    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [menuOrders, setMenuOrders] = useState([]);
-    const [selectedItems, setSelectedItems] = useState([]);
     const [fillMenu, setFillMenu] = useState([]);
     const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
     const [Loadmenu, setLoadMenu] = useState(6);
+    const [check, setCheck] = useState(false);
 
-    const handleCheckboxChange = (event) => {
-        if (event && event.target) {
-            const menuItemId = parseInt(event.target.value);
-            const isChecked = event.target.checked;
-
-            setSelectedMenuItems((prev) => {
-                const newSelected = { ...prev };
-
-                if (isChecked) {
-                    newSelected[menuItemId] = 1;
-                } else {
-                    delete newSelected[menuItemId];
-                }
-
-                return newSelected;
-            });
-
-            const newSelected = [...menuOrders];
-
-            if (isChecked) {
-                if (!newSelected.includes(menuItemId)) {
-                    newSelected.push(menuItemId);
-                }
-            } else {
-                const index = newSelected.indexOf(menuItemId);
-                if (index > -1) {
-                    newSelected.splice(index, 1);
-                }
-            }
-
-            const allSelectedItems = getAllSelectedItems(newSelected);
-            // console.log("Tất cả mục đã chọn: ", allSelectedItems);
-            setSelectedItems(allSelectedItems);
-
-            const updatedFillMenu = fillmenu.map((item) => {
-                const chon = newSelected.includes(item.id_menu) ? 1 : 0;
-                return { ...item, chon };
-            });
-
-            setFillMenu(updatedFillMenu);
-            setMenuOrders(newSelected);
-        }
+    const handleCheckboxChange = (e, menuId) => {
+        setSelectedMenuItems(prevState => ({
+            ...prevState,
+            [menuId]: prevState[menuId] ? 0 : 1 // Khởi tạo số lượng là 1 khi chọn mục
+        }));
     };
 
-    const getAllSelectedItems = (selectedIds) => {
-        return fillmenu.filter(item => selectedIds.includes(item.id_menu));
-    };
-
-
-    const handleQuantityChange = (id_menu, change) => {
-        setSelectedMenuItems((prev) => {
-            const newQuantity = (prev[id_menu] || 0) + change;
-            if (newQuantity < 0) {
-                return prev;
-            }
-            return { ...prev, [id_menu]: newQuantity };
+    const handleQuantityChange = (menuId, amount) => {
+        setSelectedMenuItems(prevState => {
+            const newQuantity = (prevState[menuId] || 0) + amount;
+            return {
+                ...prevState,
+                [menuId]: newQuantity > 0 ? newQuantity : 0 // Không để số lượng âm
+            };
         });
     };
+console.log(selectedMenuItems);
+
+    // const handleCheckboxChange = (event) => {
+    //     if (event && event.target) {
+    //         const menuItemId = parseInt(event.target.value);
+    //         const isChecked = event.target.checked;
+
+    //         setSelectedMenuItems((prev) => {
+    //             const newSelected = { ...prev };
+
+    //             if (isChecked) {
+    //                 newSelected[menuItemId] = 1;
+    //             } else {
+    //                 delete newSelected[menuItemId];
+    //             }
+
+    //             return newSelected;
+    //         });
+
+    //         const newSelected = [...menuOrders];
+
+    //         if (isChecked) {
+    //             if (!newSelected.includes(menuItemId)) {
+    //                 newSelected.push(menuItemId);
+    //             }
+    //         } else {
+    //             const index = newSelected.indexOf(menuItemId);
+    //             if (index > -1) {
+    //                 newSelected.splice(index, 1);
+    //             }
+    //         }
+
+    //         const allSelectedItems = getAllSelectedItems(newSelected);
+    //         // console.log("Tất cả mục đã chọn: ", allSelectedItems);
+    //         setSelectedItems(allSelectedItems);
+
+    //         const updatedFillMenu = fillmenu.map((item) => {
+    //             const chon = newSelected.includes(item.id_menu) ? 1 : 0;
+    //             return { ...item, chon };
+    //         });
+
+    //         setFillMenu(updatedFillMenu);
+    //         setMenuOrders(newSelected);
+    //     }
+    // };
+
+    // const getAllSelectedItems = (selectedIds) => {
+    //     return fillmenu.filter(item => selectedIds.includes(item.id_menu));
+    // };
+
+
+    // const handleQuantityChange = (id_menu, change) => {
+    //     setSelectedMenuItems((prev) => {
+    //         const newQuantity = (prev[id_menu] || 0) + change;
+    //         if (newQuantity < 0) {
+    //             return prev;
+    //         }
+    //         console.log({ ...prev, [id_menu]: newQuantity });
+
+    //         return { ...prev, [id_menu]: newQuantity };
+    //     });
+    // };
+
 
     const handleLoadMenu = () => {
         setLoadMenu((prevCount) => prevCount + 3);
@@ -505,7 +524,6 @@ const Gioithieu = () => {
 
                                 </CardContent>
                             </Card>
-
                         </div>
 
                         <div className="col-lg-6 mb-3">
@@ -536,19 +554,18 @@ const Gioithieu = () => {
                                                             type="checkbox"
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
-                                                            onChange={handleCheckboxChange}
+                                                            checked={selectedMenuItems[value.id_menu] !== undefined}
+                                                            onChange={(e) => handleCheckboxChange(e, value.id_menu)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
 
                                                     {selectedMenuItems[value.id_menu] !== undefined && (
-                                                        <div className="mb-4 d-flex align-items-center" >
-                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1 " ></label>
-
+                                                        <div className="mb-4 d-flex align-items-center">
                                                             <button
                                                                 className="btn btn-outline-secondary"
                                                                 onClick={() => handleQuantityChange(value.id_menu, -1)}
-                                                                disabled={selectedMenuItems[value.id_menu] <= 0}
+                                                                disabled={selectedMenuItems[value.id_menu] <= 1}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 -
@@ -559,10 +576,7 @@ const Gioithieu = () => {
                                                                 className="form-control mx-2"
                                                                 id={`quantity_${value.id_menu}`}
                                                                 value={selectedMenuItems[value.id_menu]}
-                                                                onChange={(e) => {
-                                                                    const newQuantity = parseInt(e.target.value) || 0;
-                                                                    handleQuantityChange(value.id_menu, newQuantity - (selectedMenuItems[value.id_menu] || 0));
-                                                                }}
+                                                                readOnly
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
                                                             />
 
@@ -593,7 +607,7 @@ const Gioithieu = () => {
                                                     padding: '8px 16px',
                                                     fontSize: '12px',
                                                     fontWeight: 'bold',
-                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                     position: 'relative',
                                                     overflow: 'hidden',
                                                     transition: 'all 0.3s ease',
@@ -907,7 +921,7 @@ const Gioithieu = () => {
                                                                     padding: '8px 16px',
                                                                     fontSize: '12px',
                                                                     fontWeight: 'bold',
-                                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                                     position: 'relative',
                                                                     overflow: 'hidden',
                                                                     transition: 'all 0.3s ease',
