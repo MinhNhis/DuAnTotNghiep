@@ -170,25 +170,28 @@ const Menu = () => {
 
 
                         {alldanhmuc.map((danhmuc, index) => (
-                            <li key={index} className="nav-item p-2">
+                            <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
                                 {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
-                                    <a
+                                    <button
                                         className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
-                                        onClick={() => handleCategoryClick(danhmuc.id_alldanhmuc)}
+                                        onClick={(e) => {
+                                            handleCategoryClick(danhmuc.id_alldanhmuc);
+                                        }}
                                     >
                                         <span className="text-dark" style={{ width: '150px' }}>{danhmuc.ten_danhmuc}</span>
-                                    </a>
+                                    </button>
                                 ) : null}
                                 {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
-                                    <ul className="dropdown-menu show">
+                                    <ul className="dropdown-menu2 show">
                                         {subCategories.map((subCategory, subIndex) => (
-                                            <li key={subIndex} className="dropdown-item" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
+                                            <li key={subIndex} className="dropdown-item2" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
                                                 {subCategory.danh_muc}
                                             </li>
                                         ))}
                                     </ul>
                                 )}
                             </li>
+
                         ))}
                     </ul>
 

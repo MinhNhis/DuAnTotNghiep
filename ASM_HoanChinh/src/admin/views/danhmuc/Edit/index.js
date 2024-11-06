@@ -43,8 +43,6 @@ const EditDanhmuc = () => {
       setAllDanhmucById("ten_danhmuc", resAllDanhmuc.data.id_alldanhmuc);
       setValue("ten_danhmuc", resAllDanhmuc.data.id_alldanhmuc); 
     }
-    
-    console.log(resAllDanhmuc);
   };
 
   const onSubmit = async (data) => {
