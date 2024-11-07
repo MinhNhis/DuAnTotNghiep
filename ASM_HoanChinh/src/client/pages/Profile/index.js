@@ -175,11 +175,10 @@ const Profile = () => {
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
-            enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             localStorage.removeItem("accounts");
+            enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             navigate("/login");
         } catch (error) {
-            console.log(error)
             if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
                 enqueueSnackbar('Mật khẩu hiện tại không chính xác!', { variant: 'error' });
             } else {
@@ -195,11 +194,7 @@ const Profile = () => {
                     <div className="profile-avatar">
                         <img
                             src={
-                                nguoidung?.hinh_anh
-                                    ? (nguoidung.hinh_anh.startsWith('http')
-                                        ? nguoidung.hinh_anh
-                                        : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`)
-                                    : (accounts.hinh_anh || ImgUser)
+                                nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`) : (ImgUser)
                             }
                             alt="User Avatar"
                             className="avatar-img"

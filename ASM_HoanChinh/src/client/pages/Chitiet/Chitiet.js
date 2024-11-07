@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import './style.css'
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -164,99 +165,41 @@ const Gioithieu = () => {
 
     const [selectedMenuItems, setSelectedMenuItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [fillMenu, setFillMenu] = useState([]);
-    const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
     const [Loadmenu, setLoadMenu] = useState(6);
-    const [check, setCheck] = useState(false);
 
     const handleCheckboxChange = (e, menuId) => {
-        setSelectedMenuItems(prevState => ({
-            ...prevState,
-            [menuId]: prevState[menuId] ? 0 : 1 // Khởi tạo số lượng là 1 khi chọn mục
-        }));
-    };
-
-    const handleQuantityChange = (menuId, amount) => {
         setSelectedMenuItems(prevState => {
-            const newQuantity = (prevState[menuId] || 0) + amount;
-            return {
-                ...prevState,
-                [menuId]: newQuantity > 0 ? newQuantity : 0 // Không để số lượng âm
-            };
+            const exists = prevState.find(item => item.menuId === menuId);
+
+            if (exists) {
+                return prevState.filter(item => item.menuId !== menuId);
+            } else {
+                return [...prevState, { menuId, quantity: 1 }];
+            }
         });
     };
-console.log(selectedMenuItems);
 
-    // const handleCheckboxChange = (event) => {
-    //     if (event && event.target) {
-    //         const menuItemId = parseInt(event.target.value);
-    //         const isChecked = event.target.checked;
-
-    //         setSelectedMenuItems((prev) => {
-    //             const newSelected = { ...prev };
-
-    //             if (isChecked) {
-    //                 newSelected[menuItemId] = 1;
-    //             } else {
-    //                 delete newSelected[menuItemId];
-    //             }
-
-    //             return newSelected;
-    //         });
-
-    //         const newSelected = [...menuOrders];
-
-    //         if (isChecked) {
-    //             if (!newSelected.includes(menuItemId)) {
-    //                 newSelected.push(menuItemId);
-    //             }
-    //         } else {
-    //             const index = newSelected.indexOf(menuItemId);
-    //             if (index > -1) {
-    //                 newSelected.splice(index, 1);
-    //             }
-    //         }
-
-    //         const allSelectedItems = getAllSelectedItems(newSelected);
-    //         // console.log("Tất cả mục đã chọn: ", allSelectedItems);
-    //         setSelectedItems(allSelectedItems);
-
-    //         const updatedFillMenu = fillmenu.map((item) => {
-    //             const chon = newSelected.includes(item.id_menu) ? 1 : 0;
-    //             return { ...item, chon };
-    //         });
-
-    //         setFillMenu(updatedFillMenu);
-    //         setMenuOrders(newSelected);
-    //     }
-    // };
-
-    // const getAllSelectedItems = (selectedIds) => {
-    //     return fillmenu.filter(item => selectedIds.includes(item.id_menu));
-    // };
-
-
-    // const handleQuantityChange = (id_menu, change) => {
-    //     setSelectedMenuItems((prev) => {
-    //         const newQuantity = (prev[id_menu] || 0) + change;
-    //         if (newQuantity < 0) {
-    //             return prev;
-    //         }
-    //         console.log({ ...prev, [id_menu]: newQuantity });
-
-    //         return { ...prev, [id_menu]: newQuantity };
-    //     });
-    // };
-
+    const handleQuantityChange = (menuId, newQuantity) => {
+        setSelectedMenuItems(prevState => {
+            return prevState.map(item => {
+                if (item.menuId === menuId) {
+                    const quantity = Math.max(Number(newQuantity), 0);
+                    return { ...item, quantity };
+                }
+                return item;
+            }).filter(item => item.quantity >= 0);
+        });
+    };
+    console.log(selectedMenuItems);
 
     const handleLoadMenu = () => {
         setLoadMenu((prevCount) => prevCount + 3);
     };
 
     useEffect(() => {
-        const total = Object.entries(selectedMenuItems).reduce((acc, [id_menu, quantity]) => {
-            const menuItem = menu.find((item) => item.id_menu === parseInt(id_menu));
-            return acc + (menuItem ? menuItem.gia * quantity : 0);
+        const total = selectedMenuItems.reduce((acc, item) => {
+            const menuItem = menu.find((menuItem) => menuItem.id_menu === item.menuId);
+            return acc + (menuItem ? menuItem.gia * item.quantity : 0);
         }, 0);
         setTotalPrice(total);
     }, [selectedMenuItems, menu]);
@@ -554,35 +497,36 @@ console.log(selectedMenuItems);
                                                             type="checkbox"
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
-                                                            checked={selectedMenuItems[value.id_menu] !== undefined}
+                                                            checked={selectedMenuItems.some(item => item.menuId === value.id_menu)}
                                                             onChange={(e) => handleCheckboxChange(e, value.id_menu)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
 
-                                                    {selectedMenuItems[value.id_menu] !== undefined && (
+                                                    {selectedMenuItems.some(item => item.menuId === value.id_menu) && (
                                                         <div className="mb-4 d-flex align-items-center">
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, -1)}
-                                                                disabled={selectedMenuItems[value.id_menu] <= 1}
+                                                                onClick={() => handleQuantityChange(value.id_menu, selectedMenuItems.find(item => item.menuId === value.id_menu).quantity - 1)}
+                                                                disabled={selectedMenuItems.find(item => item.menuId === value.id_menu).quantity <= 1}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 -
                                                             </button>
 
                                                             <input
-                                                                type="text"
+                                                                type="number"
                                                                 className="form-control mx-2"
                                                                 id={`quantity_${value.id_menu}`}
-                                                                value={selectedMenuItems[value.id_menu]}
-                                                                readOnly
+                                                                value={selectedMenuItems.find(item => item.menuId === value.id_menu).quantity}
+                                                                onChange={(e) => handleQuantityChange(value.id_menu, e.target.value)}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
+                                                                min="1"
                                                             />
 
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, 1)}
+                                                                onClick={() => handleQuantityChange(value.id_menu, selectedMenuItems.find(item => item.menuId === value.id_menu).quantity + 1)}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 +
@@ -592,6 +536,7 @@ console.log(selectedMenuItems);
                                                 </div>
                                             ) : null;
                                         })}
+
                                     </div>
                                     {Loadmenu < menu.filter((mn) => mn.id_quanan === quanan.id_quanan).length && (
                                         <Grid container justifyContent="center">
