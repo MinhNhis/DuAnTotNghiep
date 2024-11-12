@@ -129,9 +129,7 @@ const DichVuTable = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Box>
                     <Typography variant="body1" sx={{ ml: 0.5 }}>
-                      {value?.vai_tro === 0 ? "Admin" : ""}
-                      {value?.vai_tro === 1 ? "User" : ""}
-                      {value?.vai_tro === 2 ? "Admin quán" : ""}
+                      {value?.vai_tro === 0 ? "Người quản trị" : (value.vai_tro === 1? "Người dùng" : (value.vai_tro === 2? "Chủ quán" : ""))}
                     </Typography>
                   </Box>
                 </Box>
