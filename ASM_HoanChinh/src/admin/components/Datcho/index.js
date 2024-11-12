@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 
 import IconButton from '@mui/material/IconButton';
-// import DeleteIcon from '@mui/icons-material/Delete';
+import Visibility from "@mui/icons-material/Visibility";
 import EditIcon from '@mui/icons-material/Edit';
 import { getDatcho, paginator } from "../../../services/Datcho";
 import { getQuanan } from "../../../services/Quanan";
@@ -63,7 +63,7 @@ const DatchoTable = () => {
 
     return (
         <>
-            <Table aria-label="simple table" sx={{ mt: 3 }}>
+            <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap",}}>
                 <TableHead>
                     <TableRow>
                         <TableCell>
@@ -86,11 +86,11 @@ const DatchoTable = () => {
                                 Điện thoại
                             </Typography>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Email
                             </Typography>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Ngày
@@ -101,7 +101,7 @@ const DatchoTable = () => {
                                 Giờ
                             </Typography>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Số lượng người
                             </Typography>
@@ -110,7 +110,7 @@ const DatchoTable = () => {
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Yêu cầu khác
                             </Typography>
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Trạng thái
@@ -159,7 +159,7 @@ const DatchoTable = () => {
                                     </Box>
                                 </Box>
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
@@ -167,7 +167,7 @@ const DatchoTable = () => {
                                         </Typography>
                                     </Box>
                                 </Box>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
@@ -186,7 +186,7 @@ const DatchoTable = () => {
                                     </Box>
                                 </Box>
                             </TableCell>
-                            <TableCell>
+                            {/* <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
@@ -203,7 +203,7 @@ const DatchoTable = () => {
                                         </Typography>
                                     </Box>
                                 </Box>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
@@ -211,6 +211,7 @@ const DatchoTable = () => {
                                             {dc.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                             {dc.trang_thai === 1 ? "Đã có chỗ" : ""}
                                             {dc.trang_thai === 2 ? "Đã hủy" : ""}
+                                            {dc.trang_thai === 3 ? "Đã hoàn thành" : ""}
                                         </Typography>
                                     </Box>
                                 </Box>
@@ -222,11 +223,11 @@ const DatchoTable = () => {
                                             <EditIcon />
                                         </IconButton>
                                     </Link>
-                                    {/* <Link to={`/admin/dat-cho/delete/${dc.id_datcho}`}>
-                                    <IconButton aria-label="edit" color="danger" style={{width: "50px"}}>
-                                        <DeleteIcon />
-                                    </IconButton>
-                                </Link> */}
+                                    <Link to={`/admin/dat-cho/chi-tiet/${dc.id_datcho}`}>
+                                        <IconButton aria-label="edit" color="primary" style={{ width: "50px" }}>
+                                            <Visibility />
+                                        </IconButton>
+                                    </Link>
                                 </Typography>
                             </TableCell>
                         </TableRow>

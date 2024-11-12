@@ -43,17 +43,16 @@ const Map = ({ quanan, sizeData }) => {
     })
 
     const makerIconOn = new L.Icon({
-        iconUrl: require('../../../admin/assets/images/marker-blue.png'),
-        iconSize: [40, 45],
+        iconUrl: require('../../../admin/assets/images/marker-green.png'),
+        iconSize: [45, 50],
         iconAnchor: [17, 45],
         popupAnchor: [0, -45]
     })
     const routeColors = ["blue", "red", "green", "purple", "orange", "yellow"];
 
     useEffect(() => {
-        
         loadMap()
-    }, [quanan, sizeData]);
+    }, [sizeData, location]);
 
     useEffect(() => {
         speedRef.current = speed;
@@ -194,13 +193,13 @@ const Map = ({ quanan, sizeData }) => {
     const loadMap = async () => {
         if (!mapRef.current) {
             mapRef.current = L.map("map").setView([userPosition.latitude, userPosition.longitude], 16);
-
+    
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }).addTo(mapRef.current);
         }
-
+    
         for (const quan of quanan) {
             if (quan.lat && quan.lng) {
                 const popupContent = `
@@ -215,30 +214,37 @@ const Map = ({ quanan, sizeData }) => {
                         </div>
                     </a>
                 `;
-
-                const marker = L.marker([quan.lat, quan.lng], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
-                    .addTo(mapRef.current)
-                    .bindPopup(popupContent)
-                    .on('click', () => calculateRoute(quan.lat, quan.lng, quan));
-                if (location.latitude && location.longitude) {
-                    const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
-                    if (sizeData === 1) {
-                        calculateRoute(quan.lat, quan.lng, quan)
-                    } else {
-                        if (distance && distance <= 10) {
-                            calculateRoute(quan.lat, quan.lng, quan);
-                        }
-                    }
-                } else {
-                    calculateRoute(quan.lat, quan.lng, quan);
+    
+                try {
+                    const marker = L.marker([quan.lat, quan.lng], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
+                        .addTo(mapRef.current)
+                        .bindPopup(popupContent)
+                        .on('click', () => calculateRoute(quan.lat, quan.lng, quan));
+    
+                    // if (location.latitude && location.longitude) {
+                         calculateRoute(quan.lat, quan.lng, quan);
+                    //     if (sizeData === 1) {
+                    //          calculateRoute(quan.lat, quan.lng, quan);
+                    //     } else {
+                    //         const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
+                    //         if (distance && distance <= 10) {
+                    //              calculateRoute(quan.lat, quan.lng, quan);
+                    //         }
+                    //     }
+                    // } else {
+                    //     calculateRoute(quan.lat, quan.lng, quan);
+                    // }
+    
+                } catch (error) {
+                    console.error(`Không thể load quán ${quan.ten_quan_an}:`, error);
                 }
-
-
+    
             } else {
                 console.error(`Quán ăn ${quan.ten_quan_an} không có vị trí hợp lệ.`);
             }
         }
     };
+       
 
     const calculateRoute = (latitude, longitude, quan) => {
         const currentLocation = locationRef.current;
@@ -309,7 +315,7 @@ const Map = ({ quanan, sizeData }) => {
             marker.bindPopup(popupContent)
             marker.openPopup();
 
-            setNearbyMarkers((prevMarkers) => [...prevMarkers, { latitude, longitude }]);
+            //setNearbyMarkers((prevMarkers) => [...prevMarkers, { latitude, longitude }]);
             setRoutesInfo((prevRoutes) => [
                 ...prevRoutes,
                 { latitude, longitude, distanceKm, marker, hinh_anh: quan.hinh_anh, ten_quan_an: quan.ten_quan_an, dia_chi: quan.dia_chi, gio_mo_cua: quan.gio_mo_cua, gio_dong_cua: quan.gio_dong_cua, id_quanan: quan.id_quanan },

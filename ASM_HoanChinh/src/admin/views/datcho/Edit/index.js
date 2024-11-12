@@ -245,6 +245,7 @@ const EditDatcho = () => {
                                         <MenuItem value={"-1"} disabled>Trạng thái</MenuItem>
                                         <MenuItem value={0}>Đang chờ xử lí</MenuItem>
                                         <MenuItem value={1}>Đã có chỗ</MenuItem>
+                                        <MenuItem value={3}>Đã hoàn thành</MenuItem>
                                         <MenuItem value={2}>Đã hủy</MenuItem>
                                     </Select>
                                     {formState?.errors?.trang_thai && (

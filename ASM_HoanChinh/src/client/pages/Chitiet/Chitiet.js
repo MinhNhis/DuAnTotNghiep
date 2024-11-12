@@ -14,6 +14,7 @@ import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
 import Map from "../../components/Map";
+import { addMenuOrder } from "../../../services/MenuOrder";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -31,6 +32,9 @@ const Gioithieu = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [stars, setStar] = useState(0);
     const [visibleCount, setVisibleCount] = useState(2);
+    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [Loadmenu, setLoadMenu] = useState(6);
 
     useEffect(() => {
         initData();
@@ -74,6 +78,42 @@ const Gioithieu = () => {
         }
     };
 
+    const handleCheckboxChange = (e, menuId, menuName, price) => {
+        setSelectedMenuItems(prevState => {
+            const exists = prevState.find(item => item.menuId === menuId);
+
+            if (exists) {
+                return prevState.filter(item => item.menuId !== menuId);
+            } else {
+                return [...prevState, { menuId, quantity: 1, name: menuName, price: price }];
+            }
+        });
+    };
+
+    const handleQuantityChange = (menuId, newQuantity) => {
+        setSelectedMenuItems(prevState => {
+            return prevState.map(item => {
+                if (item.menuId === menuId) {
+                    const quantity = Math.max(Number(newQuantity), 0);
+                    return { ...item, quantity };
+                }
+                return item;
+            }).filter(item => item.quantity >= 0);
+        });
+    };
+
+    const handleLoadMenu = () => {
+        setLoadMenu((prevCount) => prevCount + 3);
+    };
+
+    useEffect(() => {
+        const total = selectedMenuItems.reduce((acc, item) => {
+            const menuItem = menu.find((menuItem) => menuItem.id_menu === item.menuId);
+            return acc + (menuItem ? menuItem.gia * item.quantity : 0);
+        }, 0);
+        setTotalPrice(total);
+    }, [selectedMenuItems, menu]);
+
     const submit = async (value) => {
         if (value.so_luong > quanan.so_luong_cho) {
             enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
@@ -88,7 +128,7 @@ const Gioithieu = () => {
 
             fillDatcho.find(async (e) => {
                 if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
-                    await addDatcho({
+                    const res = await addDatcho({
                         ten_quan: quanan.ten_quan_an,
                         ten_kh: value?.ten_kh,
                         sdt_kh: value?.sdt,
@@ -101,6 +141,18 @@ const Gioithieu = () => {
                         id_nguoidung: accounts.id_nguoidung,
                         id_quanan: id
                     })
+
+                    if (selectedMenuItems) {
+                        selectedMenuItems.forEach(async (value) => {
+                            const resOrder = await addMenuOrder({
+                                ten_mon: value.name,
+                                so_luong: value.quantity,
+                                gia: value.price,
+                                id_datcho: res.data.id_datcho,
+                            })
+                        })
+
+                    }
                     enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
                     navigate("/profile")
 
@@ -108,7 +160,7 @@ const Gioithieu = () => {
                     return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
                 }
             })
-            // Lương///
+            // -------------------------------------------------------------------------------------/
             if (fillDatcho.length === 0) {
                 const res = await addDatcho({
                     ten_quan: quanan.ten_quan_an,
@@ -123,6 +175,17 @@ const Gioithieu = () => {
                     id_nguoidung: accounts.id_nguoidung,
                     id_quanan: id
                 })
+                if (selectedMenuItems) {
+                    selectedMenuItems.forEach(async (value) => {
+                        const resOrder = await addMenuOrder({
+                            ten_mon: value.name,
+                            so_luong: value.quantity,
+                            gia: value.price,
+                            id_datcho: res.data.id_datcho,
+                        })
+                    })
+
+                }
                 enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
                 navigate("/profile")
             }
@@ -163,47 +226,6 @@ const Gioithieu = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
 
-    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [Loadmenu, setLoadMenu] = useState(6);
-
-    const handleCheckboxChange = (e, menuId) => {
-        setSelectedMenuItems(prevState => {
-            const exists = prevState.find(item => item.menuId === menuId);
-
-            if (exists) {
-                return prevState.filter(item => item.menuId !== menuId);
-            } else {
-                return [...prevState, { menuId, quantity: 1 }];
-            }
-        });
-    };
-
-    const handleQuantityChange = (menuId, newQuantity) => {
-        setSelectedMenuItems(prevState => {
-            return prevState.map(item => {
-                if (item.menuId === menuId) {
-                    const quantity = Math.max(Number(newQuantity), 0);
-                    return { ...item, quantity };
-                }
-                return item;
-            }).filter(item => item.quantity >= 0);
-        });
-    };
-    console.log(selectedMenuItems);
-
-    const handleLoadMenu = () => {
-        setLoadMenu((prevCount) => prevCount + 3);
-    };
-
-    useEffect(() => {
-        const total = selectedMenuItems.reduce((acc, item) => {
-            const menuItem = menu.find((menuItem) => menuItem.id_menu === item.menuId);
-            return acc + (menuItem ? menuItem.gia * item.quantity : 0);
-        }, 0);
-        setTotalPrice(total);
-    }, [selectedMenuItems, menu]);
-
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
@@ -214,27 +236,27 @@ const Gioithieu = () => {
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
                     <div class="col-12 ">
-                        <Map quanan={quananMap} sizeData={1} />
+                        <Map quanan={quananMap} sizeData={quananMap.length} />
                     </div>
                 </div>
                 <div className="container">
                     <div class="d-flex align-items-center justify-content-between ">
                         <h2
                             className="display-5 mb-3"
-                            style={{ fontSize: "60px", fontWeight: "bold" }}
+                            style={{ fontSize: "30px", fontWeight: "bold" }}
                         >
                             {quanan.ten_quan_an}
                         </h2>
 
                     </div>
                     <p className="mb-4">
-                        {/* Mô Tả */}
+                        {quanan.mo_ta}
                     </p>
                     <div className="row mt-3 mb-3" style={{ borderRadius: "10px", backgroundColor: '#fffcf8' }} >
                         <div className="col-lg-6 mb-3">
                             <Card>
                                 <CardContent>
-                                    <h1 className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
+                                    <h1 style={{fontSize: "30px"}} className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
                                     {cookies?.token && cookies?.role === 1 ?
                                         <>
                                             <div className="col-lg-12 mb-4">
@@ -471,7 +493,7 @@ const Gioithieu = () => {
 
                         <div className="col-lg-6 mb-3">
                             <Card>
-                                <h1 className="text-dark text-center">MENU</h1>
+                                <h1 style={{fontSize: "30px"}} className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
                                         {menu.slice(0, Loadmenu).map((value) => {
@@ -498,7 +520,7 @@ const Gioithieu = () => {
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
                                                             checked={selectedMenuItems.some(item => item.menuId === value.id_menu)}
-                                                            onChange={(e) => handleCheckboxChange(e, value.id_menu)}
+                                                            onChange={(e) => handleCheckboxChange(e, value.id_menu, value.ten_menu, value.gia)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
