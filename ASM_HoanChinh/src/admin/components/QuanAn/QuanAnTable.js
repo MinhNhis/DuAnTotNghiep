@@ -11,10 +11,11 @@ import {
   Grid,
   Card,
   CardContent,
-  CardMedia,
-  CardActions,
   Box,
   IconButton,
+  Stack,
+  Divider,
+  CardActions,
   Button
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -93,11 +94,6 @@ const ExQuanAn = () => {
                   Điện Thoại
                 </Typography>
               </TableCell>
-              {/* <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Giờ Hoạt Động
-                </Typography>
-              </TableCell> */}
               <TableCell>
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                   Hành động
@@ -146,18 +142,6 @@ const ExQuanAn = () => {
                       {items.dien_thoai}
                     </Typography>
                   </TableCell>
-                  {/* <TableCell>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                      {items.gio_mo_cua}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                      {items.gio_dong_cua}
-                    </Typography>
-                  </TableCell> */}
-                  {/* <TableCell>{items.link_website}</TableCell>
-              <TableCell>{items.link_facebook}</TableCell> */}
                   <TableCell>
                     <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
                       <IconButton
@@ -209,109 +193,216 @@ const ExQuanAn = () => {
   );
 
   const renderProfile = () => (
-      <>
-        <Grid aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
-          {filteredQuanan.map((items, index) => (
-              <Grid item xs={12} sm={12} md={12} key={items.id_quanan} sx={{ position: 'relative' }}>
-                {items.hinh_anh && (
-                    <CardMedia
-                        component="img"
-                        height="400px"
-                        image={`${BASE_URL}/uploads/${items.hinh_anh}`}
-                        alt={items.ten_quan_an}
-                        sx={{ borderRadius: '6px', objectFit: 'cover' }}
-                    />
-                )}
-
-                {/* CardActions với các nút */}
-                <CardActions
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'flex-start',
-                      padding: '8px'
-                    }}
-                >
-                  <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
-                    <IconButton
-                        aria-label="edit"
-                        color="primary"
-                        sx={{
-                          width: "45px",
-                          height: "45px",
-                          marginBottom: '8px',
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 1)'
+      <div className="container mt-4">
+        <CardContent sx={{ padding: "30px", position: "relative" }}>
+          <Grid container spacing={4}>
+            {filteredQuanan.map((items, index) => (
+                <React.Fragment key={index}>
+                  <Divider variant="middle" />
+                  <Grid container spacing={4}>
+                    <Grid item xs={12} md={6}>
+                      <img
+                          src={
+                            items?.hinh_anh
+                                ? `${BASE_URL}/uploads/${items?.hinh_anh}`
+                                : ""
                           }
-                        }}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </Link>
-                  <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
-                    <IconButton
-                        aria-label="delete"
-                        color="error"
-                        sx={{
-                          width: "45px",
-                          height: "45px",
-                          backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                          '&:hover': {
-                            backgroundColor: 'rgba(255, 255, 255, 1)'
-                          }
-                        }}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Link>
+                          alt="Restaurant"
+                          style={{
+                            width: "100%",
+                            height: "400px",
+                            borderRadius: "10px",
+                            objectFit: "cover",
+                          }}
+                      />
+                    </Grid>
+                    <Grid item xs={12} md={6}>
+                      <Stack spacing={2}>
+                        <Typography variant="h6">
+                          <strong>Tên quán ăn:</strong> {items?.ten_quan_an}
+                        </Typography>
+                        <Typography variant="h6">
+                          <strong>Địa chỉ:</strong> {items?.dia_chi}
+                        </Typography>
+                        <Typography variant="h6">
+                          <strong>Điện thoại:</strong> {items?.dien_thoai}
+                        </Typography>
+                        <Typography variant="h6">
+                          <strong>Giờ hoạt động:</strong> {items?.gio_mo_cua} - {items?.gio_dong_cua}
+                        </Typography>
+                      </Stack>
+                      <Box mt={4}>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                              fontWeight: "bold",
+                              color: "#1976d2",
+                              textAlign: "left",
+                              mb: 2,
+                            }}
+                        >
+                          <strong>Thông tin giới thiệu</strong>
+                        </Typography>
+                        <Grid container spacing={2}>
+                          <Grid item xs={12}>
+                            <Typography variant="body1">
+                              <strong>Giới thiệu:</strong>
+                              <span
+                                  style={{
+                                    ml: 0.5,
+                                    fontSize: "15px",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    display: "-webkit-box",
+                                    WebkitLineClamp: 2,
+                                    WebkitBoxOrient: "vertical",
+                                    whiteSpace: "normal",
+                                  }}
+                              >
+                        {" "}
+                                {items?.mo_ta || "Chưa cập nhật"}
+                      </span>
+                            </Typography>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={2}>
+                              <Typography variant="body1">
+                                <strong>Tiện nghi:</strong>{" "}
+                                {items?.tiennghis && items.tiennghis.length > 0
+                                    ? items.tiennghis
+                                        .map((tiennghi) => tiennghi.tien_nghi)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                              <Typography variant="body1">
+                                <strong>Không khí:</strong>{" "}
+                                {items?.khongkhis && items.khongkhis.length > 0
+                                    ? items.khongkhis
+                                        .map((khongkhi) => khongkhi.khong_khi)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                              <Typography variant="body1">
+                                <strong>Dịch vụ:</strong>{" "}
+                                {items?.dichvus && items.dichvus.length > 0
+                                    ? items.dichvus
+                                        .map((dichvu) => dichvu.dich_vu)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <Stack spacing={2}>
+                              <Typography variant="body1">
+                                <strong>Kế hoạch:</strong>{" "}
+                                {items?.kehoachs && items.kehoachs.length > 0
+                                    ? items.kehoachs
+                                        .map((kehoach) => kehoach.ke_hoach)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                              <Typography variant="body1">
+                                <strong>Bãi đỗ xe:</strong>{" "}
+                                {items?.baidoxes && items.baidoxes.length > 0
+                                    ? items.baidoxes
+                                        .map((baidoxe) => baidoxe.bai_do_xe)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                              <Typography variant="body1">
+                                <strong>Loại khách hàng:</strong>{" "}
+                                {items?.loaikhs && items.loaikhs.length > 0
+                                    ? items.loaikhs
+                                        .map((loaikh) => loaikh.khach_hang)
+                                        .join(", ")
+                                    : "Chưa cập nhật"}
+                              </Typography>
+                            </Stack>
+                          </Grid>
+                        </Grid>
+                      </Box>
+                      <CardActions
+                          sx={{
+                            position: "absolute",
+                            bottom: -25,
+                            left: 16,
+                          }}
+                      >
+                        {items.link_website && (
+                            <Button
+                                size="medium"
+                                startIcon={<LanguageIcon />}
+                                href={items.link_website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                              Website
+                            </Button>
+                        )}
+                        {items.link_facebook && (
+                            <Button
+                                size="medium"
+                                startIcon={<FacebookIcon />}
+                                href={items.link_facebook}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                              Facebook
+                            </Button>
+                        )}
+                      </CardActions>
+                      <CardActions
+                          sx={{
+                            position: "absolute",
+                            top: -30,
+                            right: 16,
+                            display: "flex",
+                            flexDirection: "column",
+                          }}
+                      >
+                        <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
+                          <IconButton
+                              aria-label="edit"
+                              color="primary"
+                              sx={{
+                                width: "45px",
+                                height: "45px",
+                                mb: 1,
+                                backgroundColor: "rgba(230, 230, 230, 0.8)",
+                                "&:hover": {
+                                  backgroundColor: "rgba(255, 255, 255, 1)",
+                                },
+                              }}
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Link>
+                        <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
+                          <IconButton
+                              aria-label="delete"
+                              color="error"
+                              sx={{
+                                width: "45px",
+                                height: "45px",
+                                backgroundColor: "rgba(230, 230, 230, 0.8)",
+                                "&:hover": {
+                                  backgroundColor: "rgba(255, 255, 255, 1)",
+                                },
+                              }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Link>
+                      </CardActions>
+                    </Grid>
+                  </Grid>
+                </React.Fragment>
+            ))}
+          </Grid>
+        </CardContent>
+      </div>
 
-                </CardActions>
-                <CardContent>
-                  <Typography variant="h4" sx={{ fontSize: "40px", fontWeight: "bold" }}>
-                    {items.ten_quan_an}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-                    <strong>Địa chỉ:</strong> {items.dia_chi}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    <strong>Điện thoại:</strong> {items.dien_thoai}
-                  </Typography>
-                  <Typography variant="body1" color="text.secondary">
-                    <strong>Giờ hoạt động:</strong> {items?.gio_mo_cua} - {items?.gio_dong_cua}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  {items.link_website && (
-                      <Button
-                          size="medium"
-                          startIcon={<LanguageIcon />}
-                          href={items.link_website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        Website
-                      </Button>
-                  )}
-                  {items.link_facebook && (
-                      <Button
-                          size="medium"
-                          startIcon={<FacebookIcon />}
-                          href={items.link_facebook}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        Facebook
-                      </Button>
-                  )}
-                </CardActions>
-              </Grid>
-          ))}
-        </Grid>
-      </>
   );
   return cookies.role === 0 ? renderTable() : renderProfile();
 };

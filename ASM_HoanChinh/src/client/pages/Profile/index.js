@@ -23,6 +23,7 @@ import ImgUser from "../../../admin/assets/images/user.png";
 import { changPassword } from "../../../services/Auth";
 import { useNavigate } from "react-router-dom";
 import { getQuanan } from "../../../services/Quanan";
+import { getMenuOrder } from "../../../services/MenuOrder";
 
 const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -31,6 +32,7 @@ const Profile = () => {
 
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
+    const [menuorder, setMenuOrder] = useState([]);
     const [quans, setQuans] = useState([]);
     const [nguoidung, setnguoidung] = useState();
     const [open, setOpen] = useState(false);
@@ -48,10 +50,12 @@ const Profile = () => {
             const resultDon = await getDatcho();
             setDon(resultDon.data);
 
+            const resultMenuorder = await getMenuOrder()
+            setMenuOrder(resultMenuorder.data)
+
             const resultQuan = await getQuanan();
             setQuans(resultQuan.data)
 
-            // Gọi autoCancelExpiredBookings ngay sau khi lấy danh sách đặt chỗ
             await autoCancelExpiredBookings(resultDon.data);
 
             const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
@@ -68,17 +72,13 @@ const Profile = () => {
             const bookingDate = new Date(booking.ngay_dat);
             const expirationDate = new Date(bookingDate);
             expirationDate.setDate(expirationDate.getDate() + 1);
-
-            // Kiểm tra nếu đơn đã hết hạn và chỉ cập nhật nếu trạng thái là 0 (Đang chờ xử lý)
             if (expirationDate < currentDate && booking.trang_thai === 0) {
                 try {
-                    // Cập nhật trạng thái hủy đơn đặt chỗ
                     await editDatcho(booking.id_datcho, {
                         ...booking,
-                        trang_thai: 2 // Chỉ cập nhật trạng thái thành "Đã hủy"
+                        trang_thai: 2
                     });
 
-                    // Gửi email thông báo với lý do hủy là "Hết hạn"
                     await sendEmail(booking.id_datcho, "Hết hạn");
 
                     enqueueSnackbar(`Đơn đặt chỗ tại ${booking.ten_quan} đã được hủy vì hết hạn!`, { variant: "warning" });
@@ -175,11 +175,10 @@ const Profile = () => {
                 mat_khau: value.mat_khau_cu,
                 newMat_khau: value.mat_khau_moi,
             })
-            enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             localStorage.removeItem("accounts");
+            enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             navigate("/login");
         } catch (error) {
-            console.log(error)
             if (error.response && error.response.data.error === "Mật khẩu hiện tại không chính xác") {
                 enqueueSnackbar('Mật khẩu hiện tại không chính xác!', { variant: 'error' });
             } else {
@@ -188,6 +187,21 @@ const Profile = () => {
         }
     };
 
+    const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+    };
+
+    const thongBao = (array, id_datcho) => {
+        const fill = array.filter((item) => item.id_datcho === id_datcho)
+
+        if (fill.length === 0) {
+            return (
+                <div className="row booking-details mb-3">
+                    <p>{"Chưa có món ăn nào được gọi trước"}</p>
+                </div>
+            )
+        }
+    }
     return (
         <>
             <div className="profile-container">
@@ -195,11 +209,7 @@ const Profile = () => {
                     <div className="profile-avatar">
                         <img
                             src={
-                                nguoidung?.hinh_anh
-                                    ? (nguoidung.hinh_anh.startsWith('http')
-                                        ? nguoidung.hinh_anh
-                                        : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`)
-                                    : (accounts.hinh_anh || ImgUser)
+                                nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`) : (ImgUser)
                             }
                             alt="User Avatar"
                             className="avatar-img"
@@ -493,7 +503,7 @@ const Profile = () => {
                                 <span
                                     className={`badge ${value?.trang_thai === 0
                                         ? "badge-warning"
-                                        : value?.trang_thai === 1
+                                        : value?.trang_thai === 1 || value?.trang_thai === 3
                                             ? "badge-success"
                                             : "badge-danger"
                                         }`}
@@ -501,28 +511,83 @@ const Profile = () => {
                                     {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
                                     {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
                                     {value?.trang_thai === 2 ? "Đã hủy" : ""}
+                                    {value?.trang_thai === 3 ? "Đã hoàn thành" : ""}
                                 </span>
                             </div>
-                            <div className="booking-details mt-3">
-                                <p>
-                                    <strong>Thời gian:</strong> {value?.thoi_gian}
-                                </p>
-                                <p>
-                                    <strong>Số lượng khách:</strong> {value?.so_luong_nguoi}
-                                </p>
-                                <p>
-                                    <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
-                                </p>
-                                <p>
-                                    <strong>Ngày:</strong>
-                                    {value?.ngay_dat.split("T")[0]}
-                                </p>
+                            <div className="row">
+                                <div className="col-4">
+                                    <div className="booking-details mt-3">
+                                        <p>
+                                            <strong>Thời gian:</strong> {value?.thoi_gian}
+                                        </p>
+                                        <p>
+                                            <strong>Số lượng khách:</strong> {value?.so_luong_nguoi}
+                                        </p>
+                                        <p>
+                                            <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
+                                        </p>
+                                        <p>
+                                            <strong>Ngày:</strong>
+                                            {value?.ngay_dat.split("T")[0]}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="col-8">
+                                    <div className="mb-3">
+                                        <h6>Thông tin gọi món</h6>
+                                    </div>
+                                    <div className="booking-details mt-3">
+                                        {
+                                            menuorder.map((item) => {
+                                                if (item.id_datcho === value.id_datcho) {
+                                                    return (
+                                                        <div className="row booking-details">
+                                                            <div className="col-4">
+                                                                <div className="text-dark">{item.ten_mon}</div>
+                                                            </div>
+                                                            <div className="col-8 text-dark">
+                                                                {formatPrice(item.gia)} x {item.so_luong}
+                                                            </div>
+                                                            <hr className="text-dark" style={{ width: "50%" }}></hr>
+                                                        </div>
+                                                    )
+                                                }
+                                            })
+                                        }
+
+                                        {
+                                            thongBao(menuorder, value.id_datcho)
+                                        }
+                                        <div className="row booking-details">
+                                            <div className="col-4">
+                                                <p className="text-dark" style={{ fontWeight: "bold" }}>Tổng tiền:
+
+                                                </p>
+                                            </div>
+                                            <div className="col-8">
+                                                <p style={{ fontWeight: "bold" }}>
+                                                    {
+                                                        menuorder
+                                                            .filter(item => item.id_datcho === value.id_datcho)
+                                                            .reduce((total, item) => total + item.gia * item.so_luong, 0)
+                                                            .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                                                    }
+                                                </p>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
                             </div>
+
+
                             <Button
                                 variant="contained"
                                 color="error"
                                 style={
-                                    value?.trang_thai === 2
+                                    value?.trang_thai === 2 || value?.trang_thai === 3
                                         ? { display: "none" }
                                         : { display: "block", width: "100px" }
                                 }

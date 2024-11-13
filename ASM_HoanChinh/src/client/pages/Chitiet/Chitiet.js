@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import './style.css'
 import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -13,6 +14,7 @@ import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
 import Map from "../../components/Map";
+import { addMenuOrder } from "../../../services/MenuOrder";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -30,10 +32,12 @@ const Gioithieu = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [stars, setStar] = useState(0);
     const [visibleCount, setVisibleCount] = useState(2);
+    const [selectedMenuItems, setSelectedMenuItems] = useState([]);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [Loadmenu, setLoadMenu] = useState(6);
 
     useEffect(() => {
         initData();
-        handleCheckboxChange();
     }, []);
 
     const initData = async () => {
@@ -74,6 +78,42 @@ const Gioithieu = () => {
         }
     };
 
+    const handleCheckboxChange = (e, menuId, menuName, price) => {
+        setSelectedMenuItems(prevState => {
+            const exists = prevState.find(item => item.menuId === menuId);
+
+            if (exists) {
+                return prevState.filter(item => item.menuId !== menuId);
+            } else {
+                return [...prevState, { menuId, quantity: 1, name: menuName, price: price }];
+            }
+        });
+    };
+
+    const handleQuantityChange = (menuId, newQuantity) => {
+        setSelectedMenuItems(prevState => {
+            return prevState.map(item => {
+                if (item.menuId === menuId) {
+                    const quantity = Math.max(Number(newQuantity), 0);
+                    return { ...item, quantity };
+                }
+                return item;
+            }).filter(item => item.quantity >= 0);
+        });
+    };
+
+    const handleLoadMenu = () => {
+        setLoadMenu((prevCount) => prevCount + 3);
+    };
+
+    useEffect(() => {
+        const total = selectedMenuItems.reduce((acc, item) => {
+            const menuItem = menu.find((menuItem) => menuItem.id_menu === item.menuId);
+            return acc + (menuItem ? menuItem.gia * item.quantity : 0);
+        }, 0);
+        setTotalPrice(total);
+    }, [selectedMenuItems, menu]);
+
     const submit = async (value) => {
         if (value.so_luong > quanan.so_luong_cho) {
             enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
@@ -88,7 +128,7 @@ const Gioithieu = () => {
 
             fillDatcho.find(async (e) => {
                 if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
-                    await addDatcho({
+                    const res = await addDatcho({
                         ten_quan: quanan.ten_quan_an,
                         ten_kh: value?.ten_kh,
                         sdt_kh: value?.sdt,
@@ -101,6 +141,18 @@ const Gioithieu = () => {
                         id_nguoidung: accounts.id_nguoidung,
                         id_quanan: id
                     })
+
+                    if (selectedMenuItems) {
+                        selectedMenuItems.forEach(async (value) => {
+                            const resOrder = await addMenuOrder({
+                                ten_mon: value.name,
+                                so_luong: value.quantity,
+                                gia: value.price,
+                                id_datcho: res.data.id_datcho,
+                            })
+                        })
+
+                    }
                     enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
                     navigate("/profile")
 
@@ -123,6 +175,17 @@ const Gioithieu = () => {
                     id_nguoidung: accounts.id_nguoidung,
                     id_quanan: id
                 })
+                if (selectedMenuItems) {
+                    selectedMenuItems.forEach(async (value) => {
+                        const resOrder = await addMenuOrder({
+                            ten_mon: value.name,
+                            so_luong: value.quantity,
+                            gia: value.price,
+                            id_datcho: res.data.id_datcho,
+                        })
+                    })
+
+                }
                 enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
                 navigate("/profile")
             }
@@ -163,85 +226,6 @@ const Gioithieu = () => {
         setVisibleCount((prevCount) => prevCount + 2);
     };
 
-    const [selectedMenuItems, setSelectedMenuItems] = useState({});
-    const [totalPrice, setTotalPrice] = useState(0);
-    const [menuOrders, setMenuOrders] = useState([]);
-    const [selectedItems, setSelectedItems] = useState([]);
-    const [fillMenu, setFillMenu] = useState([]);
-    const fillmenu = menu.filter((e) => e.id_quanan === quanan.id_quanan);
-    const [Loadmenu, setLoadMenu] = useState(6);
-
-    const handleCheckboxChange = (event) => {
-        if (event && event.target) {
-            const menuItemId = parseInt(event.target.value);
-            const isChecked = event.target.checked;
-
-            setSelectedMenuItems((prev) => {
-                const newSelected = { ...prev };
-
-                if (isChecked) {
-                    newSelected[menuItemId] = 1;
-                } else {
-                    delete newSelected[menuItemId];
-                }
-
-                return newSelected;
-            });
-
-            const newSelected = [...menuOrders];
-
-            if (isChecked) {
-                if (!newSelected.includes(menuItemId)) {
-                    newSelected.push(menuItemId);
-                }
-            } else {
-                const index = newSelected.indexOf(menuItemId);
-                if (index > -1) {
-                    newSelected.splice(index, 1);
-                }
-            }
-
-            const allSelectedItems = getAllSelectedItems(newSelected);
-            // console.log("Tất cả mục đã chọn: ", allSelectedItems);
-            setSelectedItems(allSelectedItems);
-
-            const updatedFillMenu = fillmenu.map((item) => {
-                const chon = newSelected.includes(item.id_menu) ? 1 : 0;
-                return { ...item, chon };
-            });
-
-            setFillMenu(updatedFillMenu);
-            setMenuOrders(newSelected);
-        }
-    };
-
-    const getAllSelectedItems = (selectedIds) => {
-        return fillmenu.filter(item => selectedIds.includes(item.id_menu));
-    };
-
-
-    const handleQuantityChange = (id_menu, change) => {
-        setSelectedMenuItems((prev) => {
-            const newQuantity = (prev[id_menu] || 0) + change;
-            if (newQuantity < 0) {
-                return prev;
-            }
-            return { ...prev, [id_menu]: newQuantity };
-        });
-    };
-
-    const handleLoadMenu = () => {
-        setLoadMenu((prevCount) => prevCount + 3);
-    };
-
-    useEffect(() => {
-        const total = Object.entries(selectedMenuItems).reduce((acc, [id_menu, quantity]) => {
-            const menuItem = menu.find((item) => item.id_menu === parseInt(id_menu));
-            return acc + (menuItem ? menuItem.gia * quantity : 0);
-        }, 0);
-        setTotalPrice(total);
-    }, [selectedMenuItems, menu]);
-
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
@@ -252,27 +236,27 @@ const Gioithieu = () => {
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
                     <div class="col-12 ">
-                        <Map quanan={quananMap} sizeData={1} />
+                        <Map quanan={quananMap} sizeData={quananMap.length} />
                     </div>
                 </div>
                 <div className="container">
                     <div class="d-flex align-items-center justify-content-between ">
                         <h2
                             className="display-5 mb-3"
-                            style={{ fontSize: "60px", fontWeight: "bold" }}
+                            style={{ fontSize: "30px", fontWeight: "bold" }}
                         >
                             {quanan.ten_quan_an}
                         </h2>
 
                     </div>
                     <p className="mb-4">
-                        {/* Mô Tả */}
+                        {quanan.mo_ta}
                     </p>
                     <div className="row mt-3 mb-3" style={{ borderRadius: "10px", backgroundColor: '#fffcf8' }} >
                         <div className="col-lg-6 mb-3">
                             <Card>
                                 <CardContent>
-                                    <h1 className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
+                                    <h1 style={{fontSize: "30px"}} className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
                                     {cookies?.token && cookies?.role === 1 ?
                                         <>
                                             <div className="col-lg-12 mb-4">
@@ -505,7 +489,6 @@ const Gioithieu = () => {
 
                                 </CardContent>
                             </Card>
-
                         </div>
 
                         <div className="col-lg-6 mb-3">
@@ -536,39 +519,36 @@ const Gioithieu = () => {
                                                             type="checkbox"
                                                             value={value.id_menu}
                                                             id={`menu_${value.id_menu}`}
-                                                            onChange={handleCheckboxChange}
+                                                            checked={selectedMenuItems.some(item => item.menuId === value.id_menu)}
+                                                            onChange={(e) => handleCheckboxChange(e, value.id_menu, value.ten_menu, value.gia)}
                                                         />
                                                         <label className="form-check-label" htmlFor={`menu_${value.id_menu}`}>Chọn món</label>
                                                     </div>
 
-                                                    {selectedMenuItems[value.id_menu] !== undefined && (
-                                                        <div className="mb-4 d-flex align-items-center" >
-                                                            <label htmlFor={`quantity_${value.id_menu}`} className="form-label me-2 pt-1 " ></label>
-
+                                                    {selectedMenuItems.some(item => item.menuId === value.id_menu) && (
+                                                        <div className="mb-4 d-flex align-items-center">
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, -1)}
-                                                                disabled={selectedMenuItems[value.id_menu] <= 0}
+                                                                onClick={() => handleQuantityChange(value.id_menu, selectedMenuItems.find(item => item.menuId === value.id_menu).quantity - 1)}
+                                                                disabled={selectedMenuItems.find(item => item.menuId === value.id_menu).quantity <= 1}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 -
                                                             </button>
 
                                                             <input
-                                                                type="text"
+                                                                type="number"
                                                                 className="form-control mx-2"
                                                                 id={`quantity_${value.id_menu}`}
-                                                                value={selectedMenuItems[value.id_menu]}
-                                                                onChange={(e) => {
-                                                                    const newQuantity = parseInt(e.target.value) || 0;
-                                                                    handleQuantityChange(value.id_menu, newQuantity - (selectedMenuItems[value.id_menu] || 0));
-                                                                }}
+                                                                value={selectedMenuItems.find(item => item.menuId === value.id_menu).quantity}
+                                                                onChange={(e) => handleQuantityChange(value.id_menu, e.target.value)}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px", width: "60px", textAlign: "center", borderRadius: "4px" }}
+                                                                min="1"
                                                             />
 
                                                             <button
                                                                 className="btn btn-outline-secondary"
-                                                                onClick={() => handleQuantityChange(value.id_menu, 1)}
+                                                                onClick={() => handleQuantityChange(value.id_menu, selectedMenuItems.find(item => item.menuId === value.id_menu).quantity + 1)}
                                                                 style={{ paddingBottom: "1px", paddingTop: "1px" }}
                                                             >
                                                                 +
@@ -578,6 +558,7 @@ const Gioithieu = () => {
                                                 </div>
                                             ) : null;
                                         })}
+
                                     </div>
                                     {Loadmenu < menu.filter((mn) => mn.id_quanan === quanan.id_quanan).length && (
                                         <Grid container justifyContent="center">
@@ -593,7 +574,7 @@ const Gioithieu = () => {
                                                     padding: '8px 16px',
                                                     fontSize: '12px',
                                                     fontWeight: 'bold',
-                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                     position: 'relative',
                                                     overflow: 'hidden',
                                                     transition: 'all 0.3s ease',
@@ -674,128 +655,72 @@ const Gioithieu = () => {
                                     </h4>
                                     <div className="row">
                                         <div className="col-6">
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Không khí
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Không khí</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {khongkhi.map((kk, index) => {
-                                                                return kk.id_khongkhi === value.id_khongkhi ? (
-                                                                    <div key={index}>{kk.khong_khi}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.khongkhis?.length > 0 ? (
+                                                        quanan.khongkhis.map((khongkhi, index) =>
+                                                        (<div key={khongkhi.id_khongkhi}>
+                                                            {khongkhi.khong_khi} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Dịch vụ
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Dịch vụ</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {dichvu.map((dv, index) => {
-                                                                return dv.id_dichvu === value.id_dichvu ? (
-                                                                    <div key={index}>{dv.dich_vu}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.dichvus?.length > 0 ? (
+                                                        quanan.dichvus.map((dichvu, index) =>
+                                                        (<div key={dichvu.id_dichvu}>
+                                                            {dichvu.dich_vu} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Tiện nghi
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Tiện nghi</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {tiennghi.map((tn, index) => {
-                                                                return tn.id_tiennghi === value.id_tiennghi ? (
-                                                                    <div key={index}>{tn.tien_nghi}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.tiennghis?.length > 0 ? (
+                                                        quanan.tiennghis.map((tiennghi, index) =>
+                                                        (<div key={tiennghi.id_tiennghi}>
+                                                            {tiennghi.tien_nghi} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-6">
-
-
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Kế hoạch
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Kế hoạch</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {kehoach.map((kh, index) => {
-                                                                return kh.id_kehoach === value.id_kehoach ? (
-                                                                    <div key={index}>{kh.ke_hoach}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.kehoachs?.length > 0 ? (
+                                                        quanan.kehoachs.map((kehoach, index) =>
+                                                        (<div key={kehoach.id_kehoach}>
+                                                            {kehoach.ke_hoach} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Bãi đỗ xe
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Bãi đỗ xe</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {baidoxe.map((bdx, index) => {
-                                                                return bdx.id_baidoxe === value.id_baidoxe ? (
-                                                                    <div key={index}>{bdx.bai_do_xe}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.baidoxes?.length > 0 ? (
+                                                        quanan.baidoxes.map((baidoxe, index) =>
+                                                        (<div key={baidoxe.id_baidoxe}>
+                                                            {baidoxe.bai_do_xe} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
-                                            <p
-                                                className="mb-2 text-dark"
-                                                style={{ fontWeight: "bold" }}
-                                            >
-                                                Loại khách hàng
-                                            </p>
-                                            <div
-                                                className="row g-4 text-dark"
-                                                style={{ whiteSpace: "nowrap" }}
-                                            >
+                                            <p className="mb-2 text-dark" style={{ fontWeight: "bold" }}>Loại khách hàng</p>
+                                            <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
-                                                    {/* {loaikhachhang.map((loaikh, index) => {
-                                                                return loaikh.id_loaikh === value.id_loaikh ? (
-                                                                    <div key={index}>{loaikh.khach_hang}</div>
-                                                                ) : (
-                                                                    ""
-                                                                );
-                                                            })} */}
+                                                    {quanan?.loaikhs?.length > 0 ? (
+                                                        quanan.loaikhs.map((loaikh, index) =>
+                                                        (<div key={loaikh.id_loaikh}>
+                                                            {loaikh.khach_hang} </div>))) :
+                                                        "Chưa cập nhật"
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -963,7 +888,7 @@ const Gioithieu = () => {
                                                                     padding: '8px 16px',
                                                                     fontSize: '12px',
                                                                     fontWeight: 'bold',
-                                                                    textTransform: 'uppercase',                                                    cursor: 'pointer',
+                                                                    textTransform: 'uppercase', cursor: 'pointer',
                                                                     position: 'relative',
                                                                     overflow: 'hidden',
                                                                     transition: 'all 0.3s ease',

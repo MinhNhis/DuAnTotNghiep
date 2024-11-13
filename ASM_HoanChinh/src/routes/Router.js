@@ -7,6 +7,7 @@ import Datcho from "../admin/views/datcho/index.js";
 import AddDatcho from "../admin/views/datcho/Add/index.js";
 import DeleteDatcho from "../admin/views/datcho/Delete/index.js";
 import EditDatcho from "../admin/views/datcho/Edit/index.js";
+import ChiTietDonDatCho from "../admin/views/datcho/Detail/index.js"
 import DatCho from "../client/pages/Datcho/Datcho.js";
 import DeleteNguoiDung from "../admin/views/nguoidung/Delete/index.js";
 import DeleteLHK from "../admin/views/loaikhachhang/Delete/index.js";
@@ -165,6 +166,7 @@ const ThemeRoutes = [
       { path: "admin/dat-cho/add", element: <AddDatcho />, },
       { path: "admin/dat-cho/delete/:id_datcho", element: <DeleteDatcho />, },
       { path: "admin/dat-cho/edit/:id_datcho", element: <EditDatcho />, },
+      { path: "admin/dat-cho/chi-tiet/:id_datcho", element: <ChiTietDonDatCho />, },
 
       { path: "admin/dich-vu/add", exact: true, element: <AddDichVu /> },
       { path: "admin/dich-vu/edit/:id", exact: true, element: <EditDichVu /> },

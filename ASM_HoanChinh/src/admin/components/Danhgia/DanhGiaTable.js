@@ -137,7 +137,7 @@ const ExDanhGia = () => {
                       ml: 0.5,
                       fontSize: "15px",
                       display: '-webkit-box',
-                      WebkitLineClamp: 2, // Chỉ hiển thị 2 dòng
+                      WebkitLineClamp: 2,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -169,18 +169,6 @@ const ExDanhGia = () => {
                 </Typography>
               </TableCell>
               <TableCell>
-                {/* <Typography >
-                <Link to={`/admin/danhgia/edit/${items.id_danhgia}`}>
-                  <IconButton aria-label="edit" color="primary" style={{ width: "50px", heighte: "50px" }}>
-                    <EditIcon />
-                  </IconButton>
-                </Link>
-                <Link to={`/admin/danhgia/delete/${items.id_danhgia}`}>
-                  <IconButton aria-label="edit" color="danger" style={{ width: "50px", heighte: "50px" }}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Link>
-              </Typography> */}
               </TableCell>
             </TableRow>
           ))}

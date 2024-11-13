@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import ForgotPassword from "../ForgotPassword";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { BASE_URL } from "../../../config/ApiConfig";
+import { TextField } from "@mui/material";
 
 const Login = () => {
   const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
@@ -16,7 +17,8 @@ const Login = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [showForgotPasswordForm, setShowForgotPasswordForm] = useState(false);
-  const clientId = "330129041706-5ag8cfd691vsful1sjjr6lq3ug10r94q.apps.googleusercontent.com"
+  const clientId =
+      "330129041706-5ag8cfd691vsful1sjjr6lq3ug10r94q.apps.googleusercontent.com";
 
   useEffect(() => {
     if (userLogin) {
@@ -93,7 +95,10 @@ const Login = () => {
         <div className="col-12 col-sm-10 col-md-8 col-lg-4 col-xl-3">
           <div className="card shadow-sm p-4 border-3">
             <div className="card-header bg-transparent border-0 pb-0">
-              <Link to="/" className="btn-close position-absolute top-0 end-0 mt-2 me-2"></Link>
+              <Link
+                  to="/"
+                  className="btn-close position-absolute top-0 end-0 mt-2 me-2"
+              ></Link>
             </div>
             {!showForgotPasswordForm ? (
                 <div className="card-body">
@@ -102,11 +107,11 @@ const Login = () => {
                     Vui lòng đăng nhập bằng thông tin cá nhân để tiếp tục
                   </p>
                   <form onSubmit={handleSubmit(submit)} className="text-center">
-                    <div className="form-group mb-3">
-                      <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Email"
+                    <div className="form-group mb-1">
+                      <TextField
+                          label="Email"
+                          variant="outlined"
+                          fullWidth
                           {...register("email", {
                             required: "Email không được bỏ trống",
                             pattern: {
@@ -114,18 +119,33 @@ const Login = () => {
                               message: "Email không hợp lệ",
                             },
                           })}
+                          error={!!formState.errors.email}
+                          helperText={formState.errors.email?.message}
+                          sx={{
+                            mb: 2,
+                            "& .MuiInputBase-root": {
+                              height: "50px",
+                              fontSize: "0.9rem",
+                            },
+                            "& .MuiInputLabel-root": {
+                              top: "-3px",
+                              fontSize: "1rem",
+                            },
+                            "& .MuiFormHelperText-root": {
+                              fontSize: "0.85rem",
+                              color: "#d32f2f",
+                              marginTop: "2px",
+                              marginLeft: "2px",
+                            },
+                          }}
                       />
-                      {formState?.errors?.email && (
-                          <small className="text-danger" style={{ textAlign: "left", display: "block", marginTop: "5px" }}>
-                            {formState?.errors?.email?.message}
-                          </small>
-                      )}
                     </div>
-                    <div className="form-group mb-3">
-                      <input
+                    <div className="form-group mb-1">
+                      <TextField
+                          label="Mật Khẩu"
                           type="password"
-                          className="form-control"
-                          placeholder="Mật Khẩu"
+                          variant="outlined"
+                          fullWidth
                           {...register("mat_khau", {
                             required: "Mật khẩu không được bỏ trống",
                             minLength: {
@@ -133,19 +153,44 @@ const Login = () => {
                               message: "Mật khẩu phải ít nhất 6 kí tự",
                             },
                           })}
+                          error={!!formState.errors.mat_khau}
+                          helperText={formState.errors.mat_khau?.message}
+                          sx={{
+                            mb: 2,
+                            "& .MuiInputBase-root": {
+                              height: "50px",
+                              fontSize: "0.9rem",
+                            },
+                            "& .MuiInputLabel-root": {
+                              top: "-3px",
+                              fontSize: "1rem",
+                            },
+                            "& .MuiFormHelperText-root": {
+                              fontSize: "0.85rem",
+                              color: "#d32f2f",
+                              marginTop: "2px",
+                              marginLeft: "2px",
+                            },
+                          }}
                       />
-                      {formState?.errors?.mat_khau && (
-                          <small className="text-danger" style={{ textAlign: "left", display: "block", marginTop: "5px" }}>
-                            {formState?.errors?.mat_khau?.message}
-                          </small>
-                      )}
                     </div>
-                    <div className="mb-3" style={{ marginRight: "175px" }}>
-                      <Link to="#" onClick={handleShowForgotPasswordForm} className="text-decoration-none">
+                    <div
+                        className="mb-2"
+                        style={{ textAlign: "left", display: "block" }}
+                    >
+                      <Link
+                          to="#"
+                          onClick={handleShowForgotPasswordForm}
+                          className="text-decoration-none"
+                      >
                         Quên mật khẩu?
                       </Link>
                     </div>
-                    <button type="submit" className="btn btn-primary w-100" style={{borderRadius: "5px"}}>
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-100"
+                        style={{ borderRadius: "5px" }}
+                    >
                       Đăng Nhập
                     </button>
                   </form>
@@ -157,7 +202,7 @@ const Login = () => {
                             width={299}
                             theme="dark"
                             size="large"
-                            borderRadius = {"30px"}
+                            borderRadius={"30px"}
                         />
                       </div>
                     </GoogleOAuthProvider>

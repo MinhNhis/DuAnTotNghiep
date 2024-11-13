@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography, Button, TextField } from "@mui/material";
 import { addNguoiDung } from "../../../../services/Nguoidung";
@@ -12,8 +11,6 @@ const AddNguoiDung = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const submit = async (value) => {
-    console.log(value);
-    
     try {
       await addNguoiDung({
         ten_nguoi_dung: value?.username,
@@ -29,7 +26,6 @@ const AddNguoiDung = () => {
       enqueueSnackbar('Thêm người dùng thành công!', { variant: 'success' });
       navigate("/admin/nguoi-dung");
     } catch (error) {
-      console.log(error);
       if (error.response && error.response.data.message === "Email đã tồn tại") {
         enqueueSnackbar('Email đã tồn tại, vui lòng thử email khác!', { variant: 'error' });
       } else {

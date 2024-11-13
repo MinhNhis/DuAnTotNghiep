@@ -26,10 +26,10 @@ const AddDichVu = () => {
         dich_vu: value?.dich_vu,
         created_user: accounts.id_nguoidung
       });
-      enqueueSnackbar('Thêm dịch vụ thành công!', { variant: 'success' }); // Show success message
+      enqueueSnackbar('Thêm dịch vụ thành công!', { variant: 'success' }); 
       navigate("/admin/dich-vu");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra, vui lòng thử lại.', { variant: 'error' }); // Show error message
+      enqueueSnackbar('Có lỗi xảy ra, vui lòng thử lại.', { variant: 'error' }); 
     }
   };
 

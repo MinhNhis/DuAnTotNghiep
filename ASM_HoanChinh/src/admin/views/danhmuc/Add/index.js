@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
-import "./style.css";
 import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuItem, Button } from "@mui/material";
 import { addDanhmuc } from "../../../../services/Danhmuc";
 import { getAllDanhmuc } from "../../../../services/Alldanhmuc";
@@ -45,8 +43,6 @@ const AddDanhmuc = () => {
   const initData = async () => {
     const resultAlldanhmuc = await getAllDanhmuc();
     setAllDanhmuc(resultAlldanhmuc.data);
-
-
   };
 
   return (

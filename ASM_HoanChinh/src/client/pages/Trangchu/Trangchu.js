@@ -132,7 +132,7 @@ const Trangchu = () => {
             <div className="container-fluid bg-light py-3 my-6 mt-0">
                 <div className="container-fluid" style={{ position: 'relative', width: '100%' }}>
                     <Suspense fallback={<div>Loading...</div>}>
-                        <Map quanan={quananMap} sizeData={2} />
+                        <Map quanan={quananMap} sizeData={quananMap.length} />
                     </Suspense>
                 </div>
             </div>
