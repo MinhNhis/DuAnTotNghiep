@@ -156,9 +156,10 @@ const Menu = () => {
                 <div className="text-center wow " data-wow-delay="0.1s">
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
-                <div className="tab-class text-center">
 
+                <div className="tab-class text-center">
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+
                         <li className="nav-item p-2">
                             <button
                                 className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary' : 'bg-light'}`}
@@ -167,19 +168,19 @@ const Menu = () => {
                                 <span className="text-dark" style={{ width: '150px' }}>All</span>
                             </button>
                         </li>
-
-
+                        
                         {alldanhmuc.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
+
+
                                 {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
-                                    <button
+                                    <a
                                         className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
-                                        onClick={(e) => {
-                                            handleCategoryClick(danhmuc.id_alldanhmuc);
-                                        }}
+                                        onClick={(e) => { handleCategoryClick(danhmuc.id_alldanhmuc); }}
+
                                     >
                                         <span className="text-dark" style={{ width: '150px' }}>{danhmuc.ten_danhmuc}</span>
-                                    </button>
+                                    </a>
                                 ) : null}
                                 {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
                                     <ul className="dropdown-menu2 show">
@@ -194,7 +195,6 @@ const Menu = () => {
 
                         ))}
                     </ul>
-
 
                     <div className="tab-content">
                         <div id="tab-1" className="tab-pane fade show p-0 active" >
