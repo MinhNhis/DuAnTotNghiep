@@ -1,5 +1,4 @@
 import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useForm, Controller } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography, Button, TextField } from "@mui/material";
 import ReactQuill from 'react-quill';

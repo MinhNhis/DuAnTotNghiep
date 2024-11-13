@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
-import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuItem, Button } from "@mui/material";
+import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
 import { addAllDanhmuc } from "../../../../services/Alldanhmuc";
-import { getAllDanhmuc } from "../../../../services/Alldanhmuc";
 
 const AddAllDanhmuc = () => {
     const { register, handleSubmit, formState } = useForm();
@@ -13,9 +11,8 @@ const AddAllDanhmuc = () => {
     const { enqueueSnackbar } = useSnackbar();
     const accounts = JSON.parse(localStorage.getItem("accounts"));
 
-
     const onSubmit = async (value) => {
-       
+
         try {
             await addAllDanhmuc({
                 ten_danhmuc: value?.danhmuc,
@@ -33,7 +30,6 @@ const AddAllDanhmuc = () => {
     const handleCancle = () => {
         navigate("/admin/alldanhmuc");
     };
-
 
     return (
         <div>

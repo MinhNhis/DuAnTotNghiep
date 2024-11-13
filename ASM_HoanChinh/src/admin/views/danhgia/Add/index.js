@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography } from "@mui/material";
 import { addDanhgia } from "../../../../services/Danhgia";
 import { getQuanan } from "../../../../services/Quanan";
 import { getNguoiDung } from "../../../../services/Nguoidung";
-import { useSnackbar } from 'notistack'; // Import useSnackbar
+import { useSnackbar } from 'notistack';
 
 const AddDanhGia = () => {
   const { register, handleSubmit, formState } = useForm();
   const [nguoidung, setNguoiDung] = useState([]);
   const [quanan, setQuanAn] = useState([]);
   const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar(); // Destructure enqueueSnackbar
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     initFata();
@@ -38,11 +37,10 @@ const AddDanhGia = () => {
         id_nguoidung: value?.id_nguoidung,
         id_quanan: value?.id_quanan
       });
-      enqueueSnackbar('Thêm đánh giá thành công!', { variant: 'success' }); // Show success message
+      enqueueSnackbar('Thêm đánh giá thành công!', { variant: 'success' });
       navigate("/admin/danhgia");
-      console.log(value);
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra!', { variant: 'error' }); // Show error message
+      enqueueSnackbar('Có lỗi xảy ra!', { variant: 'error' });
     }
   };
 
