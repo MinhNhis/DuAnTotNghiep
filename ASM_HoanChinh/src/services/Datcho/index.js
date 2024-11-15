@@ -18,12 +18,13 @@ const getDatchoById = async (id) => {
     return res
 }
 
-const addDatcho = async ({ ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+const addDatcho = async ({ ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
 
     const res = await request({
         method: "POST",
         path: "api/dat-cho",
         data: {
+            ma_don: ma_don,
             ten_quan: ten_quan,
             ten_kh: ten_kh,
             sdt_kh: sdt_kh,
@@ -42,12 +43,13 @@ const addDatcho = async ({ ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gi
     return res
 }
 
-const editDatcho = async (id, { ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+const editDatcho = async (id, { ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
 
     const res = await request({
         method: "PUT",
         path: `api/dat-cho/${id}`,
         data: {
+            ma_don: ma_don,
             ten_quan: ten_quan,
             ten_kh: ten_kh,
             sdt_kh: sdt_kh,

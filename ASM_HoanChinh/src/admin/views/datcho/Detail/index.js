@@ -59,7 +59,8 @@ const ChiTietDonDatCho = () => {
                     <Table>
                         <TableHead>
                             <TableRow>
-                                <TableCell>Khách hàng</TableCell>
+                                <TableCell align="left">Mã đơn</TableCell>
+                                <TableCell align="left">Khách hàng</TableCell>
                                 <TableCell align="left">Điện thoại</TableCell>
                                 <TableCell align="left">Email</TableCell>
                                 <TableCell align="left">Ngày giờ</TableCell>
@@ -70,7 +71,8 @@ const ChiTietDonDatCho = () => {
                         </TableHead>
                         <TableBody>
                             <TableRow key={1}>
-                                <TableCell>{datcho.ten_kh}</TableCell>
+                                <TableCell align="left">{datcho.ma_don}</TableCell>
+                                <TableCell align="left">{datcho.ten_kh}</TableCell>
                                 <TableCell align="left">{datcho.sdt_kh}</TableCell>
                                 <TableCell align="left">{datcho.email_kh}</TableCell>
                                 <TableCell align="left">{datcho.ngay_dat} - {datcho.thoi_gian}</TableCell>

@@ -516,7 +516,10 @@ const Profile = () => {
                             </div>
                             <div className="row">
                                 <div className="col-4">
-                                    <div className="booking-details mt-3">
+                                    <div className="booking-details">
+                                        <p>
+                                            <strong>Mã đơn:</strong> {value?.ma_don}
+                                        </p>
                                         <p>
                                             <strong>Thời gian:</strong> {value?.thoi_gian}
                                         </p>

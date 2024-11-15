@@ -83,14 +83,9 @@ const DatchoTable = () => {
                         </TableCell>
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                                Điện thoại
+                               Mã đơn
                             </Typography>
                         </TableCell>
-                        {/* <TableCell>
-                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                                Email
-                            </Typography>
-                        </TableCell> */}
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Ngày
@@ -101,16 +96,6 @@ const DatchoTable = () => {
                                 Giờ
                             </Typography>
                         </TableCell>
-                        {/* <TableCell>
-                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                                Số lượng người
-                            </Typography>
-                        </TableCell>
-                        <TableCell>
-                            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                                Yêu cầu khác
-                            </Typography>
-                        </TableCell> */}
                         <TableCell>
                             <Typography variant="h5" sx={{ fontWeight: "bold" }}>
                                 Trạng thái
@@ -154,20 +139,11 @@ const DatchoTable = () => {
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {dc.sdt_kh}
+                                            {dc.ma_don}
                                         </Typography>
                                     </Box>
                                 </Box>
                             </TableCell>
-                            {/* <TableCell>
-                                <Box sx={{ display: "flex", alignItems: "center", }}>
-                                    <Box>
-                                        <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {dc.email_kh}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </TableCell> */}
                             <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
@@ -186,24 +162,6 @@ const DatchoTable = () => {
                                     </Box>
                                 </Box>
                             </TableCell>
-                            {/* <TableCell>
-                                <Box sx={{ display: "flex", alignItems: "center", }}>
-                                    <Box>
-                                        <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {dc.so_luong_nguoi}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </TableCell>
-                            <TableCell>
-                                <Box sx={{ display: "flex", alignItems: "center", }}>
-                                    <Box>
-                                        <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {dc.yeu_cau_khac}
-                                        </Typography>
-                                    </Box>
-                                </Box>
-                            </TableCell> */}
                             <TableCell>
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>

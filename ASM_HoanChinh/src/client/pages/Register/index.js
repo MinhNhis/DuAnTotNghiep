@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { addNguoiDung } from "../../../services/Nguoidung";
 import { useSnackbar } from "notistack";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 
 const Register = () => {
     const { register, handleSubmit, getValues, formState } = useForm();
@@ -29,6 +29,9 @@ const Register = () => {
                 so_dien_thoai: value?.so_dien_thoai,
                 dia_chi: value?.dia_chi,
                 vai_tro: check ? 2 : 1,
+                stk: check && value.stk? value.stk : null,
+                ngan_hang: check && value.ngan_hang ? value.ngan_hang : null,
+                ctk: check && value.ctk ? value.ctk : null
             });
             enqueueSnackbar("Đăng kí tài khoản thành công!", { variant: "success" });
             navigate("/login");
@@ -258,22 +261,118 @@ const Register = () => {
                             </div>
 
                             {check && (
-                                <div className="form-check mb-1">
-                                    <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        checked={checkLuuY}
-                                        onChange={handleCheckLuuY}
-                                    />
-                                    <label className="form-check-label ms-2">
-                                        <span style={{ color: "red" }}>*</span>Lưu ý: Nếu đăng quán bạn sẽ cần phải trả phí. Bạn có đồng ý không?
-                                    </label>
-                                </div>
+                                <>
+                                    {/* <div className="form-group mb-1 mt-3">
+                                        <TextField
+                                            label="Số tài khoản"
+                                            type="text"
+                                            variant="outlined"
+                                            fullWidth
+                                            {...register("stk", {
+                                                required: "Số tài khoản không được bỏ trống",
+                                            })}
+                                            error={!!formState.errors.stk}
+                                            helperText={formState.errors.stk?.message}
+                                            sx={{
+                                                mb: 2,
+                                                "& .MuiInputBase-root": {
+                                                    height: "40px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiInputLabel-root": {
+                                                    top: "-5px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiFormHelperText-root": {
+                                                    fontSize: "0.75rem",
+                                                    marginTop: "2px",
+                                                    marginLeft: "2px",
+                                                },
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="form-group mb-1">
+                                        <TextField
+                                            label="Ngân hàng"
+                                            type="text"
+                                            variant="outlined"
+                                            fullWidth
+                                            {...register("ngan_hang", {
+                                                required: "Ngân hàng không được bỏ trống",
+                                            })}
+                                            error={!!formState.errors.ngan_hang}
+                                            helperText={formState.errors.ngan_hang?.message}
+                                            sx={{
+                                                mb: 2,
+                                                "& .MuiInputBase-root": {
+                                                    height: "40px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiInputLabel-root": {
+                                                    top: "-5px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiFormHelperText-root": {
+                                                    fontSize: "0.75rem",
+                                                    marginTop: "2px",
+                                                    marginLeft: "2px",
+                                                },
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="form-group mb-1">
+                                        <TextField
+                                            label="Chủ tài khoản"
+                                            type="text"
+                                            variant="outlined"
+                                            fullWidth
+                                            {...register("ctk", {
+                                                required: "Chủ tài khoản không được bỏ trống",
+                                            })}
+                                            error={!!formState.errors.ctk}
+                                            helperText={formState.errors.ctk?.message}
+                                            sx={{
+                                                mb: 2,
+                                                "& .MuiInputBase-root": {
+                                                    height: "40px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiInputLabel-root": {
+                                                    top: "-5px",
+                                                    fontSize: "0.9rem",
+                                                },
+                                                "& .MuiFormHelperText-root": {
+                                                    fontSize: "0.75rem",
+                                                    marginTop: "2px",
+                                                    marginLeft: "2px",
+                                                },
+                                            }}
+                                        />
+                                    </div> */}
+                                    <div className="form-check mb-1">
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            checked={checkLuuY}
+                                            onChange={handleCheckLuuY}
+                                        />
+                                        <label className="form-check-label ms-2">
+                                            <span style={{ color: "red" }}>*</span>Lưu ý: Nếu đăng quán bạn sẽ cần phải trả phí. Bạn có đồng ý không?
+                                        </label>
+                                    </div>
+                                </>
                             )}
 
-                            <button type="submit" className="btn btn-primary w-100 mt-3" disabled={check && !checkLuuY}>
+                            <Button type="submit" className="btn btn-primary w-100" disabled={check && !checkLuuY}
+                            sx={{
+                                borderRadius: "5px",
+                                height: "37px",
+                                backgroundColor: "#d4a762",
+                                color: "white",
+                                fontWeight: "bold",
+                              }}>
                                 Đăng ký
-                            </button>
+                            </Button>
                         </form>
                         <p className="text-center mt-3">
                             Bạn đã có tài khoản? <Link to="/login">Đăng nhập</Link>

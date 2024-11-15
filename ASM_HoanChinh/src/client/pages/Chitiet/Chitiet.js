@@ -114,6 +114,15 @@ const Gioithieu = () => {
         setTotalPrice(total);
     }, [selectedMenuItems, menu]);
 
+    const randomMadon = () => {
+        let ma_don;
+        do {
+            ma_don = Math.floor(Math.random() * 9000000000) + 1000000000;
+        } while (datcho.some((e) => e.ma_don === ma_don));
+        return ma_don;
+    };
+
+
     const submit = async (value) => {
         if (value.so_luong > quanan.so_luong_cho) {
             enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
@@ -129,6 +138,7 @@ const Gioithieu = () => {
             fillDatcho.find(async (e) => {
                 if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
                     const res = await addDatcho({
+                        ma_don: 'FS' + randomMadon(),
                         ten_quan: quanan.ten_quan_an,
                         ten_kh: value?.ten_kh,
                         sdt_kh: value?.sdt,
@@ -163,6 +173,7 @@ const Gioithieu = () => {
             // -------------------------------------------------------------------------------------/
             if (fillDatcho.length === 0) {
                 const res = await addDatcho({
+                    ma_don: 'FS' + randomMadon(),
                     ten_quan: quanan.ten_quan_an,
                     ten_kh: value?.ten_kh,
                     sdt_kh: value?.sdt,
@@ -256,7 +267,7 @@ const Gioithieu = () => {
                         <div className="col-lg-6 mb-3">
                             <Card>
                                 <CardContent>
-                                    <h1 style={{fontSize: "30px"}} className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
+                                    <h1 style={{ fontSize: "30px" }} className="text-dark text-center mt-1">ĐẶT CHỖ</h1>
                                     {cookies?.token && cookies?.role === 1 ?
                                         <>
                                             <div className="col-lg-12 mb-4">
@@ -493,7 +504,7 @@ const Gioithieu = () => {
 
                         <div className="col-lg-6 mb-3">
                             <Card>
-                                <h1 style={{fontSize: "30px"}} className="text-dark text-center">MENU</h1>
+                                <h1 style={{ fontSize: "30px" }} className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
                                         {menu.slice(0, Loadmenu).map((value) => {

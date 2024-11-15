@@ -7,7 +7,7 @@ import { useSnackbar } from "notistack";
 import ForgotPassword from "../ForgotPassword";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { BASE_URL } from "../../../config/ApiConfig";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 
 const Login = () => {
   const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
@@ -186,13 +186,19 @@ const Login = () => {
                         Quên mật khẩu?
                       </Link>
                     </div>
-                    <button
+                    <Button
                         type="submit"
                         className="btn btn-primary w-100"
-                        style={{ borderRadius: "5px" }}
+                        sx={{
+                          borderRadius: "5px",
+                          height: "37px",
+                          backgroundColor: "#d4a762",
+                          color: "white",
+                          fontWeight: "bold",
+                        }}
                     >
                       Đăng Nhập
-                    </button>
+                    </Button>
                   </form>
                   <div className="d-flex justify-content-center mt-2">
                     <GoogleOAuthProvider clientId={clientId}>
