@@ -76,6 +76,9 @@ const Navbar = () => {
               <Link to="/kham-pha" className="nav-item nav-link" onClick={closeNavbar}>
                 Khám phá
               </Link>
+              <Link to="/Lien-he" className="nav-item nav-link" onClick={closeNavbar}>
+                Liên hệ
+              </Link>
             </div>
 
             <button

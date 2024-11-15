@@ -242,7 +242,7 @@ const Menu = () => {
                                                             <p className="mb-0 text-start" >
                                                                 Giá: {formatPrice(menuItem.gia)}
                                                             </p>
-                                                            <p className="mb-0 text-dark">
+                                                            <p className="mb-0 text-dark text-start  ">
                                                                 Quán: {quanan.find(value => value.id_quanan === menuItem.id_quanan)?.ten_quan_an || ''}
                                                             </p>
                                                         </div>

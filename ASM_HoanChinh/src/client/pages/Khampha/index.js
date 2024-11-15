@@ -42,6 +42,7 @@ const KhamPha = () => {
                     <ol className="breadcrumb justify-content-center mb-0 animated ">
                         <li className="breadcrumb-item"><a href="/">Trang Chủ</a></li>
                         <li className="breadcrumb-item text-dark" aria-current="page">Khám Phá</li>
+                        <li className="breadcrumb-item text-dark" aria-current="page"><a href='/Lien-he'>Liên hệ</a></li>
                     </ol>
                 </div>
             </div>

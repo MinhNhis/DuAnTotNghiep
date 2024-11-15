@@ -14,7 +14,7 @@ const DatCho = () => {
     const id = params.id
     const navigate = useNavigate()
     const { enqueueSnackbar } = useSnackbar();
-    const { register, handleSubmit, formState } = useForm()
+    const { register, handleSubmit, formState } = useForm();
     const accounts = JSON.parse(localStorage.getItem("accounts"))
     const [quanan, setQuanan] = useState([])
 
