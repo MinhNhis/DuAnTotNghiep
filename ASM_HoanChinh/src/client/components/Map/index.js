@@ -49,21 +49,21 @@ const Map = ({ quanan, sizeData }) => {
         popupAnchor: [0, -45]
     })
     const routeColors = ["blue", "red", "green", "purple", "orange", "yellow"];
-
+    useEffect(() => {
+        setTimeout(() => {
+            userLocation();
+        }, 2000)
+    }, [location])
     useEffect(() => {
         loadMap()
-    }, [sizeData, location]);
+    }, [location, sizeData]);
 
     useEffect(() => {
         speedRef.current = speed;
         updatePopups();
     }, [speed]);
 
-    useEffect(() => {
-        setTimeout(() => {
-            userLocation();
-        }, 2000)
-    }, [location]);
+
 
     // useEffect(() => {
     //     if (!mapRef.current) {
@@ -193,13 +193,13 @@ const Map = ({ quanan, sizeData }) => {
     const loadMap = async () => {
         if (!mapRef.current) {
             mapRef.current = L.map("map").setView([userPosition.latitude, userPosition.longitude], 16);
-    
+
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 19,
                 attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }).addTo(mapRef.current);
         }
-    
+
         for (const quan of quanan) {
             if (quan.lat && quan.lng) {
                 const popupContent = `
@@ -214,37 +214,36 @@ const Map = ({ quanan, sizeData }) => {
                         </div>
                     </a>
                 `;
-    
+
                 try {
                     const marker = L.marker([quan.lat, quan.lng], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
                         .addTo(mapRef.current)
                         .bindPopup(popupContent)
                         .on('click', () => calculateRoute(quan.lat, quan.lng, quan));
-    
-                    // if (location.latitude && location.longitude) {
-                         calculateRoute(quan.lat, quan.lng, quan);
-                    //     if (sizeData === 1) {
-                    //          calculateRoute(quan.lat, quan.lng, quan);
-                    //     } else {
-                    //         const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
-                    //         if (distance && distance <= 10) {
-                    //              calculateRoute(quan.lat, quan.lng, quan);
-                    //         }
-                    //     }
-                    // } else {
-                    //     calculateRoute(quan.lat, quan.lng, quan);
-                    // }
-    
+
+                    if (location.latitude && location.longitude) {
+                        if (sizeData <= 1) {
+                            calculateRoute(quan.lat, quan.lng, quan);
+                        } else {
+                            const distance = await khoangCach(location.latitude, location.longitude, quan.lat, quan.lng);
+                            if (distance && distance <= 5) {
+                                calculateRoute(quan.lat, quan.lng, quan);
+                            }
+                        }
+                    } else {
+                        calculateRoute(quan.lat, quan.lng, quan);
+                    }
+
                 } catch (error) {
                     console.error(`Không thể load quán ${quan.ten_quan_an}:`, error);
                 }
-    
+
             } else {
                 console.error(`Quán ăn ${quan.ten_quan_an} không có vị trí hợp lệ.`);
             }
         }
     };
-       
+
 
     const calculateRoute = (latitude, longitude, quan) => {
         const currentLocation = locationRef.current;
@@ -261,7 +260,6 @@ const Map = ({ quanan, sizeData }) => {
         }
 
         const routingContainer = document.querySelector('.leaflet-routing-container');
-
         const newRoutingControl = L.Routing.control({
             waypoints: [
                 L.latLng(currentLocation.latitude, currentLocation.longitude),
@@ -284,6 +282,11 @@ const Map = ({ quanan, sizeData }) => {
         }).addTo(mapRef.current);
 
         setRoutingControl(newRoutingControl);
+
+        if (sizeData <= 1) {
+            routingContainer.style.display = 'block';
+        }
+
         newRoutingControl.on('routesfound', (e) => {
             const routes = e.routes;
             const summary = routes[0].summary;
@@ -322,11 +325,6 @@ const Map = ({ quanan, sizeData }) => {
             ]);
         });
 
-        if (sizeData === 1) {
-            if (routingContainer) {
-                routingContainer.style.display = (sizeData === 1) ? 'block' : 'none';
-            }
-        } else return
     };
 
     const updatePopups = () => {

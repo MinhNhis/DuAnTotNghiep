@@ -54,11 +54,11 @@ const Menuitems = [
         icon: EmojiTransportationOutlinedIcon,
         href: "admin/tien-nghi",
       },
-      {
-        title: "Các dịch vụ",
-        icon: DeliveryDiningIcon,
-        href: "admin/cac-dich-vu",
-      },
+      // {
+      //   title: "Các dịch vụ",
+      //   icon: DeliveryDiningIcon,
+      //   href: "admin/cac-dich-vu",
+      // },
       {
         title: "Khách hàng",
         icon: PeopleAltIcon,
