@@ -507,7 +507,7 @@ const Gioithieu = () => {
                                 <h1 style={{ fontSize: "30px" }} className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
-                                        {menu.slice(0, Loadmenu).map((value) => {
+                                        {menu.map((value) => {
                                             return value.id_quanan === quanan.id_quanan ? (
                                                 <div className="col-4" key={value.id_menu}>
                                                     <img
@@ -571,7 +571,7 @@ const Gioithieu = () => {
                                         })}
 
                                     </div>
-                                    {Loadmenu < menu.filter((mn) => mn.id_quanan === quanan.id_quanan).length && (
+                                    {/* {Loadmenu < menu.filter((mn) => mn.id_quanan === quanan.id_quanan).length && (
                                         <Grid container justifyContent="center">
                                             <Button
                                                 variant="outlined"
@@ -594,7 +594,7 @@ const Gioithieu = () => {
                                                 Xem thêm
                                             </Button>
                                         </Grid>
-                                    )}
+                                    )} */}
                                     <p style={{ marginTop: "20px" }}>Tổng tiền dự tính: {formatPrice(totalPrice)}</p>
                                 </CardContent>
                             </Card>

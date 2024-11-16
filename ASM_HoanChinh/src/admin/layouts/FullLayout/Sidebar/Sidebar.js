@@ -58,7 +58,7 @@ const Sidebar = (props) => {
           }}
         >
           <h1 className="text-primary fw-bold">
-            Food<span className="text-dark">S</span>
+            Food<span className="text-dark">Seeker</span>
           </h1>
         </Box>
       </Link>

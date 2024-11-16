@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Select from 'react-select'
 import './index.css'
-import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate, useParams } from "react-router-dom";
 import { Controller, useForm } from "react-hook-form";
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
@@ -187,7 +186,7 @@ const AddQuanAn = () => {
                 <Box sx={{ padding: "15px 30px" }} display="flex" alignItems="center">
                     <Box flexGrow={1}>
                         <Typography
-                            sx={{ fontSize: "18px", fontWeight: "bold", textAlign: "center" }}
+                            sx={{ fontSize: "18px", fontWeight: "bold", textAlign: "left" }}
                         >
                             {`Cập Nhật Quán Ăn`}
                         </Typography>
@@ -222,58 +221,28 @@ const AddQuanAn = () => {
                                     </div>
                                 </div>
                                 <div className="col-6">
-                                    <div className="mb-3">
-                                        <label className="form-label">Địa chỉ</label>
-                                        <TextField
-                                            type="text"
-                                            fullWidth variant="outlined"
-                                            min={0}
-                                            name="dia_chi"
-                                            id="dia_chi"
-                                            placeholder="Địa chỉ"
-                                            {...register("dia_chi", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Địa chỉ không được bỏ trống",
-                                                },
-                                            })}
-                                        />
+                                    <label className="form-label">Hình ảnh</label>
+                                    <TextField
+                                        type="file"
+                                        fullWidth
+                                        variant="outlined"
+                                        name="images"
+                                        id="images"
+                                        {...register("hinh_anh", {
+                                            // required: {
+                                            //     value: true,
+                                            //     message: "Hình ảnh không được bỏ trống"
+                                            // }
+                                        })}
+                                    />
+                                    {formState?.errors?.hinh_anh && (
+                                        <small className="text-danger">
+                                            {formState?.errors?.hinh_anh?.message}
+                                        </small>
+                                    )}
+                                </div>
 
-                                        {formState?.errors?.dia_chi && (
-                                            <small className="text-danger">
-                                                {formState?.errors?.dia_chi?.message}
-                                            </small>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div className="mb-3">
-                                        <label className="form-label">Số điện thoại</label>
-                                        <TextField
-                                            type="number"
-                                            fullWidth variant="outlined"
-                                            min={0}
-                                            name="dien_thoai"
-                                            id="dien_thoai"
-                                            placeholder="Số điện thoại"
-                                            {...register("dien_thoai", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Số điện thoại không được bỏ trống",
-                                                },
-                                                maxLength: {
-                                                    value: 10,
-                                                    message: "Số điện thoại không đúng định dạng"
-                                                }
-                                            })}
-                                        />
-                                        {formState?.errors?.dien_thoai && (
-                                            <small className="text-danger">
-                                                {formState?.errors?.dien_thoai?.message}
-                                            </small>
-                                        )}
-                                    </div>
-                                </div>
+
                                 <div className="col-6">
                                     <div className="row">
                                         <div className="col-6">
@@ -328,58 +297,106 @@ const AddQuanAn = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <div className="col-6">
+                                    <div className="mb-3">
+                                        <label className="form-label">Loại Khách hàng</label>
+                                        <Controller
+                                            name="id_loaikh"
+                                            control={control}
+                                            render={({ field: { onChange, value } }) => (
+                                                <Select
+                                                    className="select-2"
+                                                    classNamePrefix="select"
+                                                    isMulti
+                                                    name="id_loaikh"
+                                                    closeMenuOnSelect={false}
+                                                    options={loaikh
+                                                        .filter((item) =>
+                                                            item?.created_user === account?.id_nguoidung ||
+                                                            item?.updated_user === account?.id_nguoidung ||
+                                                            account?.vai_tro === 0
+                                                        )
+                                                        .map((item) => ({
+                                                            value: item.id_loaikh,
+                                                            label: item.khach_hang,
+                                                        }))}
+                                                    value={loaikh
+                                                        .filter((item) => (value || []).includes(item.id_loaikh))
+                                                        .map((item) => ({
+                                                            value: item.id_loaikh,
+                                                            label: item.khach_hang,
+                                                        }))}
+                                                    onChange={(selectedOptions) => {
+                                                        onChange(selectedOptions ? selectedOptions.map((option) => option.value) : []);
+                                                    }}
+                                                />
+                                            )}
+                                        />
+                                    </div>
+                                </div>
 
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Link Facebook</label>
+                                        <label className="form-label">Địa chỉ</label>
                                         <TextField
                                             type="text"
                                             fullWidth variant="outlined"
                                             min={0}
-                                            name="link_facebook"
-                                            id="link_facebook"
-                                            placeholder="Link Website"
-                                            {...register("link_facebook", {
+                                            name="dia_chi"
+                                            id="dia_chi"
+                                            placeholder="Địa chỉ"
+                                            {...register("dia_chi", {
                                                 required: {
                                                     value: true,
-                                                    message: "Link Facebook không được bỏ trống",
+                                                    message: "Địa chỉ không được bỏ trống",
                                                 },
                                             })}
                                         />
-                                        {formState?.errors?.link_facebook && (
+
+                                        {formState?.errors?.dia_chi && (
                                             <small className="text-danger">
-                                                {formState?.errors?.link_facebook?.message}
+                                                {formState?.errors?.dia_chi?.message}
                                             </small>
                                         )}
                                     </div>
                                 </div>
-
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Link Website</label>
-                                        <TextField
-                                            type="text"
-                                            fullWidth
-                                            variant="outlined"
-                                            min={0}
-                                            name="link_website"
-                                            id="link_website"
-                                            placeholder="Link Website"
-                                            {...register("link_website", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Link Website không được bỏ trống",
-                                                },
-                                            })}
+                                        <label className="form-label">Không khí</label>
+                                        <Controller
+                                            name="id_khongkhi"
+                                            control={control}
+                                            render={({ field: { onChange, value } }) => (
+                                                <Select
+                                                    className="select-2"
+                                                    classNamePrefix="select"
+                                                    isMulti
+                                                    name="id_khongkhi"
+                                                    closeMenuOnSelect={false}
+                                                    options={khongkhis
+                                                        .filter((item) =>
+                                                            item?.created_user === account?.id_nguoidung ||
+                                                            item?.updated_user === account?.id_nguoidung ||
+                                                            account?.vai_tro === 0
+                                                        )
+                                                        .map((item) => ({
+                                                            value: item.id_khongkhi,
+                                                            label: item.khong_khi,
+                                                        }))}
+                                                    value={khongkhis
+                                                        .filter((item) => (value || []).includes(item.id_khongkhi))
+                                                        .map((item) => ({
+                                                            value: item.id_khongkhi,
+                                                            label: item.khong_khi,
+                                                        }))}
+                                                    onChange={(selectedOptions) => {
+                                                        onChange(selectedOptions ? selectedOptions.map((option) => option.value) : []);
+                                                    }}
+                                                />
+                                            )}
                                         />
-                                        {formState?.errors?.link_website && (
-                                            <small className="text-danger">
-                                                {formState?.errors?.link_website?.message}
-                                            </small>
-                                        )}
                                     </div>
                                 </div>
-
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Số lượng chỗ</label>
@@ -410,29 +427,6 @@ const AddQuanAn = () => {
                                         )}
                                     </div>
                                 </div>
-
-                                <div className="col-6">
-                                    <label className="form-label">Hình ảnh</label>
-                                    <TextField
-                                        type="file"
-                                        fullWidth
-                                        variant="outlined"
-                                        name="images"
-                                        id="images"
-                                        {...register("hinh_anh", {
-                                            // required: {
-                                            //     value: true,
-                                            //     message: "Hình ảnh không được bỏ trống"
-                                            // }
-                                        })}
-                                    />
-                                    {formState?.errors?.hinh_anh && (
-                                        <small className="text-danger">
-                                            {formState?.errors?.hinh_anh?.message}
-                                        </small>
-                                    )}
-                                </div>
-
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Tiện nghi</label>
@@ -474,6 +468,35 @@ const AddQuanAn = () => {
 
                                 <div className="col-6">
                                     <div className="mb-3">
+                                        <label className="form-label">Số điện thoại</label>
+                                        <TextField
+                                            type="number"
+                                            fullWidth variant="outlined"
+                                            min={0}
+                                            name="dien_thoai"
+                                            id="dien_thoai"
+                                            placeholder="Số điện thoại"
+                                            {...register("dien_thoai", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Số điện thoại không được bỏ trống",
+                                                },
+                                                maxLength: {
+                                                    value: 10,
+                                                    message: "Số điện thoại không đúng định dạng"
+                                                }
+                                            })}
+                                        />
+                                        {formState?.errors?.dien_thoai && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.dien_thoai?.message}
+                                            </small>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="col-6">
+                                    <div className="mb-3">
                                         <label className="form-label">Dịch vụ</label>
                                         <Controller
                                             name="id_dichvu"
@@ -509,44 +532,31 @@ const AddQuanAn = () => {
                                         />
                                     </div>
                                 </div>
-
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Không khí</label>
-                                        <Controller
-                                            name="id_khongkhi"
-                                            control={control}
-                                            render={({ field: { onChange, value } }) => (
-                                                <Select
-                                                    className="select-2"
-                                                    classNamePrefix="select"
-                                                    isMulti
-                                                    name="id_khongkhi"
-                                                    closeMenuOnSelect={false}
-                                                    options={khongkhis
-                                                        .filter((item) =>
-                                                            item?.created_user === account?.id_nguoidung ||
-                                                            item?.updated_user === account?.id_nguoidung ||
-                                                            account?.vai_tro === 0
-                                                        )
-                                                        .map((item) => ({
-                                                            value: item.id_khongkhi,
-                                                            label: item.khong_khi,
-                                                        }))}
-                                                    value={khongkhis
-                                                        .filter((item) => (value || []).includes(item.id_khongkhi))
-                                                        .map((item) => ({
-                                                            value: item.id_khongkhi,
-                                                            label: item.khong_khi,
-                                                        }))}
-                                                    onChange={(selectedOptions) => {
-                                                        onChange(selectedOptions ? selectedOptions.map((option) => option.value) : []);
-                                                    }}
-                                                />
-                                            )}
+                                        <label className="form-label">Link Facebook</label>
+                                        <TextField
+                                            type="text"
+                                            fullWidth variant="outlined"
+                                            min={0}
+                                            name="link_facebook"
+                                            id="link_facebook"
+                                            placeholder="Link Website"
+                                            {...register("link_facebook", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Link Facebook không được bỏ trống",
+                                                },
+                                            })}
                                         />
+                                        {formState?.errors?.link_facebook && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.link_facebook?.message}
+                                            </small>
+                                        )}
                                     </div>
                                 </div>
+
 
                                 <div className="col-6">
                                     <div className="mb-3">
@@ -588,39 +598,27 @@ const AddQuanAn = () => {
 
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Loại Khách hàng</label>
-                                        <Controller
-                                            name="id_loaikh"
-                                            control={control}
-                                            render={({ field: { onChange, value } }) => (
-                                                <Select
-                                                    className="select-2"
-                                                    classNamePrefix="select"
-                                                    isMulti
-                                                    name="id_loaikh"
-                                                    closeMenuOnSelect={false}
-                                                    options={loaikh
-                                                        .filter((item) =>
-                                                            item?.created_user === account?.id_nguoidung ||
-                                                            item?.updated_user === account?.id_nguoidung ||
-                                                            account?.vai_tro === 0
-                                                        )
-                                                        .map((item) => ({
-                                                            value: item.id_loaikh,
-                                                            label: item.khach_hang,
-                                                        }))}
-                                                    value={loaikh
-                                                        .filter((item) => (value || []).includes(item.id_loaikh))
-                                                        .map((item) => ({
-                                                            value: item.id_loaikh,
-                                                            label: item.khach_hang,
-                                                        }))}
-                                                    onChange={(selectedOptions) => {
-                                                        onChange(selectedOptions ? selectedOptions.map((option) => option.value) : []);
-                                                    }}
-                                                />
-                                            )}
+                                        <label className="form-label">Link Website</label>
+                                        <TextField
+                                            type="text"
+                                            fullWidth
+                                            variant="outlined"
+                                            min={0}
+                                            name="link_website"
+                                            id="link_website"
+                                            placeholder="Link Website"
+                                            {...register("link_website", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Link Website không được bỏ trống",
+                                                },
+                                            })}
                                         />
+                                        {formState?.errors?.link_website && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.link_website?.message}
+                                            </small>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="col-6">
