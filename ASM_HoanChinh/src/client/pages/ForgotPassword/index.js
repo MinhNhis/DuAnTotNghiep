@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { BASE_URL } from "../../../config/ApiConfig";
-import { TextField } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 
 const ForgotPassword = () => {
@@ -89,9 +89,16 @@ const ForgotPassword = () => {
           </p>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100 ">
+        <Button type="submit" className="btn btn-primary w-100 "
+        sx={{
+          borderRadius: "5px",
+          height: "37px",
+          backgroundColor: "#d4a762",
+          color: "white",
+          fontWeight: "bold",
+        }}>
           Đặt Lại Mật Khẩu
-        </button>
+        </Button>
         {message && (
           <div className={`alert alert-${messageType} mt-2`}>
             {message}

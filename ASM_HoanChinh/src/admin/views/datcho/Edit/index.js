@@ -55,10 +55,9 @@ const EditDatcho = () => {
         }
     };
     const submit = async (value) => {
-        console.log(value);
         try {
             if (value.trang_thai === 2) {
-                setShowPopup(true); // Hiển thị popup khi trạng thái == 2
+                setShowPopup(true);
                 return;
             }
 
@@ -74,42 +73,42 @@ const EditDatcho = () => {
                 yeu_cau_khac: value?.yeu_cau,
                 id_quanan: value?.quan_an.split(",")[1]
             });
-            enqueueSnackbar('Cập nhật thành công!', { variant: 'success' });
             navigate("/admin/dat-cho");
+            enqueueSnackbar('Cập nhật thành công!', { variant: 'success' });
+            if (value.trang_thai === 1) {
+                return await sendEmail(id, "Đơn hàng đã được xử lý");
+            }
         } catch (error) {
             console.log(error);
             enqueueSnackbar('Có lỗi xảy ra!', { variant: 'error' });
+            return;
         }
+
     };
+
+
     const handlePopupSubmit = async (event) => {
-
         event.preventDefault();
-
-        setShowPopup(false); // Ẩn popup
-
+        setShowPopup(false);
         try {
-            // Gọi editDatcho với lý do đã cung cấp
             await editDatcho(id, {
-                ten_quan: datcho.ten_quan, // Giữ nguyên tên quán
-                ten_kh: datcho.ten_kh, // Giữ nguyên tên khách hàng
-                sdt_kh: datcho.sdt_kh, // Giữ nguyên số điện thoại
-                email_kh: datcho.email_kh, // Giữ nguyên email
-                ngay_dat: datcho.ngay_dat, // Giữ nguyên ngày đặt
-                thoi_gian: datcho.thoi_gian, // Giữ nguyên thời gian
-                so_luong_nguoi: datcho.so_luong_nguoi, // Giữ nguyên số lượng người
-                trang_thai: "2", // Đặt trạng thái là 2 (đã hủy)
-                yeu_cau_khac: datcho.yeu_cau_khac, // Giữ nguyên yêu cầu khác
-                // Chỉ cần cập nhật lý do hủy
-                ly_do_huy: reason // Thêm lý do hủy đơn nếu API hỗ trợ
+                ten_quan: datcho.ten_quan,
+                ten_kh: datcho.ten_kh,
+                sdt_kh: datcho.sdt_kh,
+                email_kh: datcho.email_kh,
+                ngay_dat: datcho.ngay_dat,
+                thoi_gian: datcho.thoi_gian,
+                so_luong_nguoi: datcho.so_luong_nguoi,
+                trang_thai: "2",
+                yeu_cau_khac: datcho.yeu_cau_khac,
+                ly_do_huy: reason
             });
-
             enqueueSnackbar('Đơn hàng đã được hủy!', { variant: 'success' });
             navigate("/admin/dat-cho");
         } catch (error) {
             console.log(error);
             enqueueSnackbar('Có lỗi xảy ra khi hủy đơn!', { variant: 'error' });
         }
-
         await sendEmail(id, reason)
     };
 

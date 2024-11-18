@@ -18,7 +18,7 @@ const getNguoiDungById = async (id) => {
     return res
 }
 
-const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro }) => {
+const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro, stk, ngan_hang, ctk }) => {
     const data = new FormData();
     data.append("ten_nguoi_dung", ten_nguoi_dung);
     data.append("mat_khau", mat_khau);
@@ -28,6 +28,9 @@ const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien
     data.append("gioi_tinh", gioi_tinh);
     data.append("dia_chi", dia_chi);
     data.append("vai_tro", vai_tro);
+    data.append("stk", stk);
+    data.append("ngan_hang", ngan_hang);
+    data.append("ctk", ctk);
     // Gửi 1 ảnh
     data.append("hinh_anh", hinh_anh);
 
@@ -45,7 +48,7 @@ const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien
     }
 }
 
-const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro }) => {
+const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro , stk, ngan_hang, ctk}) => {
     const data = new FormData();
     data.append("ten_nguoi_dung", ten_nguoi_dung);
     data.append("mat_khau", mat_khau);
@@ -54,6 +57,9 @@ const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so
     data.append("ngay_sinh", ngay_sinh);
     data.append("gioi_tinh", gioi_tinh);
     data.append("dia_chi", dia_chi);
+    data.append("stk", stk);
+    data.append("ngan_hang", ngan_hang);
+    data.append("ctk", ctk);
     // Gửi 1 ảnh
     data.append("hinh_anh", hinh_anh);
 
