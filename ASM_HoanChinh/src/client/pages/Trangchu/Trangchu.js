@@ -22,7 +22,7 @@ const Trangchu = () => {
         setTimeout(()=>{
             initData2()
         }, 5000)
-       
+
     }, [quanan])
     const initData2 = async () => {
         const resQuan = await getQuanan();
@@ -30,19 +30,19 @@ const Trangchu = () => {
         const quanan = resQuan.data;
 
         const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        await delay(2000); 
+        await delay(2000);
         // if (location.latitude && location.longitude) {
         //     const promises = quanan.map(async (item, index) => {
         //         const Km = await khoangCach(location.latitude, location.longitude, item.lat, item.lng);
         //         console.log(Km);
-                
+
         //         const distanceInKm = Km ? Km.toFixed(1) : 0;
-    
+
         //         return { ...item, distanceInKm };
         //     });
         //     const results = await Promise.all(promises); 
         // }
-        
+
 
         const resBv = await baiviet();
         setBaiViet(resBv.data.slice(0, 3));
@@ -164,7 +164,7 @@ const Trangchu = () => {
                                                     <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
                                                 </h5>
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
-                                                <div className='mb-1'>{value.distanceInKm} Km</div>
+                                                {/* <div className='mb-1'>{value.distanceInKm} Km</div> */}
                                                 <div className='mb-1' style={{
                                                     color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
                                                 }}>
@@ -181,14 +181,14 @@ const Trangchu = () => {
                                                     {value.dia_chi}
                                                 </div>
                                                 <div className="mb-3 text-dark"
-                                                    style={{
-                                                        display: '-webkit-box',
-                                                        WebkitLineClamp: 2,
-                                                        WebkitBoxOrient: 'vertical',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        whiteSpace: 'normal'
-                                                    }}
+                                                     style={{
+                                                         display: '-webkit-box',
+                                                         WebkitLineClamp: 2,
+                                                         WebkitBoxOrient: 'vertical',
+                                                         overflow: 'hidden',
+                                                         textOverflow: 'ellipsis',
+                                                         whiteSpace: 'normal'
+                                                     }}
                                                 >
                                                     {value.mo_ta}
                                                 </div>
@@ -268,17 +268,50 @@ const Trangchu = () => {
                                                         <p
                                                             style={{
                                                                 ml: 0.5,
-                                                                fontSize: "13px",
+                                                                fontSize: "16px",
                                                                 overflow: 'hidden',
                                                                 textOverflow: 'ellipsis',
                                                                 display: '-webkit-box',
                                                                 WebkitLineClamp: 2,
                                                                 WebkitBoxOrient: 'vertical',
                                                                 whiteSpace: 'normal',
+                                                                color: '#D4A762',
+                                                                textTransform: 'uppercase',
                                                             }}
                                                         >
                                                             {baiviet.tieu_de}
                                                         </p>
+                                                        <p
+                                                            style={{
+                                                                ml: 0.5,
+                                                                fontSize: "13px",
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 3,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                whiteSpace: 'normal',
+
+                                                            }}
+                                                        >
+                                                            {baiviet.noi_dung}
+                                                        </p>
+                                                        <p
+                                                            style={{
+                                                                ml: 0.5,
+                                                                fontSize: "10px",
+                                                                overflow: 'hidden',
+                                                                textOverflow: 'ellipsis',
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 1,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                whiteSpace: 'normal',
+                                                                color: 'gray',
+                                                            }}
+                                                        >
+                                                            Tác giả: {baiviet.created_user === 0 ?"FoodSeeker": ""}
+                                                        </p>
+
                                                     </Link>
                                                 </div>
                                             </div>
