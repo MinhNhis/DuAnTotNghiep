@@ -146,8 +146,8 @@ const AddQuanAn = () => {
                 await editQuanan(id, {
                     ten_quan_an: value?.ten_quan_an,
                     dia_chi: value?.dia_chi,
-                    lat: location?.latitude,
-                    lng: location?.longitude,
+                    // lat: location?.latitude,
+                    // lng: location?.longitude,
                     dien_thoai: value?.dien_thoai,
                     gio_mo_cua: value?.gio_mo_cua,
                     gio_dong_cua: value?.gio_dong_cua,

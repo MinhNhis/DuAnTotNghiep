@@ -166,10 +166,10 @@ const DatchoTable = () => {
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {dc.trang_thai === 0 ? "Đang chờ xử lý" : ""}
-                                            {dc.trang_thai === 1 ? "Đã có chỗ" : ""}
-                                            {dc.trang_thai === 2 ? "Đã hủy" : ""}
-                                            {dc.trang_thai === 3 ? "Đã hoàn thành" : ""}
+                                            {dc.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : ""}
+                                            {dc.trang_thai === 1 ? <span class="badge badge-success">Đã có chỗ</span> : ""}
+                                            {dc.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : ""}
+                                            {dc.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : ""}
                                         </Typography>
                                     </Box>
                                 </Box>

@@ -8,7 +8,6 @@ import { baiviet } from '../../../services/Baiviet';
 import { getDanhgia } from '../../../services/Danhgia';
 import Menu from '../../components/Menu/index'
 import { BASE_URL } from '../../../config/ApiConfig';
-import useGeolocation from "../../components/Map/useGeolocation";
 
 const Map = lazy(() => import('../../components/Map/index'))
 const Trangchu = () => {
@@ -16,61 +15,16 @@ const Trangchu = () => {
     const [quananMap, setQuananMap] = useState([]);
     const [baiviets, setBaiViet] = useState([]);
     const [quanan5Km, setQUanan5Km] = useState([]);
-    const [locationUser, setLocationUser] = useState(null);
-    const location = useGeolocation()
+    const quanan5km = JSON.parse(localStorage.getItem("QUAN_AN5KM"));
     useEffect(() => {
-        setTimeout(()=>{
-            initData2()
-        }, 5000)
-
-    }, [quanan])
+        initData2()
+    }, [])
     const initData2 = async () => {
         const resQuan = await getQuanan();
         setQuananMap(resQuan.data);
-        const quanan = resQuan.data;
-
-        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-        await delay(2000);
-        // if (location.latitude && location.longitude) {
-        //     const promises = quanan.map(async (item, index) => {
-        //         const Km = await khoangCach(location.latitude, location.longitude, item.lat, item.lng);
-        //         console.log(Km);
-
-        //         const distanceInKm = Km ? Km.toFixed(1) : 0;
-
-        //         return { ...item, distanceInKm };
-        //     });
-        //     const results = await Promise.all(promises);
-        // }
-
 
         const resBv = await baiviet();
         setBaiViet(resBv.data.slice(0, 3));
-    };
-
-    const khoangCach = async (lat1, lon1, lat2, lon2, retries = 3) => {
-        const url = `https://router.project-osrm.org/route/v1/driving/${lon1},${lat1};${lon2},${lat2}?overview=full&alternatives=true&steps=true`;
-
-        try {
-            const response = await fetch(url, { timeout: 1000 });
-            const data = await response.json();
-
-            if (data.routes && data.routes.length > 0) {
-                const route = data.routes[0];
-                const distance = route.distance / 1000;
-                return distance;
-            } else {
-                return null;
-            }
-        } catch (error) {
-            if (retries > 0) {
-                console.warn("Lỗi khi gọi OSRM API, thử lại...", retries);
-                return await khoangCach(lat1, lon1, lat2, lon2, retries - 1);
-            } else {
-                console.error("Lỗi khi gọi OSRM API sau nhiều lần thử:", error);
-                return null;
-            }
-        }
     };
 
     const initData = async (data) => {
@@ -126,6 +80,27 @@ const Trangchu = () => {
 
         return now >= openingTime && now <= closingTime;
     };
+    setTimeout(() => {
+        checkLoca(quanan5km)
+    }, 1000);
+    const checkLoca = async (quanan, retries = 3) => {
+        try {
+            if (quanan) {
+                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
+                setQUanan5Km(sortedQuanan);
+            } else {
+                return null
+            }
+        } catch (error) {
+            if (retries > 0) {
+                console.warn("thử lại...", retries);
+                return await checkLoca(quanan, retries - 1);
+            } else {
+                console.error("Lỗi sau nhiều lần thử:", error);
+                return null;
+            }
+        }
+    }
 
     const capitalizeFirstLetter = (string) => {
         if (!string) return ''; // Kiểm tra chuỗi rỗng
@@ -155,6 +130,57 @@ const Trangchu = () => {
                     </div>
                     <div className="row g-5 align-items-center">
                         <div className='row mb-3'>
+                            <h2>{quanan5Km ? 'Quán ăn gần đây' : ''}</h2>
+                            {
+                                quanan5Km.map((value, index) => {
+                                    return (
+                                        <div className='col-lg-3 col-md-4 col-sm-6 mb-3' key={index} style={{ height: "auto" }}>
+                                            <div className='card'>
+                                                <Link to={`/chi-tiet/${value.id_quanan}`}>
+                                                    <img src={`${BASE_URL}/uploads/${value?.hinh_anh}`} className="img-fluid rounded" alt="" style={{ width: "100%", height: "200px", objectFit: "cover" }} />
+                                                </Link>
+                                            </div>
+                                            <div className='card-body'>
+                                                <h5 className="tittleQuan" style={{ fontWeight: 'bold' }}>
+                                                    <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
+                                                </h5>
+                                                <div className='mb-1'>{renderStars(value.startTB)}</div>
+                                                <div className='mb-1'>{value.distanceKm} Km</div>
+                                                <div className='mb-1' style={{
+                                                    color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
+                                                }}>
+                                                    {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? <p style={{ fontSize: "13px", marginBottom: "0px" }}>{value.gio_mo_cua}- {value.gio_dong_cua} Đang mở cửa</p> : <p style={{ fontSize: "13px", marginBottom: "0px" }}>Đã đóng cửa</p>}
+                                                </div>
+                                                <div className='mb-1' style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 1,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'normal'
+                                                }}>
+                                                    {value.dia_chi}
+                                                </div>
+                                                <div className="mb-3 text-dark"
+                                                    style={{
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'normal'
+                                                    }}
+                                                >
+                                                    {value.mo_ta}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        <div className='row mb-3'>
+                            <h2>Tất cả quán ăn</h2>
                             {
                                 quanan.map((value, index) => {
                                     return (
@@ -169,7 +195,7 @@ const Trangchu = () => {
                                                     <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
                                                 </h5>
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
-                                                {/* <div className='mb-1'>{value.distanceInKm} Km</div> */}
+                                                <div className='mb-1'>{value.distanceKm} Km</div>
                                                 <div className='mb-1' style={{
                                                     color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
                                                 }}>

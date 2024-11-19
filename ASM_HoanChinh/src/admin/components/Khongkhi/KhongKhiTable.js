@@ -28,7 +28,6 @@ const KhongKhiTable = () => {
     try {
       const result = await khongkhi();
       setKhongkhi(result.data);
-      console.log(result.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu từ kế hoạch:", error);
       setKhongkhi([]);

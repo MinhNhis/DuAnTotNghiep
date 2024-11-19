@@ -187,7 +187,7 @@ const ThanhToanTable = () => {
                                 <Box sx={{ display: "flex", alignItems: "center", }}>
                                     <Box>
                                         <Typography variant="body1" sx={{ ml: 0.5, }}>
-                                            {tt.trang_thai === 0 ? "Đã thanh toán" :  (tt.trang_thai === 1005? "Đã hết hạn": "Đang chờ xử lý")}
+                                            {tt.trang_thai === 0 ?<span class="badge badge-success">Đâ thanh toán</span> :  (tt.trang_thai === 1005? <span class="badge badge-danger">Hết hạn</span>: <span class="badge badge-warning">Đang xử lý</span>)}
                                         </Typography>
                                     </Box>
                                 </Box>
