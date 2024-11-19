@@ -25,9 +25,9 @@ const AddMenu = () => {
         setDanhmuc(resultDanhmuc.data);
 
         const resultQuanan = await getQuanan();
-        setQuanan(resultQuanan.data);
+        setQuanan(resultQuanan.data);    
     };
-
+    
     const onSubmit = async (value) => {
         try {
             await addMenu({
@@ -157,7 +157,7 @@ const AddMenu = () => {
                                                 return true;
                                             }
                                         })}>
-                                            <MenuItem selected value={"-1"} disabled>Quán ăn</MenuItem>
+                                            <MenuItem selected value={'-1'} disabled>Quán ăn</MenuItem>
                                             {quanan.map((value, index) => {
                                                 if (
                                                     value?.created_user === account?.id_nguoidung ||

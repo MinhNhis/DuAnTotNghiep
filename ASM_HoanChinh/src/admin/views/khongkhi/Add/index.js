@@ -1,27 +1,81 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from 'notistack';
 import { Card, CardContent, Divider, Box, Typography, TextField, Button } from "@mui/material";
-import { addkhongkhi } from "../../../../services/Khongkhi";
+import { addkhongkhi, khongkhi } from "../../../../services/Khongkhi";
+import { editQuananMoTa, getQuanan } from "../../../../services/Quanan";
 
 const AddKhongKhi = () => {
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [quanan, setQuanan] = useState({})
+  const [dichvu, setDichvu] = useState([])
+  const [khongkhi, setKhongkhi] = useState([])
+  const [kehoach, setKehoach] = useState([])
+  const [baidoxe, setBaidoxe] = useState([])
+  const [tiengnhi, setTiennghi] = useState([])
+  const [loaikh, setLoaikh] = useState([])
   const accounts = JSON.parse(localStorage.getItem("accounts"));
+
+  useEffect(() => {
+    initData()
+  }, [])
+
+  const initData = async () => {
+    const res = await getQuanan();
+    const fillquan = res.data.find(
+      (e) => e.created_user === accounts.id_nguoidung
+    );
+    setQuanan(fillquan)
+    if (fillquan.dichvus) {
+      const ids = fillquan.dichvus.map((e) => e.id_dichvu);
+      setDichvu(ids);
+    }
+    if (fillquan.khongkhis) {
+      const ids = fillquan.khongkhis.map((e) => e.id_khongkhi);
+      setKhongkhi(ids);
+    }
+    if (fillquan.kehoachs) {
+      const ids = fillquan.kehoachs.map((e) => e.id_kehoach);
+      setKehoach(ids);
+    }
+    if (fillquan.baidoxes) {
+      const ids = fillquan.baidoxes.map((e) => e.id_baidoxe);
+      setBaidoxe(ids);
+    }
+    if (fillquan.loaikhs) {
+      const ids = fillquan.loaikhs.map((e) => e.id_loaikh);
+      setLoaikh(ids);
+    }
+    if (fillquan.tiengnhis) {
+      const ids = fillquan.tiengnhis.map((e) => e.id_tiennghi);
+      setTiennghi(ids);
+    }
+  }
 
   const submit = async (value) => {
     try {
       const newKhongkhi = {
         khong_khi: value.khong_khi,
-        created_user: accounts.id_nguoidung
+        created_user: accounts.id_nguoidung,
       };
-      await addkhongkhi(newKhongkhi);
-      enqueueSnackbar('Thêm không khí thành công!', { variant: 'success' });
+      const res = await addkhongkhi(newKhongkhi);
+      const fill = res.data.id_khongkhi;
+      await editQuananMoTa(quanan.id_quanan, {
+        khongkhiIds: [...khongkhi, fill],
+        dichvuIds: dichvu,
+        kehoachIds: kehoach,
+        baidoxeIds: baidoxe,
+        loaikhIds: loaikh,
+        tiennghiIds: tiengnhi
+      });
+
+      enqueueSnackbar("Thêm không khí thành công!", { variant: "success" });
       navigate("/admin/khong-khi");
     } catch (error) {
-      enqueueSnackbar('Có lỗi xảy ra khi thêm không khí!', { variant: 'error' });
+      enqueueSnackbar("Có lỗi xảy ra khi thêm không khí!", { variant: "error" });
       console.error("Lỗi khi thêm Không Khí:", error);
     }
   };

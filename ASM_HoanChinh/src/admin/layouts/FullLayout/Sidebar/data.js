@@ -16,7 +16,6 @@ import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ArticleIcon from '@mui/icons-material/Article';
 
-// Use the StarIcon in your component
 <StarIcon />
 
 const Menuitems = [
@@ -59,11 +58,11 @@ const Menuitems = [
       //   icon: DeliveryDiningIcon,
       //   href: "admin/cac-dich-vu",
       // },
-      {
-        title: "Khách hàng",
-        icon: PeopleAltIcon,
-        href: "admin/loai-khach-hang",
-      },
+      // {
+      //   title: "Khách hàng",
+      //   icon: PeopleAltIcon,
+      //   href: "admin/loai-khach-hang",
+      // },
     ],
   },
   {

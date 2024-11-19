@@ -83,8 +83,8 @@ const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_t
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
-    data.append("lat", lat);
-    data.append("lng", lng);
+    // data.append("lat", lat);
+    // data.append("lng", lng);
     data.append("dien_thoai", dien_thoai);
     data.append("gio_mo_cua", gio_mo_cua);
     data.append("gio_dong_cua", gio_dong_cua);
@@ -114,6 +114,38 @@ const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_t
     });
     // Gửi 1 ảnh
     data.append("hinh_anh", hinh_anh);
+
+    console.log(data);
+    
+    const res = await request({
+        method: "PUT",
+        path: `api/quanans/${id}`,
+        data: data
+    })
+
+    return res
+}
+
+const editQuananMoTa = async (id, { tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
+    const data = new FormData();
+    tiennghiIds.forEach((e, index) => {
+        data.append(`tiennghiIds[${index}]`, e);
+    });
+    dichvuIds.forEach((e, index) => {
+        data.append(`dichvuIds[${index}]`, e);
+    });
+    khongkhiIds.forEach((e, index) => {
+        data.append(`khongkhiIds[${index}]`, e);
+    });
+    kehoachIds.forEach((e, index) => {
+        data.append(`kehoachIds[${index}]`, e);
+    });
+    baidoxeIds.forEach((e, index) => {
+        data.append(`baidoxeIds[${index}]`, e);
+    });
+    loaikhIds.forEach((e, index) => {
+        data.append(`loaikhIds[${index}]`, e);
+    });
     const res = await request({
         method: "PUT",
         path: `api/quanans/${id}`,
@@ -166,4 +198,4 @@ const getTiennghi = async () => {
     return res
 }
 
-export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan, getTiennghi}
+export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan, getTiennghi, editQuananMoTa}
