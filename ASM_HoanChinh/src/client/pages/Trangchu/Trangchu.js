@@ -40,7 +40,7 @@ const Trangchu = () => {
 
         //         return { ...item, distanceInKm };
         //     });
-        //     const results = await Promise.all(promises); 
+        //     const results = await Promise.all(promises);
         // }
 
 
@@ -125,6 +125,11 @@ const Trangchu = () => {
         closingTime.setHours(closeHour, closeMinute, 0);
 
         return now >= openingTime && now <= closingTime;
+    };
+
+    const capitalizeFirstLetter = (string) => {
+        if (!string) return ''; // Kiểm tra chuỗi rỗng
+        return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
     return (
@@ -277,6 +282,7 @@ const Trangchu = () => {
                                                                 whiteSpace: 'normal',
                                                                 color: '#D4A762',
                                                                 textTransform: 'uppercase',
+
                                                             }}
                                                         >
                                                             {baiviet.tieu_de}
@@ -291,10 +297,10 @@ const Trangchu = () => {
                                                                 WebkitLineClamp: 3,
                                                                 WebkitBoxOrient: 'vertical',
                                                                 whiteSpace: 'normal',
-
+                                                                textIndent: '10px',
                                                             }}
                                                         >
-                                                            {baiviet.noi_dung}
+                                                            {capitalizeFirstLetter(baiviet.noi_dung)}
                                                         </p>
                                                         <p
                                                             style={{
