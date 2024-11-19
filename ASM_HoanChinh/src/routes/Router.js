@@ -66,7 +66,7 @@ const DeleteMenu = lazy(() => import("../admin/views/menu/Delete/index.js"));
 
 //danh mục
 
-const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"));
+// const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"));
 const AddDanhmuc = lazy(() => import("../admin/views/danhmuc/Add/index.js"));
 const EditDanhmuc = lazy(() => import("../admin/views/danhmuc/Edit/index.js"));
 const DeleteDanhmuc = lazy(() => import("../admin/views/danhmuc/Delete/index.js"));
@@ -204,7 +204,7 @@ const ThemeRoutes = [
       { path: "admin/menu/edit/:id_menu", exact: true, element: <EditMenu /> },
       { path: "admin/menu/delete/:id_menu", exact: true, element: <DeleteMenu /> },
 
-      { path: "admin/danhmuc", exact: true, element: <Danhmuc /> },
+      // { path: "admin/danhmuc", exact: true, element: <Danhmuc /> },
       { path: "admin/danhmuc/add", exact: true, element: <AddDanhmuc /> },
       { path: "admin/danhmuc/edit/:id_danhmuc", exact: true, element: <EditDanhmuc /> },
       { path: "admin/danhmuc/delete/:id_danhmuc", exact: true, element: <DeleteDanhmuc /> },

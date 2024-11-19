@@ -29,7 +29,7 @@ const AddDanhmuc = () => {
         id_alldanhmuc: value.alldanhmuc
       });
       enqueueSnackbar("Thêm danh mục thành công!", { variant: "success" });
-      navigate("/admin/danhmuc");
+      navigate("/admin/alldanhmuc");
     } catch (error) {
       enqueueSnackbar("Có lỗi xảy ra khi thêm danh mục!", { variant: "error" });
       console.error("Lỗi khi thêm danh mục:", error);

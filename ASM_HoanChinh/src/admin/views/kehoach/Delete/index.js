@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box } from "@mui/material";
@@ -33,7 +32,7 @@ const DeleteKeHoach = () => {
   return (
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom:'20px', fontSize:'25px' }}>
             <WarningIcon sx={{ fontSize: 40, color: 'warning.main', marginRight: 1 }} />
             Bạn có chắc chắn muốn xóa?
           </Box>
@@ -47,7 +46,6 @@ const DeleteKeHoach = () => {
           <Button
               variant="contained"
               color="error"
-              startIcon={<DeleteIcon />}
               onClick={handleDelete}
               sx={{ width: "100px" }}
           >

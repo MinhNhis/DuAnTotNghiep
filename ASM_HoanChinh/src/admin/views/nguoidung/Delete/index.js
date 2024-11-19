@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -66,7 +65,7 @@ const DeleteNguoiDung = () => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom:'20px', fontSize:'25px' }}>
           <WarningIcon sx={{ fontSize: 40, color: "warning.main", marginRight: 1 }} />
           Bạn có chắc chắn muốn xóa?
         </Box>
@@ -91,7 +90,6 @@ const DeleteNguoiDung = () => {
         <Button
           variant="contained"
           color="error"
-          startIcon={<DeleteIcon />}
           onClick={submit}
           sx={{ width: "100px" }}
         >

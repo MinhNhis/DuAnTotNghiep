@@ -79,7 +79,7 @@ const Navbar = () => {
               <Link to="/" className="nav-item nav-link" onClick={closeNavbar}>
                 Thực đơn
               </Link>
-              <Link to="/" className="nav-item nav-link" onClick={closeNavbar}>
+              <Link to="/Lien-he" className="nav-item nav-link" onClick={closeNavbar}>
               Liên Hệ
               </Link>
             </div>
