@@ -84,7 +84,6 @@ const DeleteQuanAn = () => {
             });
         }
     };
-    console.log(otherReason);
 
 
     return (
