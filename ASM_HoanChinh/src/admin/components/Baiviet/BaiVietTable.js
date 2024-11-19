@@ -35,6 +35,10 @@ const BaiVietTable = () => {
       setBaiviet([]);
     }
   };
+
+  const capitalizeFirstLetter = (text) => {
+    return text.replace(/(?:^|\.\s+)(\w)/g, (match) => match.toUpperCase());
+  };
   return (
       <>
         <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -103,7 +107,7 @@ const BaiVietTable = () => {
                               width: '200px',
                             }}
                         >
-                          {baiviet.tieu_de}
+                          {capitalizeFirstLetter(baiviet.tieu_de)}
                         </Typography>
                       </Box>
                     </Box>
@@ -123,9 +127,10 @@ const BaiVietTable = () => {
                               WebkitBoxOrient: 'vertical',
                               whiteSpace: 'normal',
                               width: '200px',
+
                             }}
                         >
-                          <p dangerouslySetInnerHTML={{ __html: baiviet.noi_dung }}></p>
+                          <p dangerouslySetInnerHTML={{ __html: capitalizeFirstLetter(baiviet.noi_dung) }}></p>
                         </Typography>
 
                       </Box>
