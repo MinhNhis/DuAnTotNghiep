@@ -1,187 +1,53 @@
-/* Small devices (mobile, dưới 576px) */
-/* @media (max-width: 576px) {
-    .container-fluid {
-        padding: 0;
-    }
+.nav-item {
+    position: relative;
+}
 
-    .map-container {
-        height: 200px;
-    }
-
-    .loadingMap {
-        font-size: 10px;
-    }
-
-    .input-group {
-        width: 130%;
-        height: auto;
-    }
-
-    .form-control {
-        height: 35px !important;
-        font-size: 14px;
-        padding: 5px 10px;
-    }
-
-    .dropdown-menu.show {
-        width: 130%;
-        max-height: 140px;
-        overflow-y: auto;
-    }
-
-    .card {
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-    }
-
-    .dropdown-menu {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-        position: absolute;
-        background-color: white;
-        border: 1px solid #ddd;
-        z-index: 1000;
-    }
-
-    .dropdown-item {
-        padding: 8px 12px;
-        cursor: pointer;
-    }
-
-    .dropdown-item:hover {
-        background-color: #f1f1f1;
-
-        .card-img-top {
-            height: 100px;
-            object-fit: cover;
-        }
-
-        .card-title {
-            font-size: 13px;
-        }
-
-        .col-lg-3 {
-            flex: 0 0 100%;
-            max-width: 100%;
-        }
-
-        .img-fluid.rounded {
-            height: auto;
-        }
-
-        .display-5.mb-1 {
-            font-size: 18px;
-        }
-
-        .mb-1 {
-            font-size: 13px;
-        }
-
-        .nav-pills {
-            display: none;
-        }
-    }
-} */
-/* Tablet (577px - 768px) */
-/* @media (min-width: 577px) and (max-width: 768px) {
-    .map-container {
-        height: 450px;
-    }
-
-    .input-group {
-        width: 180%;
-    }
-
-    .dropdown-menu.show {
-        width: 180%;
-    }
-
-    .nav-pills {
-        display: flex;
-        justify-content: center;
-    }
-
-    .nav-item {
-        padding: 10px 15px;
-    }
-
-    .img-fluid.rounded {
-        height: 120px;
-    }
-} */
-
-/* Desktop (từ 769px trở lên) */
-/* @media (min-width: 769px) {
-    .map-container {
-        height: 500px;
-    }
-
-    .input-group {
-        width: 200%;
-    }
-
-    .dropdown-menu.show {
-        width: 200%;
-    }
-
-    .display-5.mb-1 {
-        font-size: 18px;
-    }
-
-    .nav-pills {
-        display: inline-flex;
-        justify-content: center;
-    }
-} */
 .dropdown-menu2 {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+    display: none;
     position: absolute;
-    background-color: white;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
     border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    min-width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    top: calc(100% + 4px); /* Đặt sát ngay dưới button, điều chỉnh khoảng cách nếu cần */
-    left: 50%; /* Căn giữa dropdown với button */
-    transform: translateX(-50%); /* Căn giữa theo chiều ngang */
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    min-width: 150px;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0;
+    transform: translateY(10px);
+    list-style-type: none;
+    margin: 0;
+    padding-left: 0;
+}
+
+.nav-item:hover .dropdown-menu2,
+.nav-item .dropdown-menu2:hover {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    color: rgb(49, 47, 47);
+    margin-left: 30px;
+    border-radius: 10px;
 }
 
 .dropdown-item2 {
     padding: 8px 12px;
     cursor: pointer;
-    text-align: center;
-    color: #333;
+    white-space: nowrap;
+    border-radius: 3px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    list-style-type: none;
+    margin-left: 10px;
+    border-radius: 5px;
+
 }
 
 .dropdown-item2:hover {
-    background-color: #f1f1f1;
-    color: #000;
-}
-
-.nav-item a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-    border: 1px solid #007bff;
-    border-radius: 20px;
-    background-color: #f8f9fa;
-    color: #333;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.nav-item a.active {
     background-color: #d4a762;
-    color: #fff;
-}
+    color: black;
+    margin-left: 10px;
+    border-radius: 5px;
 
-.nav-item a:hover {
-    background-color: #b0853d;
-    color: #fff;
 }
-

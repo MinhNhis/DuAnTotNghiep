@@ -27,6 +27,7 @@ const Menu = () => {
         setQuanan(res.data);
     };
 
+
     const initAllDanhmuc = async () => {
         const res = await getAllDanhmuc();
         if (res && res.data) {
@@ -78,7 +79,7 @@ const Menu = () => {
         initAllDanhmuc();
         initDanhmuc();
         initQuanan();
-    }, [selectedCategory]);
+    }, []);
 
     const handleCategoryClick = (categoryId) => {
         if (categoryId === null) {
@@ -97,12 +98,8 @@ const Menu = () => {
         }
 
     };
-
-
-
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
-
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
@@ -112,7 +109,6 @@ const Menu = () => {
         }
 
     };
-
 
     useEffect(() => {
         if (selectedCategory) {
@@ -148,41 +144,54 @@ const Menu = () => {
     };
 
 
-
-
     return (
         <div className="tab-class text-center">
             <div className="container">
                 <div className="text-center wow " data-wow-delay="0.1s">
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
-                <div className="tab-class text-center">
 
+                <div className="tab-class text-center">
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+
                         <li className="nav-item p-2">
                             <button
                                 className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary' : 'bg-light'}`}
                                 onClick={() => handleCategoryClick(null)}
                             >
-                                <span className="text-dark" style={{ width: '150px' }}>All</span>
+                                <span className="text-dark" style={{ width: '150px',padding:'4px' }}>All</span>
                             </button>
                         </li>
+
 
 
                         {alldanhmuc.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
                                 {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
-                                    <button
-                                        className={`d-flex mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
-                                        onClick={(e) => {
-                                            handleCategoryClick(danhmuc.id_alldanhmuc);
+                                    <a
+                                        className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
+                                        onClick={() => { handleCategoryClick(danhmuc.id_alldanhmuc); }}
+                                        style={{
+                                            width: '220px',
+                                            padding: '10px 20px',
+                                            height: '50px',
+                                            textDecoration: 'none',
+                                            color: '#333',
+                                            transition: 'all 0.3s ease',
                                         }}
                                     >
-                                        <span className="text-dark" style={{ width: '150px' }}>{danhmuc.ten_danhmuc}</span>
-                                    </button>
+                                        <span className="text-dark" style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {danhmuc.ten_danhmuc}
+                                            {quanan && quanan.length > 0 && (
+                                                <span className="ml-2 text-dark" style={{ fontWeight: 'bold' }}>
+                                                    - {quanan.find(q => q.created_user === danhmuc.created_user)?.ten_quan_an}
+                                                </span>
+                                            )}
+                                        </span>
+                                    </a>
                                 ) : null}
                                 {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
-                                    <ul className="dropdown-menu2 show">
+                                    <ul className="dropdown-menu2">
                                         {subCategories.map((subCategory, subIndex) => (
                                             <li key={subIndex} className="dropdown-item2" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
                                                 {subCategory.danh_muc}
@@ -191,10 +200,12 @@ const Menu = () => {
                                     </ul>
                                 )}
                             </li>
-
                         ))}
-                    </ul>
 
+
+
+
+                    </ul>
 
                     <div className="tab-content">
                         <div id="tab-1" className="tab-pane fade show p-0 active" >
@@ -242,7 +253,7 @@ const Menu = () => {
                                                             <p className="mb-0 text-start" >
                                                                 Giá: {formatPrice(menuItem.gia)}
                                                             </p>
-                                                            <p className="mb-0 text-dark">
+                                                            <p className="mb-0 text-dark text-start  ">
                                                                 Quán: {quanan.find(value => value.id_quanan === menuItem.id_quanan)?.ten_quan_an || ''}
                                                             </p>
                                                         </div>

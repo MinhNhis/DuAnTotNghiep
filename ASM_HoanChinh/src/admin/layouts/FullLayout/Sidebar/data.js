@@ -76,11 +76,11 @@ const Menuitems = [
         href: "admin/menu",
       },
     
-      {
-        title: "Danh mục",
-        icon: RestaurantMenuOutlinedIcon,
-        href: "admin/danhmuc",
-      },
+      // {
+      //     title: "Danh mục",
+      //     icon: RestaurantMenuOutlinedIcon,
+      //     href: "admin/danhmuc",
+      // },
 
       {
         title: " Tất Cả Danh mục",

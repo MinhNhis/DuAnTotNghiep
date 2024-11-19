@@ -11,7 +11,6 @@ const EditDanhmuc = () => {
   const [danhmuc, setDanhmuc] = useState({});
   const params = useParams();
   const id = params.id_danhmuc;
-  const id_alldanhmuc = params.id_alldanhmuc;
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -120,17 +119,12 @@ const EditDanhmuc = () => {
                   control={control}
                   defaultValue=""
                   render={({ field }) => (
-                    <Select
-                      {...field}
-                      fullWidth
-                      variant="outlined"
-                    >
-                      <MenuItem selected value={"-1"} disabled={true}>
-                        Tất Cả Danh Mục
-                      </MenuItem>
-                      {alldanhmuc.map((value, index) => {
+                    <Select {...field} fullWidth variant="outlined">
+                      <MenuItem value="-1">Danh mục</MenuItem>
+                      {alldanhmuc.map((value) => {
                         if (
-                          value?.created_user === account?.id_nguoidung && account?.vai_tro === 2
+                          value?.created_user === account?.id_nguoidung &&
+                          account?.vai_tro === 2
                         ) {
                           return (
                             <MenuItem key={value.id_alldanhmuc} value={value.id_alldanhmuc}>

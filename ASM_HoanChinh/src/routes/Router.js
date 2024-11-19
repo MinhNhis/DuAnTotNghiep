@@ -66,7 +66,7 @@ const DeleteMenu = lazy(() => import("../admin/views/menu/Delete/index.js"));
 
 //danh mục
 
-const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"));
+// const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"));
 const AddDanhmuc = lazy(() => import("../admin/views/danhmuc/Add/index.js"));
 const EditDanhmuc = lazy(() => import("../admin/views/danhmuc/Edit/index.js"));
 const DeleteDanhmuc = lazy(() => import("../admin/views/danhmuc/Delete/index.js"));
@@ -109,6 +109,8 @@ const Trangchu = lazy(() => import("../client/pages/Trangchu/Trangchu.js"));
 const Chitiet = lazy(() => import("../client/pages/Chitiet/Chitiet.js"));
 const Danhgia = lazy(() => import("../client/pages/Danhgia/Danhgia.js"));
 const KhamPha = lazy(() => import("../client/pages/Khampha/index.js"));
+const LienHe = lazy(() => import("../client/pages/Lienhe/Lienhe.js"));
+
 const Login = lazy(() => import("../client/pages/Login/index.js"));
 const Register = lazy(() => import("../client/pages/Register/index.js"));
 const MenuPhu = lazy(() => import("../client/pages/MenuMonPhu/menu_monphu.js"));
@@ -139,6 +141,10 @@ const ThemeRoutes = [
       {
         path: '/kham-pha',
         element: <KhamPha />
+      },
+      {
+        path: '/Lien-he',
+        element: <LienHe />
       },
       {
         path: '/dat-cho/:id',
@@ -198,7 +204,7 @@ const ThemeRoutes = [
       { path: "admin/menu/edit/:id_menu", exact: true, element: <EditMenu /> },
       { path: "admin/menu/delete/:id_menu", exact: true, element: <DeleteMenu /> },
 
-      { path: "admin/danhmuc", exact: true, element: <Danhmuc /> },
+      // { path: "admin/danhmuc", exact: true, element: <Danhmuc /> },
       { path: "admin/danhmuc/add", exact: true, element: <AddDanhmuc /> },
       { path: "admin/danhmuc/edit/:id_danhmuc", exact: true, element: <EditDanhmuc /> },
       { path: "admin/danhmuc/delete/:id_danhmuc", exact: true, element: <DeleteDanhmuc /> },

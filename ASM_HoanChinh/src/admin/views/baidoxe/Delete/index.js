@@ -1,5 +1,4 @@
-import React, {useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useState } from "react";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from 'notistack';
@@ -29,37 +28,36 @@ const DeleteBaidoxe = () => {
   };
 
   return (
-      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <WarningIcon sx={{ fontSize: 40, color: 'warning.main', marginRight: 1 }} />
-            Bạn có chắc chắn muốn xóa?
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText align="center">
-            Hành động này sẽ không thể hoàn tác.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <Button
-              variant="contained"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={handleDelete}
-              sx={{ width: "100px" }}
-          >
-            Xóa
-          </Button>
-          <Button
-              variant="outlined"
-              onClick={handleClose}
-              sx={{ width: "100px" }}
-          >
-            Hủy
-          </Button>
-        </DialogActions>
-      </Dialog>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogTitle>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', fontSize: '25px' }}>
+          <WarningIcon sx={{ fontSize: 40, color: 'warning.main', marginRight: 1 }} />
+          Bạn có chắc chắn muốn xóa?
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText align="center">
+          Hành động này sẽ không thể hoàn tác.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions sx={{ justifyContent: 'center' }}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={handleDelete}
+          sx={{ width: "100px" }}
+        >
+          Xóa
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={handleClose}
+          sx={{ width: "100px" }}
+        >
+          Hủy
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
