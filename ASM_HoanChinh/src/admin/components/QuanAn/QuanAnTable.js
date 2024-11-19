@@ -31,7 +31,12 @@ const ExQuanAn = () => {
   const [accounts, setAccounts] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
-
+  //khai báo phần xem thêm nội dung
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const handleToggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+  //hết
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     setAccounts(accounts);
@@ -247,6 +252,7 @@ const ExQuanAn = () => {
                         </Typography>
                         <Grid container spacing={2}>
                           <Grid item xs={12}>
+                            //xem thêm noi dung
                             <Typography variant="body1">
                               <strong>Giới thiệu:</strong>
                               <span
@@ -256,15 +262,26 @@ const ExQuanAn = () => {
                                     overflow: "hidden",
                                     textOverflow: "ellipsis",
                                     display: "-webkit-box",
-                                    WebkitLineClamp: 2,
+                                    WebkitLineClamp: showFullDescription ? 'none' : 2,
                                     WebkitBoxOrient: "vertical",
                                     whiteSpace: "normal",
                                   }}
                               >
-                        {" "}
+                            {" "}
                                 {items?.mo_ta || "Chưa cập nhật"}
-                      </span>
+                          </span>
+                              {!showFullDescription && items?.mo_ta && items.mo_ta.length > 100 && (
+                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                              ... Xem thêm
+                            </span>
+                              )}
+                              {showFullDescription && (
+                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                              Xem ít hơn
+                            </span>
+                              )}
                             </Typography>
+
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Stack spacing={2}>

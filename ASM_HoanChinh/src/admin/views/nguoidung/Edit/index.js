@@ -10,6 +10,12 @@ const EditNguoiDung = () => {
   const [quanan, setQuanan] = useState(null);
   const params = useParams();
   const id = params.id;
+  //khai báo phần xem thêm nội dung
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const handleToggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+  //hết
 
   useEffect(() => {
     initData();
@@ -115,11 +121,21 @@ const EditNguoiDung = () => {
                                   overflow: 'hidden',
                                   textOverflow: 'ellipsis',
                                   display: '-webkit-box',
-                                  WebkitLineClamp: 2,
+                                  WebkitLineClamp: showFullDescription ? 'none' : 2,
                                   WebkitBoxOrient: 'vertical',
                                   whiteSpace: 'normal',
                                 }}
-                            > {quanan?.mo_ta || "Chưa cập nhật"}</span></Typography>
+                            > {quanan?.mo_ta || "Chưa cập nhật"}</span>
+                              {!showFullDescription && quanan?.mo_ta && quanan.mo_ta.length > 100 && (
+                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                              ... Xem thêm
+                            </span>
+                              )}
+                              {showFullDescription && (
+                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                              Xem ít hơn
+                            </span>
+                              )}</Typography>
                           </Grid>
                           <Grid item xs={12} md={6}>
                             <Stack spacing={2}>
