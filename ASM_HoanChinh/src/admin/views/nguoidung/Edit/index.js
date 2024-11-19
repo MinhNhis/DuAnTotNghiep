@@ -69,11 +69,11 @@ const EditNguoiDung = () => {
               </Grid>
               <Grid item xs={12} sm={8}>
                 <Stack spacing={2}>
-                  <Typography variant="h6"><strong>Ngày sinh:</strong> {nguoidung?.ngay_sinh ? nguoidung.ngay_sinh.split("-").reverse().join("/") : "N/A"}</Typography>
-                  <Typography variant="h6"><strong>Giới tính:</strong> {nguoidung?.gioi_tinh || "N/A"}</Typography>
-                  <Typography variant="h6"><strong>Email:</strong> {nguoidung?.email || "N/A"}</Typography>
-                  <Typography variant="h6"><strong>Số điện thoại:</strong> {nguoidung?.so_dien_thoai || "N/A"}</Typography>
-                  <Typography variant="h6"><strong>Địa chỉ:</strong> {nguoidung?.dia_chi || "N/A"}</Typography>
+                  <Typography variant="body1"><strong>Ngày sinh:</strong> {nguoidung?.ngay_sinh ? nguoidung.ngay_sinh.split("-").reverse().join("/") : "N/A"}</Typography>
+                  <Typography variant="body1"><strong>Giới tính:</strong> {nguoidung?.gioi_tinh || "N/A"}</Typography>
+                  <Typography variant="body1"><strong>Email:</strong> {nguoidung?.email || "N/A"}</Typography>
+                  <Typography variant="body1"><strong>Số điện thoại:</strong> {nguoidung?.so_dien_thoai || "N/A"}</Typography>
+                  <Typography variant="body1"><strong>Địa chỉ:</strong> {nguoidung?.dia_chi || "N/A"}</Typography>
                 </Stack>
               </Grid>
             </Grid>
@@ -102,10 +102,10 @@ const EditNguoiDung = () => {
                     </Grid>
                     <Grid item xs={12} md={6}>
                       <Stack spacing={2}>
-                        <Typography variant="h6"><strong>Tên quán ăn:</strong> {quanan?.ten_quan_an}</Typography>
-                        <Typography variant="h6"><strong>Địa chỉ:</strong> {quanan?.dia_chi}</Typography>
-                        <Typography variant="h6"><strong>Điện thoại:</strong> {quanan?.dien_thoai}</Typography>
-                        <Typography variant="h6"><strong>Giờ hoạt động:</strong> {quanan?.gio_mo_cua} - {quanan?.gio_dong_cua}</Typography>
+                        <Typography variant="body1"><strong>Tên quán ăn:</strong> <span style={{fontSize: "20px"}}>{quanan?.ten_quan_an}</span></Typography>
+                        <Typography variant="body1"><strong>Địa chỉ:</strong> {quanan?.dia_chi}</Typography>
+                        <Typography variant="body1"><strong>Điện thoại:</strong> {quanan?.dien_thoai}</Typography>
+                        <Typography variant="body1"><strong>Giờ hoạt động:</strong> {quanan?.gio_mo_cua} - {quanan?.gio_dong_cua}</Typography>
                       </Stack>
                       <Box mt={4}>
                         <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1976d2", textAlign: "left", mb: 2 }}>
