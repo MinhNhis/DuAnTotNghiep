@@ -143,24 +143,26 @@ const ExQuanAn = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
-                      <IconButton
-                          aria-label="edit"
-                          color="primary"
-                          style={{ width: "50px", height: "50px" }}
-                      >
-                        <EditIcon />
-                      </IconButton>
-                    </Link>
-                    <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
-                      <IconButton
-                          aria-label="delete"
-                          color="danger"
-                          style={{ width: "50px", height: "50px" }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Link>
+                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                      <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
+                        <IconButton
+                            aria-label="edit"
+                            color="primary"
+                            style={{ width: "50px", height: "50px" }}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Link>
+                      <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
+                        <IconButton
+                            aria-label="delete"
+                            color="danger"
+                            style={{ width: "50px", height: "50px" }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Link>
+                    </Box>
                   </TableCell>
                 </TableRow>
             ))}
@@ -358,7 +360,8 @@ const ExQuanAn = () => {
                             top: -30,
                             right: 16,
                             display: "flex",
-                            flexDirection: "column",
+                            flexDirection: "row",
+                            alignItems: 'center'
                           }}
                       >
                         <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
@@ -394,6 +397,7 @@ const ExQuanAn = () => {
                             <DeleteIcon />
                           </IconButton>
                         </Link>
+
                       </CardActions>
                     </Grid>
                   </Grid>
