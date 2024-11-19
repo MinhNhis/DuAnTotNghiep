@@ -71,7 +71,7 @@ const ExQuanAn = () => {
 
   const renderTable = () => (
     <>
-      <Table aria-label="simple table" sx={{ mt: 3 }}>
+      <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: 'nowrap' }}>
         <TableHead>
           <TableRow>
             <TableCell>
@@ -138,7 +138,17 @@ const ExQuanAn = () => {
                 </Link>
               </TableCell>
               <TableCell>
-                <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                <Typography sx={{
+                  ml: 0.5,
+                  fontWeight: "500",
+                  fontSize: "15px",
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  whiteSpace: 'normal',
+                }}>
                   {items.dia_chi}
                 </Typography>
               </TableCell>
@@ -185,7 +195,7 @@ const ExQuanAn = () => {
             height: "20px",
             fontSize: "0.8rem",
             margin: "0 5px",
-            "&.Mui-selected": 
+            "&.Mui-selected":
             {
               backgroundColor: "#CCCCCC",
             }
@@ -226,7 +236,7 @@ const ExQuanAn = () => {
                 <Grid item xs={12} md={6}>
                   <Stack spacing={2}>
                     <Typography variant="body1">
-                      <strong>Tên quán ăn:</strong> <span style={{fontSize: "20px"}}>{items?.ten_quan_an}</span>
+                      <strong>Tên quán ăn:</strong> <span style={{ fontSize: "20px" }}>{items?.ten_quan_an}</span>
                     </Typography>
                     <Typography variant="body1">
                       <strong>Địa chỉ:</strong> {items?.dia_chi}
