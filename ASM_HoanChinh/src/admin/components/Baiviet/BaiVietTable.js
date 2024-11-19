@@ -189,15 +189,15 @@ const BaiVietTable = () => {
               justifyContent: "center",
               marginTop: "20px",
               button: {
-                backgroundColor: "#1976d2",
-                color: "#fff",
+                color: "black",
                 borderRadius: "50%",
                 width: "20px",
                 height: "20px",
                 fontSize: "0.8rem",
                 margin: "0 5px",
-                "&.Mui-selected": {
-                  backgroundColor: "#1e88e5",
+                "&.Mui-selected": 
+                {
+                  backgroundColor: "#CCCCCC",
                 }
               },
             }}>

@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import Visibility from "@mui/icons-material/Visibility";
 import { getNguoiDung, paginator } from "../../../services/Nguoidung";
 import { BASE_URL } from "../../../config/ApiConfig";
-import imgUser from '../../assets/images/user.png';
+import imgUser from "../../assets/images/user.png";
 import PaginationRounded from "../Paginator";
 import { useCookies } from "react-cookie";
 
@@ -33,22 +33,20 @@ const DichVuTable = () => {
 
   const initData = async (data) => {
     if (cookies.role === 0) {
-      setNguoidung(data.data)
-      setCurrentPage(data.pagination.currentPage)
+      setNguoidung(data.data);
+      setCurrentPage(data.pagination.currentPage);
+    } else {
+      const result = await getNguoiDung();
+      setNguoidung(result.data);
     }
-    else {
-      const result = await getNguoiDung()
-      setNguoidung(result.data)
-    }
-
   };
 
   const initNguoidung = async () => {
     if (cookies.role !== 0) {
-      const result = await getNguoiDung()
-      setNguoidung(result.data)
-    } else return null
-  }
+      const result = await getNguoiDung();
+      setNguoidung(result.data);
+    } else return null;
+  };
   return (
     <>
       <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -107,11 +105,22 @@ const DichVuTable = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Box>
                     <Typography variant="body1" sx={{ ml: 0.5 }}>
-                      <img src={value?.hinh_anh
-                        ? (value.hinh_anh.startsWith('http')
-                          ? value.hinh_anh
-                          : `${BASE_URL}/uploads/${value.hinh_anh}`)
-                        : (value.hinh_anh || imgUser)} alt="image" style={{ width: "70px", height: "70px", borderRadius: "50%", objectFit: "cover" }} />
+                      <img
+                        src={
+                          value?.hinh_anh
+                            ? value.hinh_anh.startsWith("http")
+                              ? value.hinh_anh
+                              : `${BASE_URL}/uploads/${value.hinh_anh}`
+                            : value.hinh_anh || imgUser
+                        }
+                        alt="image"
+                        style={{
+                          width: "70px",
+                          height: "70px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
                     </Typography>
                   </Box>
                 </Box>
@@ -129,7 +138,13 @@ const DichVuTable = () => {
                 <Box sx={{ display: "flex", alignItems: "center" }}>
                   <Box>
                     <Typography variant="body1" sx={{ ml: 0.5 }}>
-                      {value?.vai_tro === 0 ? "Người quản trị" : (value.vai_tro === 1? "Người dùng" : (value.vai_tro === 2? "Chủ quán" : ""))}
+                      {value?.vai_tro === 0
+                        ? "Người quản trị"
+                        : value.vai_tro === 1
+                        ? "Người dùng"
+                        : value.vai_tro === 2
+                        ? "Chủ quán"
+                        : ""}
                     </Typography>
                   </Box>
                 </Box>
@@ -137,7 +152,9 @@ const DichVuTable = () => {
               <TableCell>
                 <Typography>
                   {value.vai_tro !== 0 && (
-                    <Link to={`/admin/nguoi-dung/chi-tiet/${value?.id_nguoidung}`}>
+                    <Link
+                      to={`/admin/nguoi-dung/chi-tiet/${value?.id_nguoidung}`}
+                    >
                       <IconButton
                         aria-label="edit"
                         color="primary"
@@ -148,7 +165,9 @@ const DichVuTable = () => {
                     </Link>
                   )}
                   {value?.vai_tro !== 0 && (
-                    <Link to={`/admin/nguoi-dung/delete/${value?.id_nguoidung}`}>
+                    <Link
+                      to={`/admin/nguoi-dung/delete/${value?.id_nguoidung}`}
+                    >
                       <IconButton
                         aria-label="delete"
                         color="danger"
@@ -171,19 +190,22 @@ const DichVuTable = () => {
             justifyContent: "center",
             marginTop: "20px",
             button: {
-              backgroundColor: "#1976d2",
-              color: "#fff",
+              color: "black",
               borderRadius: "50%",
               width: "20px",
               height: "20px",
               fontSize: "0.8rem",
               margin: "0 5px",
               "&.Mui-selected": {
-                backgroundColor: "#1e88e5",
-              }
+                backgroundColor: "#CCCCCC",
+              },
             },
-          }}>
-          <PaginationRounded onDataChange={cookies.role === 0 ? initData : initNguoidung} paginator={paginator} />
+          }}
+        >
+          <PaginationRounded
+            onDataChange={cookies.role === 0 ? initData : initNguoidung}
+            paginator={paginator}
+          />
         </TableRow>
       )}
     </>
