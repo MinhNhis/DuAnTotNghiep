@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from "@mui/material";
 
 import IconButton from "@mui/material/IconButton";
@@ -17,16 +18,22 @@ import { getDanhmuc } from "../../../services/Danhmuc";
 import { useState, useEffect } from "react";
 
 const ExDanhmuc = () => {
-    const params = useParams();
-    const id = params.id_alldanhmuc
-    const [Danhmuc, setDanhmuc] = useState([]);
-    const [accounts, setAccounts] = useState(null);
+  const params = useParams();
+  const id = params.id_alldanhmuc
+  const [open, setOpen] = useState(true);
+  const [Danhmuc, setDanhmuc] = useState([]);
+  const [accounts, setAccounts] = useState(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     setAccounts(accounts);
     initData();
   }, []);
+  const handleClose = () => {
+    setOpen(false);
+    navigate(`/admin/alldanhmuc`);
+  };
 
   const initData = () => {
     getDanhmuc().then((result) => {
@@ -38,64 +45,68 @@ const ExDanhmuc = () => {
     });
   };
 
-  
+
 
   return (
-    <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
-      <TableHead>
-        <TableRow>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              STT
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Danh mục
-            </Typography>
-          </TableCell>
-          <TableCell>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-              Hành động
-            </Typography>
-          </TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {Danhmuc.filter(fil => fil?.created_user === accounts?.id_nguoidung && fil?.id_alldanhmuc === Number(id)).map((danhmuc, index) => (
-          <TableRow key={danhmuc.id_danhmuc}>
-            <TableCell>
-              <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                {Number(index) + 1}
-              </Typography>
-            </TableCell>
-            <TableCell>
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Box>
+    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+      <DialogContent>
+        <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  STT
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  Danh mục
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                  Hành động
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Danhmuc.filter(fil => fil?.created_user === accounts?.id_nguoidung && fil?.id_alldanhmuc === Number(id)).map((danhmuc, index) => (
+              <TableRow key={danhmuc.id_danhmuc}>
+                <TableCell>
                   <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                    {danhmuc.danh_muc}
+                    {Number(index) + 1}
                   </Typography>
-                </Box>
-              </Box>
-            </TableCell>
-            <TableCell>
-              <Typography sx={{ width: "50px", height: "50px" }}>
-                <Link to={`/admin/danhmuc/edit/${danhmuc.id_danhmuc}`}>
-                  <IconButton aria-label="edit" color="primary">
-                    <EditIcon />
-                  </IconButton>
-                </Link>
-                <Link to={`/admin/danhmuc/delete/${danhmuc.id_danhmuc}`}>
-                  <IconButton aria-label="delete" color="error">
-                    <DeleteIcon />
-                  </IconButton>
-                </Link>
-              </Typography>
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <Box>
+                      <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                        {danhmuc.danh_muc}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </TableCell>
+                <TableCell>
+                  <Typography sx={{ width: "50px", height: "50px" }}>
+                    <Link to={`/admin/danhmuc/edit/${danhmuc.id_danhmuc}`}>
+                      <IconButton aria-label="edit" color="primary">
+                        <EditIcon />
+                      </IconButton>
+                    </Link>
+                    <Link to={`/admin/danhmuc/delete/${danhmuc.id_danhmuc}`}>
+                      <IconButton aria-label="delete" color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Link>
+                  </Typography>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </DialogContent>
+    </Dialog>
   );
 };
 

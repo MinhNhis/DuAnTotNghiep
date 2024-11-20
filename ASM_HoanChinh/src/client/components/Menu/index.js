@@ -18,23 +18,13 @@ const Menu = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
+    const [quanan5Km, setQUanan5Km] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
-
 
     const initQuanan = async () => {
         const res = await getQuanan();
         setQuanan(res.data);
-    };
-
-
-    const initAllDanhmuc = async () => {
-        const res = await getAllDanhmuc();
-        if (res && res.data) {
-            setAllDanhmuc(res.data);
-        } else {
-            setError("Failed to load categories");
-        }
     };
 
     const initDanhmuc = async () => {
@@ -63,7 +53,6 @@ const Menu = () => {
             setMenus([]);
             return;
         }
-
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === selectedSubCategory);
@@ -73,6 +62,37 @@ const Menu = () => {
         }
     };
 
+    const quanan5km = JSON.parse(localStorage.getItem("QUAN_AN5KM"));
+    setTimeout(() => {
+        checkLoca(quanan5km)
+    }, 1000);
+    const checkLoca = async (quanan, retries = 3) => {
+        try {
+            if (quanan) {
+                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
+                setQUanan5Km(sortedQuanan);
+            } else {
+                return null
+            }
+        } catch (error) {
+            if (retries > 0) {
+                console.warn("thử lại...", retries);
+                return await checkLoca(quanan, retries - 1);
+            } else {
+                console.error("Lỗi sau nhiều lần thử:", error);
+                return null;
+            }
+        }
+    }
+    const initAllDanhmuc = async () => {
+        const res = await getAllDanhmuc();
+        if (res && res.data) {
+            setAllDanhmuc(res.data);
+        } else {
+            setError("Failed to load categories");
+        }
+
+    };
     useEffect(() => {
         initData();
         AllMenu();
@@ -94,9 +114,7 @@ const Menu = () => {
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
-
         }
-
     };
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
@@ -116,9 +134,7 @@ const Menu = () => {
             setSubCategories(filteredSubCategories);
         }
     }, [selectedCategory]);
-
     if (error) return <p>{error}</p>;
-
     const formatPrice = (price) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -150,7 +166,6 @@ const Menu = () => {
                 <div className="text-center wow " data-wow-delay="0.1s">
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
-
                 <div className="tab-class text-center">
                     <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
 
@@ -159,11 +174,9 @@ const Menu = () => {
                                 className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary' : 'bg-light'}`}
                                 onClick={() => handleCategoryClick(null)}
                             >
-                                <span className="text-dark" style={{ width: '150px',padding:'4px' }}>All</span>
+                                <span className="text-dark" style={{ width: '150px', padding: '4px' }}>All</span>
                             </button>
                         </li>
-
-
 
                         {alldanhmuc.map((danhmuc, index) => (
                             <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
@@ -201,10 +214,6 @@ const Menu = () => {
                                 )}
                             </li>
                         ))}
-
-
-
-
                     </ul>
 
                     <div className="tab-content">

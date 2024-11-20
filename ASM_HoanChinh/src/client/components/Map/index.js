@@ -241,17 +241,21 @@ const Map = ({ quanan, sizeData }) => {
                         </div>
                     </a>
                 `;
-            if (distanceKm <= 10) {
+            if (distanceKm <= 5) {
                 const marker = L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
                     .addTo(mapRef.current)
                 marker.bindPopup(popupContent)
                 marker.openPopup();
                 const routeLine = L.polyline(routePoints, { color: 'blue', weight: 4 }).addTo(mapRef.current);
                 mapRef.current.fitBounds(routeLine.getBounds());
-                setQuanan5Km((prevQuan) => [
-                    ...prevQuan,
-                    { ...quan, distanceKm }
-                ]);
+                setQuanan5Km((prevQuan) => {
+                    const isDuplicate = prevQuan.some(existingQuan => existingQuan.id_quanan === quan.id_quanan);
+                    if (!isDuplicate) {
+                        return [...prevQuan, { ...quan, distanceKm }];
+                    }
+                    return prevQuan;
+                });
+                
             }
 
         } catch (error) {

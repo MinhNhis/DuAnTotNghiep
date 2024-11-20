@@ -25,16 +25,16 @@ const AddMenu = () => {
         setDanhmuc(resultDanhmuc.data);
 
         const resultQuanan = await getQuanan();
-        setQuanan(resultQuanan.data);    
+        setQuanan(resultQuanan.data);
     };
-    
+    const fill = quanan.find((e) => e.created_user === account.id_nguoidung)
     const onSubmit = async (value) => {
         try {
             await addMenu({
                 ten_menu: value?.ten_menu,
                 gia: value?.gia,
                 id_danhmuc: value?.danh_muc,
-                id_quanan: value?.quan_an,
+                id_quanan: fill.id_quanan,
                 hinh_anh: value?.hinh_anh[0],
                 created_user: account.id_nguoidung
             });
@@ -86,7 +86,7 @@ const AddMenu = () => {
                                             </small>
                                         )}
                                     </div>
-                                    <div className="mn-3">
+                                    <div className="mb-3">
                                         <label className="form-lablr">Danh mục</label>
                                         <Select fullWidth defaultValue={"-1"} {...register("danh_muc", {
                                             validate: (danh_muc) => {
@@ -120,7 +120,7 @@ const AddMenu = () => {
                                     </div>
                                 </div>
                                 <div className="col-6">
-                                    <div className="mb-3">
+                                    <div className="mb-2">
                                         <label className="form-label">Giá</label>
                                         <TextField
                                             type="number"
@@ -147,7 +147,7 @@ const AddMenu = () => {
                                             </small>
                                         )}
                                     </div>
-                                    <div className="mn-3">
+                                    {/* <div className="mn-3">
                                         <label className="form-lablr">Quán ăn</label>
                                         <Select fullWidth defaultValue={'-1'} {...register("quan_an", {
                                             validate: (quan_an) => {
@@ -157,7 +157,7 @@ const AddMenu = () => {
                                                 return true;
                                             }
                                         })}>
-                                            <MenuItem selected value={'-1'} disabled>Quán ăn</MenuItem>
+                                            <MenuItem selected value={fill.id_quanan} disabled>{fill.ten_quan_an}</MenuItem>
                                             {quanan.map((value, index) => {
                                                 if (
                                                     value?.created_user === account?.id_nguoidung ||
@@ -178,30 +178,31 @@ const AddMenu = () => {
                                                 {formState?.errors?.quan_an?.message}
                                             </small>
                                         )}
+                                    </div> */}
+                                    <div className="mb-3">
+                                        <label className="form-label">Hình ảnh</label>
+                                        <TextField
+                                            type="file"
+                                            cvariant="outlined"
+                                            fullWidth
+                                            name="images"
+                                            id="images"
+                                            {...register("hinh_anh", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Hình ảnh không được bỏ trống",
+                                                },
+                                            })}
+                                        />
+                                        {formState?.errors?.hinh_anh && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.hinh_anh?.message}
+                                            </small>
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="mb-3">
-                                <label className="form-label">Hình ảnh</label>
-                                <TextField
-                                    type="file"
-                                    cvariant="outlined"
-                                    fullWidth
-                                    name="images"
-                                    id="images"
-                                    {...register("hinh_anh", {
-                                        required: {
-                                            value: true,
-                                            message: "Hình ảnh không được bỏ trống",
-                                        },
-                                    })}
-                                />
-                                {formState?.errors?.hinh_anh && (
-                                    <small className="text-danger">
-                                        {formState?.errors?.hinh_anh?.message}
-                                    </small>
-                                )}
-                            </div>
+
                             <div className="mb-3">
                                 <Button variant="contained" color="primary" sx={{ width: "100px" }} onClick={handleSubmit(onSubmit)}>{`Thêm`} </Button>
                             </div>
