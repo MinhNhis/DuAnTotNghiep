@@ -52,7 +52,7 @@ const EditDanhmuc = () => {
         id_alldanhmuc: data?.ten_danhmuc
       });
       enqueueSnackbar("Cập nhật danh mục thành công!", { variant: "success" });
-      navigate("/admin/danhmuc");
+      navigate(`/admin/danhmuc/${danhmuc.id_alldanhmuc}`);
     } catch (error) {
       enqueueSnackbar("Có lỗi xảy ra khi cập nhật danh mục!", {
         variant: "error",
@@ -62,7 +62,7 @@ const EditDanhmuc = () => {
   };
 
   const handleCancle = () => {
-    navigate("/admin/danhmuc");
+    navigate(`/admin/danhmuc/${danhmuc.id_alldanhmuc}`);
   };
 
   return (
@@ -110,87 +110,6 @@ const EditDanhmuc = () => {
                   </small>
                 )}
               </div>
-
-
-              <div className="mb-3">
-                <label className="form-lablr"> Tất Cả Danh mục</label>
-                <Controller
-                  name="ten_danhmuc"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <Select {...field} fullWidth variant="outlined">
-                      <MenuItem value="-1">Danh mục</MenuItem>
-                      {alldanhmuc.map((value) => {
-                        if (
-                          value?.created_user === account?.id_nguoidung &&
-                          account?.vai_tro === 2
-                        ) {
-                          return (
-                            <MenuItem key={value.id_alldanhmuc} value={value.id_alldanhmuc}>
-                              {value.ten_danhmuc}
-                            </MenuItem>
-                          );
-                        }
-                        return null;
-                      })}
-                    </Select>
-                  )}
-                  {...register("ten_danhmuc", {
-                    validate: (ten_danhmuc) => {
-                      if (ten_danhmuc === "-1") {
-                        return "Danh mục không được bỏ trống";
-                      }
-                      return true;
-                    },
-                  })}
-                />
-                {formState?.errors?.ten_danhmuc && (
-                  <small className="text-danger">
-                    {formState?.errors?.ten_danhmuc?.message}
-                  </small>
-                )}
-              </div>
-
-
-
-              {/* <div className="mb-3">
-                <label className="form-lablr"> Tất Cả Danh mục</label>
-                <Select fullWidth {...register("alldanhmuc", {
-                  validate: (ten_danhmuc) => {
-                    if (ten_danhmuc === "-1") {
-                      return "Danh mục không được bỏ trống";
-                    }
-                    return true;
-                  }
-                })}>
-
-                  {alldanhmucById && (
-                    <MenuItem   value={alldanhmucById.id_alldanhmuc} disabled>
-                      {alldanhmucById.ten_danhmuc}
-                    </MenuItem>
-                  )}
-
-
-                  {alldanhmucById && alldanhmuc.filter((e) =>
-                    e?.created_user === account?.id_nguoidung &&
-                    account?.vai_tro === 2
-                  ).map((value) => (
-
-                    <MenuItem key={value.id_alldanhmuc} value={value.id_alldanhmuc}>
-                      {value.ten_danhmuc}
-                    </MenuItem>
-                  ))}
-
-                </Select>
-
-                {formState?.errors?.alldanhmuc && (
-                  <small className="text-danger">
-                    {formState?.errors?.alldanhmuc?.message}
-                  </small>
-                )}
-              </div> */}
-
 
               <div className="mb-3">
                 <Button

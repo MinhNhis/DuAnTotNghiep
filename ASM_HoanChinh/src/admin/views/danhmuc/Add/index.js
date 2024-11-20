@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useSnackbar } from "notistack";
 import { Card, CardContent, Divider, Box, Typography, TextField, Select, MenuItem, Button } from "@mui/material";
@@ -7,6 +7,8 @@ import { addDanhmuc } from "../../../../services/Danhmuc";
 import { getAllDanhmuc } from "../../../../services/Alldanhmuc";
 
 const AddDanhmuc = () => {
+  const params = useParams();
+  const id = params.id_alldanhmuc;
   const { register, handleSubmit, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
@@ -26,7 +28,7 @@ const AddDanhmuc = () => {
         danh_muc: value?.danh_muc,
         created_user: accounts?.id_nguoidung,
         updated_user: accounts?.id_nguoidung,
-        id_alldanhmuc: value.alldanhmuc
+        id_alldanhmuc: id
       });
       enqueueSnackbar("Thêm danh mục thành công!", { variant: "success" });
       navigate("/admin/alldanhmuc");
@@ -87,7 +89,7 @@ const AddDanhmuc = () => {
               </div>
 
 
-              <div className="mb-3">
+              {/* <div className="mb-3">
                 <label className="form-lablr"> Tất Cả Danh mục</label>
                 <Select fullWidth defaultValue={"-1"} {...register("alldanhmuc", {
                   validate: (ten_danhmuc) => {
@@ -114,7 +116,7 @@ const AddDanhmuc = () => {
                     {formState?.errors?.alldanhmuc?.message}
                   </small>
                 )}
-              </div>
+              </div> */}
 
 
 

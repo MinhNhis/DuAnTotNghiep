@@ -39,7 +39,7 @@ const AddAllDanhmuc = () => {
                         <Typography
                             sx={{ fontSize: "18px", fontWeight: "bold", textAlign: "center" }}
                         >
-                            {`THÊM DANH MỤC`}
+                            {`THÊM DANH MỤC ChÍNH`}
                         </Typography>
                     </Box>
                 </Box>

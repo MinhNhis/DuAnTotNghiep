@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   Typography,
   Box,
@@ -17,8 +17,10 @@ import { getDanhmuc } from "../../../services/Danhmuc";
 import { useState, useEffect } from "react";
 
 const ExDanhmuc = () => {
-  const [Danhmuc, setDanhmuc] = useState([]);
-  const [accounts, setAccounts] = useState(null);
+    const params = useParams();
+    const id = params.id_alldanhmuc
+    const [Danhmuc, setDanhmuc] = useState([]);
+    const [accounts, setAccounts] = useState(null);
 
   useEffect(() => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -35,6 +37,8 @@ const ExDanhmuc = () => {
       }
     });
   };
+
+  
 
   return (
     <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
@@ -58,7 +62,7 @@ const ExDanhmuc = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {Danhmuc.filter(fil => fil?.created_user === accounts?.id_nguoidung || fil?.updated_user === accounts?.id_nguoidung || accounts?.vai_tro === 0).map((danhmuc, index) => (
+        {Danhmuc.filter(fil => fil?.created_user === accounts?.id_nguoidung && fil?.id_alldanhmuc === Number(id)).map((danhmuc, index) => (
           <TableRow key={danhmuc.id_danhmuc}>
             <TableCell>
               <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>

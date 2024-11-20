@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box } from "@mui/material";
-import { deleteDanhmuc } from "../../../../services/Danhmuc";
+import { deleteDanhmuc, getDanhmucById } from "../../../../services/Danhmuc";
 import { useSnackbar } from "notistack";
 
 const DeleteDanhmuc = () => {
@@ -11,18 +11,29 @@ const DeleteDanhmuc = () => {
   const id = params.id_danhmuc;
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(true);
+  const [danhmuc, setDanhmuc] = useState({});
+  const [idAll, setIdAll] = useState()
+
+  const initData = async () => {
+    const res = await getDanhmucById(Number(id))
+    setDanhmuc(res.data)
+    setIdAll(res.data.id_alldanhmuc)
+  }
+
+  useEffect (() => {
+    initData();
+  },[])
 
   const handleClose = () => {
     setOpen(false);
-    navigate('/admin/danhmuc');
+    navigate(`/admin/danhmuc/${danhmuc.id_alldanhmuc}`);
   };
-
 
   const handleDelete = async () => {
     try {
       await deleteDanhmuc(id);
       enqueueSnackbar('Xóa danh mục thành công!', { variant: 'success' });
-      navigate("/admin/danhmuc");
+      navigate(`/admin/danhmuc/${idAll}`);
     } catch (error) {
       enqueueSnackbar('Có lỗi xảy ra khi xóa danh mục!', { variant: 'error' });
     }
