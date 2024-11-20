@@ -79,7 +79,7 @@ const ChiTietDonDatCho = () => {
                                 <TableCell align="left">{datcho.so_luong_nguoi}</TableCell>
                                 <TableCell align="left">{datcho.yeu_cau_khac}</TableCell>
                                 <TableCell align="left">
-                                    {datcho.trang_thai === 0 ? "Đang chờ xử lí" : (datcho.trang_thai === 1 ? "Đã có chỗ" : (datcho.trang_thai === 2 ? "Đã hủy" : (datcho.trang_thai === 3 ? "Đã hoàn thành" : "")))}
+                                    {datcho.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (datcho.trang_thai === 1 ?<span class="badge badge-success">Đã có chỗ</span> : (datcho.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (datcho.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}
                                 </TableCell>
                             </TableRow>
                         </TableBody>
