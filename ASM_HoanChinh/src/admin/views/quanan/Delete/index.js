@@ -69,7 +69,7 @@ const DeleteQuanAn = () => {
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
 
-        setCheckedItems((prev) => ({
+        setCheckedItems((prev) => ({    
             ...prev,
             [name]: checked,
         }));
@@ -84,7 +84,11 @@ const DeleteQuanAn = () => {
             });
         }
     };
+
     console.log(otherReason);
+    console.log(reason);
+    
+
 
 
     return (
@@ -143,6 +147,8 @@ const DeleteQuanAn = () => {
                     </DialogContent>
                 )}
             </DialogContent>
+
+            
             <DialogActions sx={{ justifyContent: 'center' }}>
                 <Button
                     variant="contained"

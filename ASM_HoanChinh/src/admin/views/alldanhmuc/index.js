@@ -11,9 +11,7 @@ const AllDanhmuc = () => {
         navigate("/admin/alldanhmuc/add");
     };
 
-    const handleAddDanhmuc = () => {
-        navigate("/admin/danhmuc/add");
-    };
+    
 
     return (
         <Box>
@@ -32,13 +30,13 @@ const AllDanhmuc = () => {
                         >
                             Thêm Danh Mục Chính
                         </Button>
-                        <Button
+                        {/* <Button
                             variant="contained"
                             sx={{ width: "180px" }}
                             onClick={handleAddDanhmuc}
                         >
                             Thêm Danh Mục
-                        </Button>
+                        </Button> */}
                     </Box>
                     <Box
                         sx={{ overflow: { xs: "auto", sm: "unset" }, fontWeight: "bold" }}
