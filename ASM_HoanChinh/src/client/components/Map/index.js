@@ -53,9 +53,12 @@ const Map = ({ quanan, sizeData }) => {
         popupAnchor: [0, -45]
     })
     useEffect(() => {
-        if (location.latitude && location.longitude) {
-            userLocation();
-        }
+        setTimeout(() => {
+            if (location.latitude && location.longitude) {
+                userLocation();
+            }
+        }, 2000)
+
     }, [location.latitude, location.longitude]);
     useEffect(() => {
         loadMap()
@@ -234,7 +237,7 @@ const Map = ({ quanan, sizeData }) => {
                                 ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${quan.gio_mo_cua}- ${quan.gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
                             </div>
                             <p style="font-size: 12px;; margin: 0;">${quan.dia_chi}</p>
-                            <p> ${distanceKm} Km, Thời gian: ${hours? ' giờ': ''} ${minutes} phút</p>
+                            <p> ${distanceKm} Km, Thời gian: ${hours ? ' giờ' : ''} ${minutes} phút</p>
                         </div>
                     </a>
                 `;
@@ -291,14 +294,14 @@ const Map = ({ quanan, sizeData }) => {
                                 ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${quan.gio_mo_cua}- ${quan.gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
                             </div>
                             <p style="font-size: 12px;; margin: 0;">${quan.dia_chi}</p>
-                            <p> ${distanceKm} Km, Thời gian: ${hours? hours+' giờ': ''} ${minutes} phút</p>
+                            <p> ${distanceKm} Km, Thời gian: ${hours ? hours + ' giờ' : ''} ${minutes} phút</p>
                         </div>
                     </a>
                 `;
             const marker = L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
-                    .addTo(mapRef.current)
-                marker.bindPopup(popupContent)
-                marker.openPopup();
+                .addTo(mapRef.current)
+            marker.bindPopup(popupContent)
+            marker.openPopup();
             const routeLine = L.polyline(routePoints, { color: 'blue', weight: 4 }).addTo(mapRef.current);
             mapRef.current.fitBounds(routeLine.getBounds());
 

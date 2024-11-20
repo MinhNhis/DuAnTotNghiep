@@ -8,6 +8,7 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  Button
 } from "@mui/material";
 
 import IconButton from "@mui/material/IconButton";
@@ -173,6 +174,12 @@ const Alldanhmuc = () => {
                       maxWidth: "200px",
                     }}
                   >
+                    <Button
+                            variant="contained"
+                            sx={{ width: "50px" }}
+                        >
+                            +
+                        </Button>
                     {categoriesToShow.map(danhmuc => danhmuc.danh_muc).join(', ')}
                     {danhMucCon.length > 4 && (
                     <span style={{ cursor: 'pointer', color: 'blue', marginLeft: '8px', whiteSpace: 'nowrap' }} onClick={handleShowDanhmuc}>
