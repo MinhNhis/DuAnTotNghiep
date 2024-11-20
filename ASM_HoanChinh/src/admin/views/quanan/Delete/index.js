@@ -69,22 +69,53 @@ const DeleteQuanAn = () => {
     const handleCheckboxChange = (event) => {
         const { name, checked } = event.target;
 
-        setCheckedItems((prev) => ({
-            ...prev,
-            [name]: checked,
-        }));
+        setCheckedItems((prev) => {
+            const newCheckedItems = {
+                ...prev,
+                [name]: checked,
+            };
 
-        if (name !== 'other') {
-            setReason((prev) => {
-                if (checked) {
-                    return [...prev, name];
-                } else {
-                    return prev.filter(r => r !== name); 
-                }
-            });
+            if (name === 'other' && checked) {
+                Object.keys(newCheckedItems).forEach((key) => {
+                    if (key !== 'other') {
+                        newCheckedItems[key] = false;
+                    }
+                });
+            } else if (checked) {
+
+                newCheckedItems.other = false;
+            }
+
+            return newCheckedItems;
+        });
+
+        setReason((prev) => {
+            if (name === 'other') {
+                return checked ? [otherReason] : prev.filter(r => r !== otherReason);
+            }
+
+            if (checked) {
+                return [...prev, name];
+            } else {
+                return prev.filter(r => r !== name);
+            }
+        });
+
+        if (checked && name !== 'other') {
+            setOtherReason('');
+            setReason((prev) => prev.filter(r => r !== otherReason));
         }
     };
 
+    const handleOtherReasonChange = (e) => {
+        const newReason = e.target.value;
+        setOtherReason(newReason);
+
+
+        if (checkedItems.other) {
+            setReason([newReason]);
+        }
+    };
 
     return (
         <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
@@ -98,20 +129,18 @@ const DeleteQuanAn = () => {
 
             <DialogContent>
                 <div className="form-check-group" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-                    {['Quán không hợp lệ', 'Đăng kí quán khác', 'Không mún kinh doanh nữa', 'Quán vi phạm hợp đồng'].map((title, index) => (
+                    {['Quán vi phạm điều khoản ', 'Không gia hạn quán ăn'].map((key, index) => (
                         <div className="form-check mb-1" style={{ marginRight: '20px' }} key={index}>
                             <input
                                 type="checkbox"
                                 className="form-check-input"
-                                name={title} 
-                                value={title}
-                                checked={checkedItems[title]} 
+                                name={key}
+                                checked={checkedItems[key]}
                                 onChange={handleCheckboxChange}
                             />
-                            <label className="form-check-label ms-2">{title}</label>
+                            <label className="form-check-label ms-2">{key}</label>
                         </div>
                     ))}
-
                     <div className="form-check mb-1" style={{ marginRight: '20px' }}>
                         <input
                             type="checkbox"
@@ -123,7 +152,6 @@ const DeleteQuanAn = () => {
                         <label className="form-check-label ms-2">Khác</label>
                     </div>
                 </div>
-
                 {checkedItems.other && (
                     <DialogContent>
                         <DialogContentText align="center">
@@ -133,8 +161,8 @@ const DeleteQuanAn = () => {
                                     variant="outlined"
                                     multiline
                                     rows={1.75}
-                                    value={otherReason} // Giá trị nhập cho "Khác"
-                                    onChange={(e) => setOtherReason(e.target.value)} // Cập nhật giá trị nhập
+                                    value={otherReason}
+                                    onChange={handleOtherReasonChange}
                                     sx={{ width: "50%", marginTop: 1 }}
                                 />
                             )}
@@ -142,6 +170,8 @@ const DeleteQuanAn = () => {
                     </DialogContent>
                 )}
             </DialogContent>
+
+
             <DialogActions sx={{ justifyContent: 'center' }}>
                 <Button
                     variant="contained"
