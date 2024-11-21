@@ -663,7 +663,7 @@ const Gioithieu = () => {
                                     <div className="row g-4 text-dark mb-5">
                                         <div className="col-sm-12">
                                             <h3>
-                                                {stars} {renderStars(stars)}
+                                                {renderStars(stars)}({stars})
                                             </h3>
                                             <hr />
                                             <h5 className="mb-3" style={{ fontWeight: "bold" }}>
@@ -682,9 +682,9 @@ const Gioithieu = () => {
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
-                                                    <p>{foodRating} {renderStars(foodRating)}</p>
-                                                    <p>{serviceRating} {renderStars(serviceRating)}</p>
-                                                    <p>{atmosphereRating} {renderStars(atmosphereRating)}</p>
+                                                    <p>{renderStars(foodRating)}({foodRating})</p>
+                                                    <p>{renderStars(serviceRating)}({serviceRating})</p>
+                                                    <p>{renderStars(atmosphereRating)}({atmosphereRating})</p>
                                                 </div>
                                             </div>
                                         </div>
