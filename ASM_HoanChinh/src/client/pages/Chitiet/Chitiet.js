@@ -30,11 +30,17 @@ const Gioithieu = () => {
     const [datcho, setDatcho] = useState([]);
     const accounts = JSON.parse(localStorage.getItem("accounts"))
     const { enqueueSnackbar } = useSnackbar();
-    const [stars, setStar] = useState(0);
+
     const [visibleCount, setVisibleCount] = useState(2);
     const [selectedMenuItems, setSelectedMenuItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [Loadmenu, setLoadMenu] = useState(6);
+
+    const [stars, setStar] = useState(0);
+    const [foodRating, setFoodRating] = useState(0); // Đánh giá đồ ăn
+    const [serviceRating, setServiceRating] = useState(0); // Đánh giá dịch vụ
+    const [atmosphereRating, setAtmosphereRating] = useState(0); // Đánh giá không khí
+
 
     useEffect(() => {
         initData();
@@ -203,34 +209,70 @@ const Gioithieu = () => {
         }
     }
 
-    const renderStars = (stars) => {
+
+    const renderStars = (rating) => {
         return [...Array(5)].map((_, i) => {
-            if (i < Math.floor(stars)) {
+            if (i < Math.floor(rating)) {
                 return <i key={i} className="fas fa-star text-primary me-2"></i>;
-            } else if (i < stars) {
+            } else if (i < rating) {
                 return <i key={i} className="fas fa-star-half-alt text-primary me-2"></i>;
             } else {
                 return <i key={i} className="far fa-star text-primary me-2"></i>;
             }
         });
     };
-
     useEffect(() => {
+        let totalFoodStars = 0;
+        let totalServiceStars = 0;
+        let totalAtmosphereStars = 0;
         let totalStars = 0;
         let count = 0;
+        let foodCount = 0;
+        let serviceCount = 0;
+        let atmosphereCount = 0;
 
         danhgia.forEach(e => {
+            console.log("Đánh giá hiện tại:", e);
             if (e.id_quanan === quanan.id_quanan) {
-                totalStars += e.sao;
-                count++;
+                // Kiểm tra xem giá trị có hợp lệ không
+                if (typeof e.danh_gia_do_an === 'number') {
+                    totalFoodStars += e.danh_gia_do_an;
+                    foodCount++;
+                }
+                if (typeof e.danh_gia_dich_vu === 'number') {
+                    totalServiceStars += e.danh_gia_dich_vu;
+                    serviceCount++;
+                }
+                if (typeof e.danh_gia_khong_khi === 'number') {
+                    totalAtmosphereStars += e.danh_gia_khong_khi;
+                    atmosphereCount++;
+                }
+                if (typeof e.sao === 'number') {
+                    totalStars += e.sao;
+                    count++;
+                }
+            } else {
+                console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
             }
         });
 
-        if (count > 0) {
-            setStar((totalStars / count).toFixed(1));
-        } else {
-            setStar(0);
-        }
+        // Log kết quả tính toán
+        console.log({
+            totalFoodStars,
+            foodCount,
+            totalServiceStars,
+            serviceCount,
+            totalAtmosphereStars,
+            atmosphereCount,
+            totalStars,
+            count
+        });
+
+        // Tính toán giá trị trung bình
+        setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
+        setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
+        setServiceRating(serviceCount > 0 ? (totalServiceStars / serviceCount).toFixed(1) : 0);
+        setAtmosphereRating(atmosphereCount > 0 ? (totalAtmosphereStars / atmosphereCount).toFixed(1) : 0);
     }, [danhgia, quanan]);
 
     const handleLoadMore = () => {
@@ -507,7 +549,7 @@ const Gioithieu = () => {
                                 <h1 style={{ fontSize: "30px" }} className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
-                                        {menu.filter((mn) => mn.id_quanan === quanan.id_quanan).slice(0,Loadmenu).map((value) => {
+                                        {menu.filter((mn) => mn.id_quanan === quanan.id_quanan).slice(0, Loadmenu).map((value) => {
                                             if (value.id_quanan === quanan.id_quanan) {
                                                 const isSelected = selectedMenuItems.some(item => item.menuId === value.id_menu);
                                                 const selectedItem = selectedMenuItems.find(item => item.menuId === value.id_menu);
@@ -630,7 +672,7 @@ const Gioithieu = () => {
                                             <div className="row">
                                                 <div className="col-6">
                                                     <p>
-                                                        <i className="bi bi-cup-straw me-2"></i>Đồ ăn
+                                                        <i className="bi bi-cup-straw me-2 "></i>Đồ ăn
                                                     </p>
                                                     <p>
                                                         <i className="bi bi-shop me-2"></i>Dịch vụ
@@ -640,24 +682,9 @@ const Gioithieu = () => {
                                                     </p>
                                                 </div>
                                                 <div className="col-6">
-                                                    <p>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                    </p>
-                                                    <p>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                    </p>
-                                                    <p>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                        <i className="fas fa-star text-primary me-2"></i>
-                                                    </p>
+                                                    <p>{foodRating} {renderStars(foodRating)}</p>
+                                                    <p>{serviceRating} {renderStars(serviceRating)}</p>
+                                                    <p>{atmosphereRating} {renderStars(atmosphereRating)}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -677,9 +704,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.khongkhis?.length > 0 ? (
-                                                        quanan.khongkhis.map((khongkhi, index) =>
-                                                        (<div key={khongkhi.id_khongkhi}>
-                                                            {khongkhi.khong_khi} </div>))) :
+                                                            quanan.khongkhis.map((khongkhi, index) =>
+                                                                (<div key={khongkhi.id_khongkhi}>
+                                                                    {khongkhi.khong_khi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -688,9 +715,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.dichvus?.length > 0 ? (
-                                                        quanan.dichvus.map((dichvu, index) =>
-                                                        (<div key={dichvu.id_dichvu}>
-                                                            {dichvu.dich_vu} </div>))) :
+                                                            quanan.dichvus.map((dichvu, index) =>
+                                                                (<div key={dichvu.id_dichvu}>
+                                                                    {dichvu.dich_vu} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -699,9 +726,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.tiennghis?.length > 0 ? (
-                                                        quanan.tiennghis.map((tiennghi, index) =>
-                                                        (<div key={tiennghi.id_tiennghi}>
-                                                            {tiennghi.tien_nghi} </div>))) :
+                                                            quanan.tiennghis.map((tiennghi, index) =>
+                                                                (<div key={tiennghi.id_tiennghi}>
+                                                                    {tiennghi.tien_nghi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -712,9 +739,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.kehoachs?.length > 0 ? (
-                                                        quanan.kehoachs.map((kehoach, index) =>
-                                                        (<div key={kehoach.id_kehoach}>
-                                                            {kehoach.ke_hoach} </div>))) :
+                                                            quanan.kehoachs.map((kehoach, index) =>
+                                                                (<div key={kehoach.id_kehoach}>
+                                                                    {kehoach.ke_hoach} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -723,9 +750,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.baidoxes?.length > 0 ? (
-                                                        quanan.baidoxes.map((baidoxe, index) =>
-                                                        (<div key={baidoxe.id_baidoxe}>
-                                                            {baidoxe.bai_do_xe} </div>))) :
+                                                            quanan.baidoxes.map((baidoxe, index) =>
+                                                                (<div key={baidoxe.id_baidoxe}>
+                                                                    {baidoxe.bai_do_xe} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -734,9 +761,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.loaikhs?.length > 0 ? (
-                                                        quanan.loaikhs.map((loaikh, index) =>
-                                                        (<div key={loaikh.id_loaikh}>
-                                                            {loaikh.khach_hang} </div>))) :
+                                                            quanan.loaikhs.map((loaikh, index) =>
+                                                                (<div key={loaikh.id_loaikh}>
+                                                                    {loaikh.khach_hang} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -851,42 +878,42 @@ const Gioithieu = () => {
                                                     <Grid item xs={12}>
                                                         <Grid container spacing={2}>
                                                             {danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).slice(0, visibleCount).map((dg, index) => (
-                                                                    <Grid item xs={12} key={index}>
-                                                                        <Card sx={{ mb: 2 }}>
-                                                                            <CardContent>
-                                                                                <Grid container spacing={2}>
-                                                                                    <Grid item xs={6}>
-                                                                                        <Typography variant="body2" component="div">
-                                                                                            {nguoidg.map((ndg) =>
-                                                                                                dg.id_nguoidung === ndg.id_nguoidung ? (
-                                                                                                    <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
-                                                                                                ) : null
-                                                                                            )}
-                                                                                        </Typography>
-                                                                                        <Typography variant="caption" display="block">
-                                                                                            {dg.created_at.split("T")[0]}
-                                                                                        </Typography>
-                                                                                    </Grid>
-                                                                                    <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
-                                                                                        {renderStars(dg.sao)}
-                                                                                    </Grid>
-                                                                                    <Grid item xs={12}>
-                                                                                        <img
-                                                                                            src={`${BASE_URL}/uploads/${dg.hinh_anh}`}
-                                                                                            alt="image"
-                                                                                            style={{ width: "150px", borderRadius: "10px" }}
-                                                                                        />
-                                                                                    </Grid>
-                                                                                    <Grid item xs={12}>
-                                                                                        <Typography variant="body2" component="div">
-                                                                                            {dg.binh_luan}
-                                                                                        </Typography>
-                                                                                    </Grid>
+                                                                <Grid item xs={12} key={index}>
+                                                                    <Card sx={{ mb: 2 }}>
+                                                                        <CardContent>
+                                                                            <Grid container spacing={2}>
+                                                                                <Grid item xs={6}>
+                                                                                    <Typography variant="body2" component="div">
+                                                                                        {nguoidg.map((ndg) =>
+                                                                                            dg.id_nguoidung === ndg.id_nguoidung ? (
+                                                                                                <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
+                                                                                            ) : null
+                                                                                        )}
+                                                                                    </Typography>
+                                                                                    <Typography variant="caption" display="block">
+                                                                                        {dg.created_at.split("T")[0]}
+                                                                                    </Typography>
                                                                                 </Grid>
-                                                                            </CardContent>
-                                                                        </Card>
-                                                                    </Grid>
-                                                                ))}
+                                                                                <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
+                                                                                    {renderStars(dg.sao)}
+                                                                                </Grid>
+                                                                                <Grid item xs={12}>
+                                                                                    <img
+                                                                                        src={`${BASE_URL}/uploads/${dg.hinh_anh}`}
+                                                                                        alt="image"
+                                                                                        style={{ width: "150px", borderRadius: "10px" }}
+                                                                                    />
+                                                                                </Grid>
+                                                                                <Grid item xs={12}>
+                                                                                    <Typography variant="body2" component="div">
+                                                                                        {dg.binh_luan}
+                                                                                    </Typography>
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                        </CardContent>
+                                                                    </Card>
+                                                                </Grid>
+                                                            ))}
                                                         </Grid>
                                                     </Grid>
                                                     {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (
