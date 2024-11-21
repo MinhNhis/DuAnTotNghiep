@@ -16,12 +16,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { getDanhmuc } from "../../../services/Danhmuc";
 import { useState, useEffect } from "react";
+import { getAllDanhmucById } from "../../../services/Alldanhmuc";
 
 const ExDanhmuc = () => {
   const params = useParams();
   const id = params.id_alldanhmuc
   const [open, setOpen] = useState(true);
   const [Danhmuc, setDanhmuc] = useState([]);
+  const [allDanhmuc, setAllDanhmuc] = useState({});
+
   const [accounts, setAccounts] = useState(null);
   const navigate = useNavigate()
 
@@ -35,7 +38,7 @@ const ExDanhmuc = () => {
     navigate(`/admin/alldanhmuc`);
   };
 
-  const initData = () => {
+  const initData = async () => {
     getDanhmuc().then((result) => {
       if (result && Array.isArray(result.data)) {
         setDanhmuc(result.data);
@@ -43,15 +46,20 @@ const ExDanhmuc = () => {
         setDanhmuc([]);
       }
     });
+    const res = await getAllDanhmucById(id);
+    setAllDanhmuc(res.data)
   };
-
-
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogContent>
         <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
           <TableHead>
+            <TableRow>
+              <TableCell colSpan={3} sx={{ textAlign: "center", fontWeight: "bold", fontSize:"18px" }}>
+                {`Danh mục của danh muc chính: ${allDanhmuc.ten_danhmuc}`}
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell>
                 <Typography variant="h5" sx={{ fontWeight: "bold" }}>

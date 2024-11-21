@@ -46,6 +46,9 @@ const AddMenu = () => {
         }
     };
 
+    const handleCancle = () => {
+        navigate("/admin/menu");
+    }
 
     return (
         <div>
@@ -204,7 +207,38 @@ const AddMenu = () => {
                             </div>
 
                             <div className="mb-3">
-                                <Button variant="contained" color="primary" sx={{ width: "100px" }} onClick={handleSubmit(onSubmit)}>{`Thêm`} </Button>
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{
+                                        width: "100px",
+                                        marginRight: "10px",
+                                        backgroundColor: "#2196f3",
+                                        color: "#fff",
+                                        '&:hover': {
+                                            backgroundColor: "#1976d2"
+                                        }
+                                    }}
+                                    onClick={handleSubmit(onSubmit)}
+                                >
+                                    {`Thêm`}
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    sx={{
+                                        width: "100px",
+                                        backgroundColor: "#f44336",
+                                        color: "#fff",
+                                        '&:hover': {
+                                            backgroundColor: "#d32f2f"
+                                        }
+                                    }}
+                                    onClick={handleCancle}
+                                >
+                                    {`Hủy`}
+                                </Button>
                             </div>
                         </div>
                     </form>

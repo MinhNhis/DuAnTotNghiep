@@ -361,7 +361,7 @@ const ListQuanAn = () => {
           )}
 
           {selectedTab === "danhgia" && (
-            <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
+            <Box sx={{ paddingLeft: "10px", paddingTop: "15px", }}>
               {danhgia.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
                 danhgia
                   .filter((fil) => fil.id_quanan === quanan?.id_quanan)
@@ -473,7 +473,7 @@ const ListQuanAn = () => {
           )}
 
           {selectedTab === "dondat" && (
-            <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
+            <Box sx={{ paddingLeft: "10px", paddingTop: "15px" , paddingRight:'10px'}}>
               {dondat.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
                 dondat
                   .filter((fil) => fil.id_quanan === quanan?.id_quanan)
@@ -486,8 +486,8 @@ const ListQuanAn = () => {
                         marginBottom: "10px",
                         padding: "10px",
                         borderBottom: "1px solid #E0E0E0",
-                        backgroundColor: "#f9f9f9",
-                        borderRadius: "5px",
+                        backgroundColor: "# style={{color:'#222222'}} ",
+                        borderRadius: "5px",  
                       }}
                     >
                       <Box
@@ -523,13 +523,13 @@ const ListQuanAn = () => {
                         }}
                       >
                         <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Khách hàng:</strong> {dondat.ten_kh}
+                          <strong style={{color:'#222222'}} >Khách hàng:</strong> {dondat.ten_kh}
                         </Typography>
                         <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Số điện thoại:</strong> {dondat.sdt_kh}
+                          <strong style={{color:'#222222'}} >Số điện thoại:</strong> {dondat.sdt_kh}
                         </Typography>
                         <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Email:</strong> {dondat.email_kh}
+                          <strong style={{color:'#222222'}} >Email:</strong> {dondat.email_kh}
                         </Typography>
                       </Box>
                       <Box
@@ -541,17 +541,17 @@ const ListQuanAn = () => {
                         }}
                       >
                         <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Số lượng người:</strong> {dondat.so_luong_nguoi}
+                          <strong style={{color:'#222222'}} >Số lượng người:</strong> {dondat.so_luong_nguoi}
                         </Typography>
                         <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Trạng thái:</strong> {dondat.trang_thai === 0 ? "Đang chờ xử lý" : null}
-                          {dondat.trang_thai === 1 ? "Đã có chổ" : null}
-                          {dondat.trang_thai === 2 ? "Đã hủy" : null}
+                          <strong style={{color:'#222222'}} >Trạng thái: </strong> {dondat.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : null}
+                          {dondat.trang_thai === 1 ? <span class="badge badge-success">Đã có chổ</span> : null}
+                          {dondat.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : null}
 
                         </Typography>
                       </Box>
                       <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                        <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
+                        <strong style={{color:'#222222'}}>Yêu cầu khác: </strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
                       </Typography>
                     </Box>
                   ))
