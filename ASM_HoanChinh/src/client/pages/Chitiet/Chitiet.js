@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import './style.css'
-import { TextField, Button, Typography, Box, Grid, CardContent, Card } from '@mui/material';
+import { TextField, Button, Typography, Box, Grid, CardContent, Card, Dialog, DialogContent, DialogTitle, DialogActions, Divider } from '@mui/material';
 import { useForm } from "react-hook-form";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 
 import { getQuanan, getQuananById } from "../../../services/Quanan";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getNguoiDung } from "../../../services/Nguoidung";
 import { getMenus } from "../../../services/MenuPhu";
-import { addDatcho, getDatcho } from "../../../services/Datcho";
+import { addDatcho, datcoc, getDatcho } from "../../../services/Datcho";
 import { useSnackbar } from "notistack";
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
@@ -19,9 +19,14 @@ import { addMenuOrder } from "../../../services/MenuOrder";
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
     const navigate = useNavigate()
+    const hasCalledRef = useRef(false);
     const params = useParams();
+    const location = useLocation();
     const id = params.id;
-
+    const [checkAdd, setCheckAdd] = useState(false)
+    const [openDialog, setOpenDialog] = useState(false);
+    const [dialogContent, setDialogContent] = useState({});
+    const [ma, setMa] = useState('');
     const [quanan, setQuanan] = useState({});
     const [quananMap, setQuananMap] = useState([]);
     const [danhgia, setDanhgia] = useState([]);
@@ -37,8 +42,69 @@ const Gioithieu = () => {
     const [Loadmenu, setLoadMenu] = useState(6);
 
     useEffect(() => {
-        initData();
-    }, []);
+        initData()
+    }, [])
+
+    const addDondatcho = async (idOrder, transId, orderInfo, amount, resultCode) => {
+        const value = JSON.parse(localStorage.getItem("ThongTin"));
+        const selectedMenuItems = JSON.parse(localStorage.getItem("ThongTinMon"))
+        const res = await getQuananById(id);
+        const ten_quan = res.data.ten_quan_an
+
+        if (Number(resultCode) === 0 && !checkAdd) {
+            const res = await addDatcho({
+                ma_don: orderInfo,
+                tien_coc: Number(amount),
+                ma_giao_dich: Number(transId),
+                ten_quan: ten_quan,
+                ten_kh: value?.ten_kh,
+                sdt_kh: value?.sdt,
+                email_kh: value?.email,
+                ngay_dat: value?.ngay,
+                thoi_gian: value?.thoi_gian,
+                so_luong_nguoi: Number(value?.so_luong),
+                trang_thai: 0,
+                yeu_cau_khac: value?.yeu_cau,
+                id_nguoidung: Number(accounts.id_nguoidung),
+                id_quanan: Number(id)
+            })
+            if (selectedMenuItems) {
+                selectedMenuItems.forEach(async (value) => {
+                    const resOrder = await addMenuOrder({
+                        ten_mon: value.name,
+                        so_luong: Number(value.quantity),
+                        gia: Number(value.price),
+                        id_datcho: res.data.id_datcho,
+                    })
+                })
+
+            }
+            localStorage.removeItem("ThongTin");
+            localStorage.removeItem("ThongTinMon");
+            enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
+            navigate("/profile")
+        }
+    }
+    useEffect(() => {
+        if (hasCalledRef.current) return;
+        const paramsUrl = new URLSearchParams(location.search);
+        const idOrder = paramsUrl.get("orderId");
+        const transId = paramsUrl.get("transId");
+        const orderInfo = paramsUrl.get("orderInfo");
+        const amount = paramsUrl.get("amount");
+        const resultCode = paramsUrl.get("resultCode");
+
+        if (idOrder && transId && orderInfo && amount && resultCode) {
+            addDondatcho(idOrder, transId, orderInfo, amount, resultCode);
+            hasCalledRef.current = true; // Đánh dấu đã gọi
+        }
+    }, [location]);
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        navigate(`/chi-tiet/${id}`);
+    };
+
 
     const initData = async () => {
         const resultQa = await getQuananById(id);
@@ -63,6 +129,7 @@ const Gioithieu = () => {
         const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
         setDatcho(filteredDatcho);
     };
+
 
 
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
@@ -124,6 +191,8 @@ const Gioithieu = () => {
 
 
     const submit = async (value) => {
+        let ma = 'FS' + randomMadon()
+        setMa(ma)
         if (value.so_luong > quanan.so_luong_cho) {
             enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
         } else {
@@ -137,70 +206,34 @@ const Gioithieu = () => {
 
             fillDatcho.find(async (e) => {
                 if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
-                    const res = await addDatcho({
-                        ma_don: 'FS' + randomMadon(),
-                        ten_quan: quanan.ten_quan_an,
-                        ten_kh: value?.ten_kh,
-                        sdt_kh: value?.sdt,
-                        email_kh: value?.email,
-                        ngay_dat: value?.ngay,
-                        thoi_gian: value?.thoi_gian,
-                        so_luong_nguoi: value?.so_luong,
-                        trang_thai: 0,
-                        yeu_cau_khac: value?.yeu_cau,
-                        id_nguoidung: accounts.id_nguoidung,
-                        id_quanan: id
-                    })
-
-                    if (selectedMenuItems) {
-                        selectedMenuItems.forEach(async (value) => {
-                            const resOrder = await addMenuOrder({
-                                ten_mon: value.name,
-                                so_luong: value.quantity,
-                                gia: value.price,
-                                id_datcho: res.data.id_datcho,
-                            })
-                        })
-
+                    setDialogContent(value);
+                    if (totalPrice === 0) {
+                        enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })
+                    } else {
+                        localStorage.setItem("ThongTin", JSON.stringify(value));
+                        if (selectedMenuItems) {
+                            localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
+                        }
+                        setOpenDialog(true);
                     }
-                    enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
-                    navigate("/profile")
-
                 } else {
                     return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
                 }
             })
-            // -------------------------------------------------------------------------------------/
-            if (fillDatcho.length === 0) {
-                const res = await addDatcho({
-                    ma_don: 'FS' + randomMadon(),
-                    ten_quan: quanan.ten_quan_an,
-                    ten_kh: value?.ten_kh,
-                    sdt_kh: value?.sdt,
-                    email_kh: value?.email,
-                    ngay_dat: value?.ngay,
-                    thoi_gian: value?.thoi_gian,
-                    so_luong_nguoi: value?.so_luong,
-                    trang_thai: 0,
-                    yeu_cau_khac: value?.yeu_cau,
-                    id_nguoidung: accounts.id_nguoidung,
-                    id_quanan: id
-                })
-                if (selectedMenuItems) {
-                    selectedMenuItems.forEach(async (value) => {
-                        const resOrder = await addMenuOrder({
-                            ten_mon: value.name,
-                            so_luong: value.quantity,
-                            gia: value.price,
-                            id_datcho: res.data.id_datcho,
-                        })
-                    })
 
+            if (fillDatcho.length === 0) {
+                if (totalPrice === 0) {
+                    enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })
+                } else {
+                    setDialogContent(value);
+                    localStorage.setItem("ThongTin", JSON.stringify(value));
+                    localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
+                    setOpenDialog(true);
                 }
-                enqueueSnackbar("Đặt chỗ thành công!", { variant: "success" });
-                navigate("/profile")
+
             }
         }
+
     }
 
     const renderStars = (stars) => {
@@ -241,8 +274,127 @@ const Gioithieu = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
 
+    const onSubmitDatCoc = async () => {
+        try {
+            const result = await datcoc({
+                amount: totalPrice * 0.3,
+                orderInfo: ma,
+                id_quanan: id
+            })
+            //setResThanhtoan(result)
+            window.open(result.payUrl, "_self");
+        } catch (error) {
+            enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
+        }
+    };
+
     return (
         <>
+            <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+                <DialogTitle sx={{ fontSize: "30px" }}>Xác nhận đặt cọc</DialogTitle>
+
+                <DialogContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                        Thông tin đơn hàng
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, fontSize: '14px' }}>Tên khách hàng:</Typography>
+                        <Typography variant="body2">{dialogContent.ten_kh}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, }}>Email khách hàng:</Typography>
+                        <Typography variant="body2">{dialogContent.email}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, }}>Mã đơn hàng:</Typography>
+                        <Typography variant="body2">{ma}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, }}>Điện thoại:</Typography>
+                        <Typography variant="body2">{dialogContent.sdt}</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, }}>Số lượng người:</Typography>
+                        <Typography variant="body2">{dialogContent.so_luong}</Typography>
+                    </Box>
+                    <Box sx={{ mb: 3, display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1, }}>Yêu cầu khác:</Typography>
+                        <Typography variant="body2">{dialogContent.yeu_cau}</Typography>
+                    </Box>
+
+                    {/* Danh sách món đã chọn */}
+                    <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                        Thông tin gọi món
+                    </Typography>
+                    {selectedMenuItems.map((value, index) => (
+                        <React.Fragment key={index}>
+                            <Grid item xs={8} sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <Box sx={{ fontSize: "14px", flex: 1 }}>{value.name}</Box>
+                                <Box sx={{ fontSize: "14px", textAlign: "right", flex: 1 }}>
+                                    {formatPrice(value.price)} x {value.quantity}
+                                </Box>
+                            </Grid>
+                            {index < selectedMenuItems.length - 1 && (
+                                <Grid item xs={12}>
+                                    <Divider sx={{ width: "100%" }} />
+                                </Grid>
+                            )}
+                        </React.Fragment>
+                    ))}
+                    <Box sx={{ mb: 2, display: 'flex', }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 1 }}>Tổng tiền:</Typography>
+                        <Typography variant="body1">{formatPrice(totalPrice)}</Typography>
+                    </Box>
+                    <Box>
+                        <Typography variant="h6">Để hoàn thành đặt chỗ cần đặt cọc trước 30% tổng số tiền </Typography>
+                    </Box>
+                    <Box display="flex" flexDirection="column" gap={2} mt={2}>
+                        <TextField
+                            label="Số tiền đặt cọc"
+                            name="soTien"
+                            type="number"
+                            fullWidth
+                            variant="outlined"
+                            value={totalPrice * 0.3}
+                            disabled
+                            sx={{
+                                "& .MuiInputBase-input": { color: "black" },
+                                "& .MuiInputLabel-root": { color: "black" },
+                                "& .Mui-disabled": { color: "black" },
+                            }}
+                        />
+                        <TextField
+                            label="Nội dung"
+                            name="noiDung"
+                            rows={4}
+                            fullWidth
+                            variant="outlined"
+                            value={ma}
+                            disabled
+                            sx={{
+                                "& .MuiInputBase-input": { color: "black" },
+                                "& .MuiInputLabel-root": { color: "black" },
+                                "& .Mui-disabled": { color: "black" },
+                            }}
+                        />
+                    </Box>
+
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} style={{
+                        backgroundColor: "#FF3366",
+                        color: "white",
+                    }}>
+                        Hủy
+                    </Button>
+                    <Button onClick={onSubmitDatCoc} style={{
+                        backgroundColor: "#d4a762",
+                        color: "white",
+                    }}>
+                        Đồng ý
+                    </Button>
+                </DialogActions>
+            </Dialog>
             <div className="container-fluid py-1">
                 {/* <Navbar /> */}
                 <div class="row mb-2" fullWidth style={{ height: "auto" }}>
@@ -507,7 +659,7 @@ const Gioithieu = () => {
                                 <h1 style={{ fontSize: "30px" }} className="text-dark text-center">MENU</h1>
                                 <CardContent>
                                     <div className="row">
-                                        {menu.filter((mn) => mn.id_quanan === quanan.id_quanan).slice(0,Loadmenu).map((value) => {
+                                        {menu.filter((mn) => mn.id_quanan === quanan.id_quanan).slice(0, Loadmenu).map((value) => {
                                             if (value.id_quanan === quanan.id_quanan) {
                                                 const isSelected = selectedMenuItems.some(item => item.menuId === value.id_menu);
                                                 const selectedItem = selectedMenuItems.find(item => item.menuId === value.id_menu);
@@ -851,42 +1003,42 @@ const Gioithieu = () => {
                                                     <Grid item xs={12}>
                                                         <Grid container spacing={2}>
                                                             {danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).slice(0, visibleCount).map((dg, index) => (
-                                                                    <Grid item xs={12} key={index}>
-                                                                        <Card sx={{ mb: 2 }}>
-                                                                            <CardContent>
-                                                                                <Grid container spacing={2}>
-                                                                                    <Grid item xs={6}>
-                                                                                        <Typography variant="body2" component="div">
-                                                                                            {nguoidg.map((ndg) =>
-                                                                                                dg.id_nguoidung === ndg.id_nguoidung ? (
-                                                                                                    <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
-                                                                                                ) : null
-                                                                                            )}
-                                                                                        </Typography>
-                                                                                        <Typography variant="caption" display="block">
-                                                                                            {dg.created_at.split("T")[0]}
-                                                                                        </Typography>
-                                                                                    </Grid>
-                                                                                    <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
-                                                                                        {renderStars(dg.sao)}
-                                                                                    </Grid>
-                                                                                    <Grid item xs={12}>
-                                                                                        <img
-                                                                                            src={`${BASE_URL}/uploads/${dg.hinh_anh}`}
-                                                                                            alt="image"
-                                                                                            style={{ width: "150px", borderRadius: "10px" }}
-                                                                                        />
-                                                                                    </Grid>
-                                                                                    <Grid item xs={12}>
-                                                                                        <Typography variant="body2" component="div">
-                                                                                            {dg.binh_luan}
-                                                                                        </Typography>
-                                                                                    </Grid>
+                                                                <Grid item xs={12} key={index}>
+                                                                    <Card sx={{ mb: 2 }}>
+                                                                        <CardContent>
+                                                                            <Grid container spacing={2}>
+                                                                                <Grid item xs={6}>
+                                                                                    <Typography variant="body2" component="div">
+                                                                                        {nguoidg.map((ndg) =>
+                                                                                            dg.id_nguoidung === ndg.id_nguoidung ? (
+                                                                                                <span key={ndg.id_nguoidung}>{ndg.ten_nguoi_dung}</span>
+                                                                                            ) : null
+                                                                                        )}
+                                                                                    </Typography>
+                                                                                    <Typography variant="caption" display="block">
+                                                                                        {dg.created_at.split("T")[0]}
+                                                                                    </Typography>
                                                                                 </Grid>
-                                                                            </CardContent>
-                                                                        </Card>
-                                                                    </Grid>
-                                                                ))}
+                                                                                <Grid item xs={6} display="flex" alignItems="center" justifyContent="flex-end">
+                                                                                    {renderStars(dg.sao)}
+                                                                                </Grid>
+                                                                                <Grid item xs={12}>
+                                                                                    <img
+                                                                                        src={`${BASE_URL}/uploads/${dg.hinh_anh}`}
+                                                                                        alt="image"
+                                                                                        style={{ width: "150px", borderRadius: "10px" }}
+                                                                                    />
+                                                                                </Grid>
+                                                                                <Grid item xs={12}>
+                                                                                    <Typography variant="body2" component="div">
+                                                                                        {dg.binh_luan}
+                                                                                    </Typography>
+                                                                                </Grid>
+                                                                            </Grid>
+                                                                        </CardContent>
+                                                                    </Card>
+                                                                </Grid>
+                                                            ))}
                                                         </Grid>
                                                     </Grid>
                                                     {visibleCount < danhgia.filter(dg => dg.id_quanan === quanan.id_quanan).length && (

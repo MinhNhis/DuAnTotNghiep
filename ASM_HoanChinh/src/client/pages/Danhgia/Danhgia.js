@@ -63,7 +63,6 @@ const Danhgia = () => {
         })
         navigate(`/chi-tiet/${quanan.id_quanan}`)
     }
-    console.log(luot);
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
 
     useEffect(() => {

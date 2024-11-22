@@ -163,7 +163,7 @@ const DeleteQuanAn = () => {
                                     rows={1.75}
                                     value={otherReason}
                                     onChange={handleOtherReasonChange}
-                                    sx={{ width: "50%", marginTop: 1 }}
+                                    sx={{ width: "100%", marginTop: 1 }}
                                 />
                             )}
                         </DialogContentText>

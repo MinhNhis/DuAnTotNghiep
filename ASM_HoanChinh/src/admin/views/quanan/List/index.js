@@ -9,10 +9,12 @@ import { getNguoiDung } from "../../../../services/Nguoidung";
 import { getDanhmuc } from "../../../../services/Danhmuc";
 import { getDanhgia } from "../../../../services/Danhgia";
 import { getDatcho } from "../../../../services/Datcho";
+import { getMenuOrder } from "../../../../services/MenuOrder";
 
 const ListQuanAn = () => {
   const [quanan, setQuanan] = useState(null);
   const [menu, setMenu] = useState([]);
+  const [menuOrder, setMenuOrder] = useState([]);
   const [nguoidung, setNguoidung] = useState([]);
   const [nguoidungdanh, setNguoiDungDanhGia] = useState([]);
   const [selectedTab, setSelectedTab] = useState("menu");
@@ -41,6 +43,9 @@ const ListQuanAn = () => {
         const menuResult = await getMenus(quananResult.data.id_quanan);
         setMenu(menuResult.data);
       }
+
+      const resMenuOrder = await getMenuOrder();
+      setMenuOrder(resMenuOrder.data)
 
       const nguoiDungList = await getNguoiDung();
       const User = nguoiDungList.data.find(
@@ -72,6 +77,10 @@ const ListQuanAn = () => {
         ? <i key={i} className="fas fa-star text-primary me-2"></i>
         : <i key={i} className="far fa-star text-primary me-2"></i>
     ));
+  };
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
 
   return (
@@ -478,82 +487,114 @@ const ListQuanAn = () => {
                 dondat
                   .filter((fil) => fil.id_quanan === quanan?.id_quanan)
                   .map((dondat, index) => (
-                    <Box
-                      key={dondat.id_datcho}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginBottom: "10px",
-                        padding: "10px",
-                        borderBottom: "1px solid #E0E0E0",
-                        backgroundColor: "#f9f9f9",
-                        borderRadius: "5px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
+
+                    <Box sx={{
+                      display: "flex", gap: 4, padding: 2, borderBottom: "1px solid #eee"
+                    }}>
+                      {/* Cột bên trái: Thông tin quán */}
+                      <Box sx={{ flex: 1 }}>
                         <Typography
+                          variant="h6"
                           sx={{
-                            fontSize: "16px",
                             fontWeight: "bold",
                             color: "#333",
+                            marginBottom: "16px",
                           }}
                         >
                           {index + 1}. {dondat.ten_quan}
                         </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            color: "#888",
-                          }}
-                        >
-                          {new Date(dondat.ngay_dat).toLocaleDateString()} - {dondat.thoi_gian}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Ngày đặt:</strong> {new Date(dondat.ngay_dat).toLocaleDateString()} - {dondat.thoi_gian}
                         </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          flexWrap: "wrap",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã đơn hàng:</strong> {dondat.ma_don}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã giao dịch:</strong> {dondat.ma_giao_dich}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Tiền cọc:</strong> {formatPrice(dondat.tien_coc)} (30%)
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
                           <strong>Khách hàng:</strong> {dondat.ten_kh}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
                           <strong>Số điện thoại:</strong> {dondat.sdt_kh}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
                           <strong>Email:</strong> {dondat.email_kh}
                         </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
                           <strong>Số lượng người:</strong> {dondat.so_luong_nguoi}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong>Trạng thái:</strong> {dondat.trang_thai === 0 ? "Đang chờ xử lý" : null}
-                          {dondat.trang_thai === 1 ? "Đã có chổ" : null}
-                          {dondat.trang_thai === 2 ? "Đã hủy" : null}
-
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
+                        </Typography>
+                        <Typography>
+                          {dondat.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (dondat.trang_thai === 1 ? <span class="badge badge-success">Đã có chỗ</span> : (dondat.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (dondat.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}
                         </Typography>
                       </Box>
-                      <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                        <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
-                      </Typography>
+
+                      {/* Cột bên phải: Thông tin món */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333", marginBottom: "16px" }}>
+                          Thực đơn đã đặt
+                        </Typography>
+                        {menuOrder.map((item, itemIndex) => {
+                          if (item.id_datcho === dondat.id_datcho) {
+                            return (
+                              <React.Fragment key={itemIndex}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: "8px 0",
+                                    borderBottom: itemIndex < menuOrder.length - 1 ? "1px solid #eee" : "none",
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: "15px", flex: 2 }}>{item.ten_mon}</Typography>
+                                  <Typography
+                                    sx={{ fontSize: "15px", flex: 1, textAlign: "right", color: "#666" }}
+                                  >
+                                    {formatPrice(item.gia)} x {item.so_luong}
+                                  </Typography>
+                                </Box>
+                              </React.Fragment>
+                            );
+                          }
+                          return null;
+                        })}
+
+                        <React.Fragment >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mt: 2,
+                            }}
+                          >
+                            <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>Tổng tiền:</Typography>
+                            <Typography
+                              sx={{
+                                fontSize: "15px",
+                                textAlign: "right",
+                                color: "#666",
+                              }}
+                            >
+                              {menuOrder
+                                .filter((item) => item.id_datcho === dondat.id_datcho)
+                                .reduce((total, item) => total + item.gia * item.so_luong, 0)
+                                .toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                            </Typography>
+                          </Box>
+                        </React.Fragment>
+
+                      </Box>
                     </Box>
+
+
                   ))
               ) : (
                 <Typography

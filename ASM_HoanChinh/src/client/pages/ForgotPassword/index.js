@@ -13,8 +13,6 @@ const ForgotPassword = () => {
 
   const submit = async (data) => {
     try {
-      console.log('Submitting data:', data);
-
       const response = await fetch(`${PageUrl}/api/reset`, {
         method: 'POST',
         headers: {
@@ -24,8 +22,6 @@ const ForgotPassword = () => {
       });
 
       const responseData = await response.json();
-      console.log('Response from server:', responseData);
-
       if (response.ok && responseData.message === 'Password reset email sent.') {
         enqueueSnackbar("Mật khẩu đã được gửi về email", {
           variant: "success",})
