@@ -130,7 +130,7 @@ const Trangchu = () => {
                     </div>
                     <div className="row g-5 align-items-center">
                         <div className='row mb-3'>
-                            <h2>{quanan5Km ? 'Quán ăn gần đây' : ''}</h2>
+                            <h2>{quanan5Km.length >0 ? 'Quán ăn gần đây' : ''}</h2>
                             {
                                 quanan5Km.map((value, index) => {
                                     return (

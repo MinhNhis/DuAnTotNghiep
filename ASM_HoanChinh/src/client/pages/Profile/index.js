@@ -29,7 +29,7 @@ const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
     const profileForm = useForm();
     const passwordForm = useForm();
-
+    const { register, handleSubmit, formState } = useForm()
     const { enqueueSnackbar } = useSnackbar();
     const [dondatcho, setDon] = useState([]);
     const [menuorder, setMenuOrder] = useState([]);
@@ -101,7 +101,7 @@ const Profile = () => {
         setId(null);
     };
 
-    const onHuydon = async () => {
+    const onHuydon = async (value) => {
         try {
             const datcho = dondatcho.find((e) => e.id_datcho === id);
             const quan = quans.filter((e) => e.id_quanan === datcho.id_quanan)
@@ -118,8 +118,8 @@ const Profile = () => {
                 id_nguoidung: datcho?.id_nguoidung,
             });
             setOpen(false);
-            quan.map(async (value) => {
-                await sendEmailToQuan(datcho.id_datcho, value.created_user, "Khách hàng đã hủy đơn")
+            quan.map(async (item) => {
+                await sendEmailToQuan(datcho.id_datcho, item.created_user, `Khách hàng đã hủy đơn với lý do: ${value.ly_do_huy}`)
             })
             setId(null);
             enqueueSnackbar("Hủy thành công!", { variant: "success" });
@@ -134,7 +134,6 @@ const Profile = () => {
         const id_nguoidung = accounts?.id_nguoidung;
 
         try {
-            console.log("Cập nhật hồ sơ với dữ liệu:", data);
             const res = await editNguoiDung(id_nguoidung, {
                 ten_nguoi_dung: data.ten_nguoi_dung,
                 email: data.email,
@@ -520,6 +519,20 @@ const Profile = () => {
                                         <p>
                                             <strong>Mã đơn:</strong> {value?.ma_don}
                                         </p>
+
+                                        <p>
+                                            <strong>Mã giao dịch:</strong> {value?.ma_giao_dich}
+                                        </p>
+
+                                        <p>
+                                            <strong>Tiền cọc:</strong> {formatPrice(value?.tien_coc)} {'(30%)'}
+                                        </p>
+
+                                        <p>
+                                            <strong>Ngày:</strong>
+                                            {value?.ngay_dat.split("T")[0]}
+                                        </p>
+
                                         <p>
                                             <strong>Thời gian:</strong> {value?.thoi_gian}
                                         </p>
@@ -529,10 +542,7 @@ const Profile = () => {
                                         <p>
                                             <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
                                         </p>
-                                        <p>
-                                            <strong>Ngày:</strong>
-                                            {value?.ngay_dat.split("T")[0]}
-                                        </p>
+
                                     </div>
                                 </div>
 
@@ -606,9 +616,33 @@ const Profile = () => {
                                         {dondatcho.find((item) => item.id_datcho === id)?.ten_quan}{" "}
                                         này không?
                                     </DialogContentText>
+                                    <TextField
+                                        label="Lý do"
+                                        name="noiDung"
+                                        rows={4}
+                                        fullWidth
+                                        variant="outlined"
+                                        sx={{
+                                            "& .MuiInputBase-input": { color: "black" },
+                                            "& .MuiInputLabel-root": { color: "black" },
+                                            "& .Mui-disabled": { color: "black" },
+                                            mt: 2
+                                        }}
+                                        {...register("ly_do_huy", {
+                                            required: {
+                                                value: true,
+                                                message: "Vui lòng nhập lý do"
+                                            }
+                                        })}
+                                    />
+                                    {formState?.errors?.ly_do_huy && (
+                                        <small className="text-danger">
+                                            {formState?.errors?.ly_do_huy?.message}
+                                        </small>
+                                    )}
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button onClick={onHuydon} color="error" autoFocus>
+                                    <Button onClick={handleSubmit(onHuydon)} color="error" autoFocus>
                                         Có
                                     </Button>
                                     <Button onClick={handleClose} color="primary">

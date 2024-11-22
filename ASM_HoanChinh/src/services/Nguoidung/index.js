@@ -18,7 +18,7 @@ const getNguoiDungById = async (id) => {
     return res
 }
 
-const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro, stk, ngan_hang, ctk }) => {
+const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro, stk, ngan_hang, ctk, hinh_QR }) => {
     const data = new FormData();
     data.append("ten_nguoi_dung", ten_nguoi_dung);
     data.append("mat_khau", mat_khau);
@@ -48,7 +48,7 @@ const addNguoiDung = async ({ ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien
     }
 }
 
-const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro , stk, ngan_hang, ctk}) => {
+const editNguoiDung = async (id, { ten_nguoi_dung, hinh_anh, mat_khau, email, so_dien_thoai, ngay_sinh, gioi_tinh, dia_chi, vai_tro , stk, ngan_hang, ctk, hinh_QR}) => {
     const data = new FormData();
     data.append("ten_nguoi_dung", ten_nguoi_dung);
     data.append("mat_khau", mat_khau);
