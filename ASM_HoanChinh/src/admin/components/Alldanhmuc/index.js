@@ -24,11 +24,6 @@ const Alldanhmuc = () => {
   const [AllDanhmuc, setAllDanhmuc] = useState([]);
   const [Danhmuc, setDanhmuc] = useState([]);
   const [accounts, setAccounts] = useState(null);
-  const [showAll, setShowAll] = useState(false);
-
-  const handleShowDanhmuc = () => {
-    setShowAll(!showAll);
-  };
 
   const navigate = useNavigate();
 

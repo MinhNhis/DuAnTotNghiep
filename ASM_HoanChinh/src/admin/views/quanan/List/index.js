@@ -80,15 +80,10 @@ const ListQuanAn = () => {
   };
 
   useEffect(() => {
-
     let totalStars = 0;
     let count = 0;
-
-
     danhgia.forEach(e => {
-      console.log("Đánh giá hiện tại:", e);
       if (e.id_quanan === quanan.id_quanan) {
-        // Kiểm tra xem giá trị có hợp lệ không
         if (typeof e.sao === 'number') {
           totalStars += e.sao;
           count++;
@@ -203,7 +198,7 @@ const ListQuanAn = () => {
                               )}
                               {showFullDescription && (
                                   <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
-                              Xem ít hơn
+                              Ẩn bớt
                             </span>
                               )}</Typography>
                           </Grid>
