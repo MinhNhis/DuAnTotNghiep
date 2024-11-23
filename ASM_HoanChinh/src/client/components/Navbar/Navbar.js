@@ -30,6 +30,7 @@ const Navbar = () => {
   const logOut = () => {
     const date = new Date();
     localStorage.setItem("accounts", JSON.stringify(null));
+    localStorage.removeItem("Link");
     removeCookie("token", null, { path: "/", expires: date });
     removeCookie("role", null, { path: "/", expires: date });
   };
