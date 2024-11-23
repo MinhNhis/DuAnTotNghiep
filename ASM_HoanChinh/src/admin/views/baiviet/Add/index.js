@@ -12,6 +12,7 @@ const AddBaiViet = () => {
   const { register, handleSubmit, control, formState } = useForm();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
 
   const submit = async (value) => {
     try {
@@ -21,7 +22,8 @@ const AddBaiViet = () => {
         tieu_de: value?.tieu_de,
         noi_dung: value?.noi_dung,
         hinh_anh: value?.hinh_anh[0] || '',
-        ngay_dang: value?.ngay_dang || ngayhientai
+        ngay_dang: value?.ngay_dang || ngayhientai,
+        created_user: accounts.id_nguoidung
       });
       enqueueSnackbar('Thêm bài viết thành công!', { variant: 'success' });
       navigate("/admin/bai-viet");

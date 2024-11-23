@@ -48,6 +48,7 @@ const Gioithieu = () => {
 
 
     useEffect(() => {
+        localStorage.setItem("Link", `chi-tiet/${id}`)
         initData()
     }, [])
 

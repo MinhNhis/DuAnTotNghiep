@@ -158,7 +158,7 @@ const BaiVietTable = () => {
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <Box>
                         <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                          {baiviet.created_user === 0 ? 'FoodSeeker' : ''}
+                          {baiviet.created_user === 2 ? 'FoodSeeker' : ''}
                         </Typography>
                       </Box>
                     </Box>
