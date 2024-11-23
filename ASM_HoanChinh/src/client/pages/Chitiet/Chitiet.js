@@ -698,7 +698,7 @@ const Gioithieu = () => {
                                                     </Grid>
                                                 </Box>
                                             </div>
-                                        </> : <h5 className="text-center mt-5"> Bạn cần đăng nhập để có thể đặt chỗ !</h5>
+                                        </> : <h5 className="text-center mt-5"> Bạn cần <Link to="/login">đăng nhập</Link> để có thể đặt chỗ !</h5>
                                     }
 
                                 </CardContent>
