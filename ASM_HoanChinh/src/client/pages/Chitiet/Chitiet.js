@@ -288,19 +288,6 @@ const Gioithieu = () => {
                 console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
             }
         });
-
-        // Log kết quả tính toán
-        console.log({
-            totalFoodStars,
-            foodCount,
-            totalServiceStars,
-            serviceCount,
-            totalAtmosphereStars,
-            atmosphereCount,
-            totalStars,
-            count
-        });
-
         // Tính toán giá trị trung bình
         setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
         setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
