@@ -44,18 +44,49 @@ const Danhgia = () => {
 
 
     const [rating, setRating] = useState(0);
+    const [serviceRating, setServiceRating] = useState(0); // Đánh giá dịch vụ
+    const [foodRating, setFoodRating] = useState(0); // Đánh giá đồ ăn
+    const [atmosphereRating, setAtmosphereRating] = useState(0); // Đánh giá không khí
+
     const handleClick = (index) => {
         setRating(index + 1);
     };
 
+    const formatPhoneNumber = (phoneNumber) => {
+        // Loại bỏ tất cả các ký tự không phải số
+        const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+
+        // Kiểm tra độ dài của số điện thoại
+        if (cleaned.length < 4) {
+            return cleaned; // Nếu số điện thoại ngắn hơn 4 ký tự, trả về như hiện tại
+        }
+
+        // Chia số điện thoại thành 4 ký tự đầu và phần còn lại
+        const firstPart = cleaned.slice(0, 4); // 4 số đầu
+        const secondPart = cleaned.slice(4); // Phần còn lại
+
+        // Kết hợp với khoảng cách giữa các số
+        return secondPart.replace(/(\d{3})(?=\d)/g, '$1 ').trim(); // Cách ở mỗi nhóm 3 số
+    }
+    const handleServiceRating = (value) => {
+        setServiceRating(value);
+    }
+
+    const handleFoodRating = (value) => {
+        setFoodRating(value);
+    }
+
+    const handleAtmosphereRating = (value) => {
+        setAtmosphereRating(value);
+    }
 
 
     const submit = async (value) => {
         await addDanhgia({
             binh_luan: value?.noi_dung,
-            danh_gia_dich_vu: value?.danh_gia_dv,
-            danh_gia_do_an: value?.danh_gia_do_an,
-            danh_gia_khong_khi: value?.danh_gia_khong_khi,
+            danh_gia_dich_vu: serviceRating,
+            danh_gia_do_an: foodRating,
+            danh_gia_khong_khi: atmosphereRating,
             sao: rating,
             hinh_anh: value?.danh_gia_hinh_anh[0],
             id_nguoidung: accounts?.id_nguoidung,
@@ -63,7 +94,6 @@ const Danhgia = () => {
         })
         navigate(`/chi-tiet/${quanan.id_quanan}`)
     }
-    console.log(luot);
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
 
     useEffect(() => {
@@ -114,13 +144,19 @@ const Danhgia = () => {
                                             <div className="row">
                                                 <div className="col-12">
                                                     <div className="mb-2">
-                                                        <label className="form-lable text-dark"> Đánh giá dịch vụ</label>
-                                                        <input type="text" className="form-control border-primary text-dark" {...register("danh_gia_dv", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Vui lòng nhập đánh giá dịch vụ"
-                                                            }
-                                                        })} />
+                                                        <label className="form-label text-dark">Đánh giá dịch vụ</label>
+                                                        <div>
+                                                            {[...Array(5)].map((_, index) => (
+                                                                <span key={index} onClick={() => handleServiceRating(index + 1)}>
+                                                                    {index < serviceRating ? (
+                                                                        <StarIcon style={{ fontSize: '50px', color: '#d4a762' }} />
+                                                                    ) : (
+                                                                        <StarOutlineIcon style={{ fontSize: '50px' }} />
+                                                                    )}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        {/* Hiển thị thông báo lỗi nếu cần */}
                                                         {formState?.errors?.danh_gia_dv && (
                                                             <small className="text-danger">
                                                                 {formState?.errors?.danh_gia_dv?.message}
@@ -128,13 +164,19 @@ const Danhgia = () => {
                                                         )}
                                                     </div>
                                                     <div className="mb-2">
-                                                        <label className="form-lable text-dark">  Đánh giá đồ ăn</label>
-                                                        <input type="text" className="form-control border-primary text-dark" {...register("danh_gia_do_an", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Vui lòng nhập đánh giá đồ ăn"
-                                                            }
-                                                        })} />
+                                                        <label className="form-label text-dark">Đánh giá đồ ăn</label>
+                                                        <div>
+                                                            {[...Array(5)].map((_, index) => (
+                                                                <span key={index} onClick={() => handleFoodRating(index + 1)}>
+                                                                    {index < foodRating ? (
+                                                                        <StarIcon style={{ fontSize: '50px', color: '#d4a762' }} />
+                                                                    ) : (
+                                                                        <StarOutlineIcon style={{ fontSize: '50px' }} />
+                                                                    )}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        {/* Hiển thị thông báo lỗi nếu cần */}
                                                         {formState?.errors?.danh_gia_do_an && (
                                                             <small className="text-danger">
                                                                 {formState?.errors?.danh_gia_do_an?.message}
@@ -142,13 +184,19 @@ const Danhgia = () => {
                                                         )}
                                                     </div>
                                                     <div className="mb-2">
-                                                        <label className="form-lable text-dark"> Đánh giá không khí</label>
-                                                        <input type="text" className="form-control border-primary text-dark" {...register("danh_gia_khong_khi", {
-                                                            required: {
-                                                                value: true,
-                                                                message: "Vui lòng nhập đánh giá không khí"
-                                                            }
-                                                        })} />
+                                                        <label className="form-label text-dark">Đánh giá không khí</label>
+                                                        <div>
+                                                            {[...Array(5)].map((_, index) => (
+                                                                <span key={index} onClick={() => handleAtmosphereRating(index + 1)}>
+                                                                    {index < atmosphereRating ? (
+                                                                        <StarIcon style={{ fontSize: '50px', color: '#d4a762' }} />
+                                                                    ) : (
+                                                                        <StarOutlineIcon style={{ fontSize: '50px' }} />
+                                                                    )}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                        {/* Hiển thị thông báo lỗi nếu cần */}
                                                         {formState?.errors?.danh_gia_khong_khi && (
                                                             <small className="text-danger">
                                                                 {formState?.errors?.danh_gia_khong_khi?.message}
@@ -160,12 +208,12 @@ const Danhgia = () => {
                                             <div className="mb-3">
                                                 <label className="form-lable text-dark" style={{ fontSize: '25px', fontWeight: 'bold' }}>Nội dung đánh giá</label>
                                                 <textarea className="w-100 form-control mb-4 p-3 border-primary bg-light text-dark" rows="4" cols="10" placeholder="Your Message"
-                                                    {...register("noi_dung", {
-                                                        required: {
-                                                            value: true,
-                                                            message: "Nội dung không được bỏ trống"
-                                                        }
-                                                    })}
+                                                          {...register("noi_dung", {
+                                                              required: {
+                                                                  value: true,
+                                                                  message: "Nội dung không được bỏ trống"
+                                                              }
+                                                          })}
                                                 ></textarea>
                                                 {formState?.errors?.noi_dung && (
                                                     <small className="text-danger">
@@ -201,16 +249,16 @@ const Danhgia = () => {
                                     <div className="d-inline-flex w-100 border border-primary p-4 rounded mb-4">
                                         <i className="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
                                         <div className="">
-                                            <h4>Address</h4>
-                                            <p>123 Street, New York, USA</p>
+                                            <h4>Địa chỉ</h4>
+                                            <p>{quanan?.dia_chi}</p>
                                         </div>
                                     </div>
                                     <div className="d-inline-flex w-100 border border-primary p-4 rounded">
                                         <i className="fa fa-phone-alt fa-2x text-primary me-4"></i>
                                         <div className="">
-                                            <h4>Telephone</h4>
-                                            <p className="mb-2">(+012) 3456 7890 123</p>
-                                            <p className="mb-0">(+704) 5555 0127 296</p>
+                                            <h4>Số điện thoại</h4>
+                                            <p className="mb-2">{quanan?.dien_thoai ? `${quanan.dien_thoai.slice(0, 4)} ${formatPhoneNumber(quanan.dien_thoai.slice(0))}` : "Không có số điện thoại"}</p>
+
                                         </div>
                                     </div>
                                 </div>

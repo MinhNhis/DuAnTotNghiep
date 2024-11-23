@@ -18,13 +18,15 @@ const getDatchoById = async (id) => {
     return res
 }
 
-const addDatcho = async ({ ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+const addDatcho = async ({ ma_don, tien_coc, ma_giao_dich, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, yeu_cau_khac, id_nguoidung, id_quanan }) => {
 
     const res = await request({
         method: "POST",
         path: "api/dat-cho",
         data: {
             ma_don: ma_don,
+            tien_coc: tien_coc,
+            ma_giao_dich: ma_giao_dich,
             ten_quan: ten_quan,
             ten_kh: ten_kh,
             sdt_kh: sdt_kh,
@@ -110,7 +112,7 @@ const sendEmail = async (id, reason) => {
     const res = await request({
         method: "POST",
         path: `api/sendMail-dat-cho/${id}`,
-        data: {reason}
+        data: { reason }
     })
 
     return res
@@ -129,4 +131,28 @@ const sendEmailToQuan = async (id, id_chuquan, reason) => {
     return res
 }
 
-export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan,sendEmail,sendEmailToQuan, getKhachhang,paginator }
+const datcoc = async ({ amount, orderInfo, id_quanan }) => {
+    const res = await request({
+        method: "POST",
+        path: "api/paymentdatcoc",
+        data: {
+            amount: amount,
+            orderInfo: orderInfo,
+            id_quanan: id_quanan
+        }
+    })
+    return res
+}
+
+const checkStatusDatCoc = async ({orderId}) => {
+    const res = await request({
+        method: "POST",
+        path: "api/check-status-dat-coc",
+        data: {
+            orderId: orderId,
+        }
+    })
+    return res
+}
+
+export { getDatcho, getDatchoById, addDatcho, editDatcho, deleteDatcho, getQuanan, sendEmail, sendEmailToQuan, getKhachhang, paginator, datcoc }

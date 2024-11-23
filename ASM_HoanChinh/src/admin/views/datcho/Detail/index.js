@@ -43,10 +43,11 @@ const ChiTietDonDatCho = () => {
                     width: '80%',
                     maxWidth: 'none',
                     position: 'absolute',
-                    top: '10%',
-                    transform: 'translateY(-10% -10%)',
+                    top: '0%',
+                    transform: 'translateY(0%)', // Dịch chuyển theo trục Y
                 }
             }}
+
         >
             <DialogTitle>
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: "20px" }}>
@@ -54,76 +55,114 @@ const ChiTietDonDatCho = () => {
                 </Box>
             </DialogTitle>
             <DialogContent>
-                <Box sx={{ fontWeight: "bold" }}>Thông tin đơn hàng</Box>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell align="left">Mã đơn</TableCell>
-                                <TableCell align="left">Khách hàng</TableCell>
-                                <TableCell align="left">Điện thoại</TableCell>
-                                <TableCell align="left">Email</TableCell>
-                                <TableCell align="left">Ngày giờ</TableCell>
-                                <TableCell align="left">Số lượng</TableCell>
-                                <TableCell align="left">Yêu cầu khác</TableCell>
-                                <TableCell align="left">Trạng thái</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            <TableRow key={1}>
-                                <TableCell align="left">{datcho.ma_don}</TableCell>
-                                <TableCell align="left">{datcho.ten_kh}</TableCell>
-                                <TableCell align="left">{datcho.sdt_kh}</TableCell>
-                                <TableCell align="left">{datcho.email_kh}</TableCell>
-                                <TableCell align="left">{datcho.ngay_dat} - {datcho.thoi_gian}</TableCell>
-                                <TableCell align="left">{datcho.so_luong_nguoi}</TableCell>
-                                <TableCell align="left">{datcho.yeu_cau_khac}</TableCell>
-                                <TableCell align="left">
-                                    {datcho.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (datcho.trang_thai === 1 ?<span class="badge badge-success">Đã có chỗ</span> : (datcho.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (datcho.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <Box sx={{ fontWeight: "bold", mb: 2, mt: 3 }}>Thông tin gọi món</Box>
-                <Grid container spacing={2}>
-                    {
-                        menuorder.map((item, index) => {
-                            if (item.id_datcho === datcho.id_datcho) {
-                                return (
-                                    <>
-                                        <Grid item xs={4}>
-                                            <Box sx={{ fontSize: "14px" }}>
-                                                {item.ten_mon}
-                                            </Box>
-                                        </Grid>
-                                        <Grid item xs={8}>
-                                            <Box sx={{ fontSize: "14px" }}>
-                                                {formatPrice(item.gia)} x {item.so_luong}
-                                            </Box>
-                                        </Grid>
-                                        {index < menuorder.length - 1 && <Grid item xs={12}><Divider sx={{ width: "50%" }} /></Grid>}
-                                    </>
-                                )
-                            }
-                        })
-                    }
-                    <Grid item xs={4}>
-                        <Box sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                            Thành tiền:
-                        </Box>
+                <Grid container spacing={3}>
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{ fontWeight: "bold" }}>Thông tin đơn hàng</Box>
+                        <TableContainer component={Paper}>
+                            <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Mã đơn</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.ma_don}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Mã giao dich</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.ma_giao_dich}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Tiền cọc</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{formatPrice(datcho.tien_coc)} {'(30%)'}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Khách hàng</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.ten_kh}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Điện thoại</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.sdt_kh}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Email</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.email_kh}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Ngày giờ</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.ngay_dat} - {datcho.thoi_gian}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Số lượng</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.so_luong_nguoi}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Yêu cầu khác</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.yeu_cau_khac}</TableCell>
+                                </TableRow>
+                                <TableRow>
+                                    <TableHead>
+                                        <TableCell sx={{ borderBottom: "none" }} align="left">Trạng thái</TableCell>
+                                    </TableHead>
+                                    <TableCell align="left">{datcho.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (datcho.trang_thai === 1 ? <span class="badge badge-success">Đã có chỗ</span> : (datcho.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (datcho.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}</TableCell>
+                                </TableRow>
+                            </Table>
+                        </TableContainer>
                     </Grid>
-                    <Grid item xs={8}>
-                        <Box sx={{ fontSize: "14px", fontWeight: "bold" }}>
-                            {
-                                menuorder
-                                    .filter(item => item.id_datcho === datcho.id_datcho)
-                                    .reduce((total, item) => total + item.gia * item.so_luong, 0)
-                                    .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-                            }
-                        </Box>
+                    <Grid item xs={12} md={6}>
+                        <Box sx={{ fontWeight: "bold", mb: 2 }}>Thông tin gọi món</Box>
+                        <Grid container spacing={2}>
+                            {menuorder.map((item, index) => {
+                                if (item.id_datcho === datcho.id_datcho) {
+                                    return (
+                                        <React.Fragment key={index}>
+                                            <Grid item xs={4}>
+                                                <Box sx={{ fontSize: "14px" }}>{item.ten_mon}</Box>
+                                            </Grid>
+                                            <Grid item xs={8}>
+                                                <Box sx={{ fontSize: "14px" }}>
+                                                    {formatPrice(item.gia)} x {item.so_luong}
+                                                </Box>
+                                            </Grid>
+                                            {index < menuorder.length - 1 && (
+                                                <Grid item xs={12}>
+                                                    <Divider sx={{ width: "50%" }} />
+                                                </Grid>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                }
+                            })}
+                            <Grid item xs={4}>
+                                <Box sx={{ fontSize: "14px", fontWeight: "bold" }}>Thành tiền:</Box>
+                            </Grid>
+                            <Grid item xs={8}>
+                                <Box sx={{ fontSize: "14px", fontWeight: "bold" }}>
+                                    {menuorder
+                                        .filter((item) => item.id_datcho === datcho.id_datcho)
+                                        .reduce((total, item) => total + item.gia * item.so_luong, 0)
+                                        .toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                                </Box>
+                            </Grid>
+                        </Grid>
                     </Grid>
                 </Grid>
+
+
 
             </DialogContent>
         </Dialog >

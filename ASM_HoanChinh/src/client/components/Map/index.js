@@ -12,7 +12,8 @@ import useGeolocation from "./useGeolocation";
 import { BASE_URL } from "../../../config/ApiConfig";
 
 const client = new ORS.Directions({
-    api_key: "5b3ce3597851110001cf62481bfe3c5668ca4f02a5a4d522952268ab",
+    // api_key: "5b3ce3597851110001cf62481bfe3c5668ca4f02a5a4d522952268ab",
+    api_key: "5b3ce3597851110001cf6248a066b1203eb849da836d3446aa790f2f",
 });
 
 const Map = ({ quanan, sizeData }) => {

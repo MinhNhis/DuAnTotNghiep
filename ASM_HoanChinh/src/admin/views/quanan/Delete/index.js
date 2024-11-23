@@ -125,53 +125,57 @@ const DeleteQuanAn = () => {
                     Bạn có chắc chắn muốn xóa?
                 </Box>
             </DialogTitle>
-
-
-            <DialogContent>
-                <div className="form-check-group" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
-                    {['Quán vi phạm điều khoản ', 'Không gia hạn quán ăn'].map((key, index) => (
-                        <div className="form-check mb-1" style={{ marginRight: '20px' }} key={index}>
+            {
+                cookies.role === 0 ? <DialogContent>
+                    <div className="form-check-group" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+                        {['Quán vi phạm điều khoản ', 'Không gia hạn quán ăn'].map((key, index) => (
+                            <div className="form-check mb-1" style={{ marginRight: '20px' }} key={index}>
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    name={key}
+                                    checked={checkedItems[key]}
+                                    onChange={handleCheckboxChange}
+                                />
+                                <label className="form-check-label ms-2">{key}</label>
+                            </div>
+                        ))}
+                        <div className="form-check mb-1" style={{ marginRight: '20px' }}>
                             <input
                                 type="checkbox"
                                 className="form-check-input"
-                                name={key}
-                                checked={checkedItems[key]}
+                                name="other"
+                                checked={checkedItems.other}
                                 onChange={handleCheckboxChange}
                             />
-                            <label className="form-check-label ms-2">{key}</label>
+                            <label className="form-check-label ms-2">Khác</label>
                         </div>
-                    ))}
-                    <div className="form-check mb-1" style={{ marginRight: '20px' }}>
-                        <input
-                            type="checkbox"
-                            className="form-check-input"
-                            name="other"
-                            checked={checkedItems.other}
-                            onChange={handleCheckboxChange}
-                        />
-                        <label className="form-check-label ms-2">Khác</label>
                     </div>
-                </div>
-                {checkedItems.other && (
+                    {checkedItems.other && (
+                        <DialogContent>
+                            <DialogContentText align="center">
+                                {cookies.role === 0 && (
+                                    <TextField
+                                        label="Lý do"
+                                        variant="outlined"
+                                        multiline
+                                        rows={1.75}
+                                        value={otherReason}
+                                        onChange={handleOtherReasonChange}
+                                        sx={{ width: "100%", marginTop: 1 }}
+                                    />
+                                )}
+                            </DialogContentText>
+                        </DialogContent>
+                    )}
+                </DialogContent>
+                    :
                     <DialogContent>
                         <DialogContentText align="center">
-                            {cookies.role === 0 && (
-                                <TextField
-                                    label="Lý do"
-                                    variant="outlined"
-                                    multiline
-                                    rows={1.75}
-                                    value={otherReason}
-                                    onChange={handleOtherReasonChange}
-                                    sx={{ width: "50%", marginTop: 1 }}
-                                />
-                            )}
+                            Hành động này sẽ không thể hoàn tác.
                         </DialogContentText>
                     </DialogContent>
-                )}
-            </DialogContent>
-
-
+            }
             <DialogActions sx={{ justifyContent: 'center' }}>
                 <Button
                     variant="contained"

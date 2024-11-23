@@ -130,7 +130,7 @@ const Trangchu = () => {
                     </div>
                     <div className="row g-5 align-items-center">
                         <div className='row mb-3'>
-                            <h2>{quanan5Km ? 'Quán ăn gần đây' : ''}</h2>
+                            <h2>{quanan5Km.length >0 ? 'Quán ăn gần đây' : ''}</h2>
                             {
                                 quanan5Km.map((value, index) => {
                                     return (
@@ -195,7 +195,7 @@ const Trangchu = () => {
                                                     <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
                                                 </h5>
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
-                                                <div className='mb-1'>{value.distanceKm} Km</div>
+                                                <div className='mb-1'>{value.distanceKm}</div>
                                                 <div className='mb-1' style={{
                                                     color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
                                                 }}>
