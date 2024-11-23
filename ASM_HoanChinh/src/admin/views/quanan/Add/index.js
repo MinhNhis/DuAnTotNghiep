@@ -248,12 +248,13 @@ const AddQuanAn = () => {
                         <div className="mb-3">
                           <label className="form-label">Giờ mở cửa</label>
                           <TextField
-                              type="time"
+                              type="text"
                               fullWidth
                               variant="outlined"
                               min={0}
                               name="gio_mo_cua"
                               id="gio_mo_cua"
+                              defaultValue={'00:00:00'}
                               placeholder="Giờ hoạt động"
                               {...register("gio_mo_cua", {
                                 required: {
@@ -273,12 +274,13 @@ const AddQuanAn = () => {
                         <div className="mb-3">
                           <label className="form-label">Giờ đóng cửa</label>
                           <TextField
-                              type="time"
+                              type="text"
                               fullWidth
                               variant="outlined"
                               min={0}
                               name="gio_dong_cua"
                               id="gio_dong_cua"
+                              defaultValue={"00:00:00"}
                               placeholder="Giờ đóng cửa"
                               {...register("gio_dong_cua", {
                                 required: {

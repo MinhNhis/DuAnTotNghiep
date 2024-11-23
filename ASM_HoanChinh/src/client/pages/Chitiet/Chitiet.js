@@ -561,10 +561,11 @@ const Gioithieu = () => {
                                                                 fullWidth
                                                                 id="date"
                                                                 label="Thời Gian"
-                                                                type="time"
+                                                                type="text"
                                                                 InputLabelProps={{ shrink: true }}
                                                                 variant="outlined"
                                                                 required
+                                                                defaultValue={"00:00:00"}
                                                                 sx={{ mb: 3 }}
                                                                 {...register("thoi_gian", {
                                                                     required: {
@@ -578,6 +579,14 @@ const Gioithieu = () => {
 
                                                                         if (selectedDate < today) {
                                                                             return "Thời gian không được nhỏ hơn ngày hiện tại";
+                                                                        }
+
+                                                                        return true;
+                                                                    },
+
+                                                                    validate: (thoi_gian) => {
+                                                                        if (thoi_gian === '00:00:00') {
+                                                                            return "Thời gian không được bỏ trống";
                                                                         }
 
                                                                         return true;
