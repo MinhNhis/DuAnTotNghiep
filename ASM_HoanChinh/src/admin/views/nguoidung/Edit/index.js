@@ -6,7 +6,6 @@ import { BASE_URL } from "../../../../config/ApiConfig";
 import ImgUser from "../../../assets/images/user.png";
 import { getQuanan } from "../../../../services/Quanan";
 import { getDatcho } from "../../../../services/Datcho";
-import { getDatchoById } from "../../../../services/Datcho";
 const EditNguoiDung = () => {
   const [nguoidung, setNguoidung] = useState(null);
   const [quanan, setQuanan] = useState(null);
