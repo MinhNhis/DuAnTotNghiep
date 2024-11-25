@@ -28,6 +28,7 @@ import DeleteBaiviet from "../admin/views/baiviet/Delete/index.js";
 const BaiViet = lazy(() => import("../admin/views/baiviet/index.js"));
 const AddBaiViet = lazy(() => import("../admin/views/baiviet/Add/index.js"));
 const UpdateBaiViet = lazy(() => import("../admin/views/baiviet/Update/index.js"));
+const ChitietBaiViet = lazy(() => import("../admin/views/baiviet/Chitiet/index.js"));
 
 //Dịch vụ
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"));
@@ -246,7 +247,8 @@ const ThemeRoutes = [
       { path: "admin/bai-viet", element: <BaiViet/>},
       { path: "admin/bai-viet/add", element: <AddBaiViet/>},
       { path: "admin/bai-viet/delete/:id_baiviet", element: <DeleteBaiviet/>},
-      { path: "admin/bai-viet/update/:id_baiviet", element: <UpdateBaiViet/>}
+      { path: "admin/bai-viet/update/:id_baiviet", element: <UpdateBaiViet/>},
+      { path: "admin/bai-viet/chitiet/:id_baiviet", element: <ChitietBaiViet/>}
     ],
   },
 

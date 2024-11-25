@@ -14,7 +14,7 @@ const baiviet = async () => {
 
 const addbaiviet = async ({ tieu_de, noi_dung, hinh_anh, ngay_dang, created_user }) => {
   const formData = new FormData();
-
+  
   formData.append("tieu_de", tieu_de);
   formData.append("noi_dung", noi_dung);
   formData.append("hinh_anh", hinh_anh);
