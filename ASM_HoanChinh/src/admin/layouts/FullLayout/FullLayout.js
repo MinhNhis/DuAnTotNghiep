@@ -65,7 +65,6 @@ const FullLayout = () => {
         isMobileSidebarOpen={isMobileSidebarOpen}
         onSidebarClose={() => setMobileSidebarOpen(false)}
       />
-
       <PageWrapper>
         <Container
           maxWidth={false}

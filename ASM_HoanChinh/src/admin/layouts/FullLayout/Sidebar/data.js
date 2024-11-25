@@ -9,10 +9,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import StarIcon from '@mui/icons-material/Star';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import HouseIcon from '@mui/icons-material/House';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import PaymentIcon from '@mui/icons-material/Payment';
 import ArticleIcon from '@mui/icons-material/Article';
 
@@ -53,16 +51,6 @@ const Menuitems = [
         icon: EmojiTransportationOutlinedIcon,
         href: "admin/tien-nghi",
       },
-      // {
-      //   title: "Các dịch vụ",
-      //   icon: DeliveryDiningIcon,
-      //   href: "admin/cac-dich-vu",
-      // },
-      // {
-      //   title: "Khách hàng",
-      //   icon: PeopleAltIcon,
-      //   href: "admin/loai-khach-hang",
-      // },
     ],
   },
   {
@@ -75,13 +63,6 @@ const Menuitems = [
         icon: MenuIcon,
         href: "admin/menu",
       },
-    
-      // {
-      //     title: "Danh mục",
-      //     icon: RestaurantMenuOutlinedIcon,
-      //     href: "admin/danhmuc",
-      // },
-
       {
         title: " Tất Cả Danh mục",
         icon: RestaurantMenuOutlinedIcon,
@@ -99,7 +80,6 @@ const Menuitems = [
       },
     ]
   },
-  
   {
     title: "Người dùng",
     key: 2,
