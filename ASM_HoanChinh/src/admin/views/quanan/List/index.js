@@ -502,7 +502,7 @@ const ListQuanAn = () => {
                                         <img
                                             src={danhgia?.hinh_anh ? `${BASE_URL}/uploads/${danhgia?.hinh_anh}` : ""}
                                             style={{
-                                              width: "40%",
+                                              width: "30%",
                                               height: "200px",
                                               objectFit: "cover",
                                               borderRadius: "8px",
