@@ -3,6 +3,6 @@ import ProductPerformance from "./ProductPerformance";
 import SalesOverview from "./SalesOverview";
 import DailyActivities from "./DailyActivities";
 import MapComponent from "./Map";
-import ChartsOverviewDemo from "./Chart";
+import Charts from "./Charts"
 
-export { BlogCard, ProductPerformance, SalesOverview, DailyActivities, MapComponent, ChartsOverviewDemo};
+export { BlogCard, ProductPerformance, SalesOverview, DailyActivities, MapComponent, Charts};

@@ -18,6 +18,15 @@ const getThanhtoanById = async (id) => {
     return res
 }
 
+const getTongTien = async (month) => {
+    const res = await request({
+        method: "GET",
+        path: `/api/tong-tien/${month}`
+    });
+
+    return res
+}
+
 const addThanhtoan = async ({ ma_don, tong_tien, noi_dung, trang_thai, thoi_gian, ma_giao_dich, id_nguoidung }) => {
 
     const res = await request({
@@ -94,4 +103,4 @@ const sendMail = async ({orderId, transId, name, amount, email}) => {
     return res
 }
 
-export { getThanhtoan, getThanhtoanById, addThanhtoan, addMomo, checkStatus, updateThanhtoan, sendMail}
+export { getThanhtoan, getThanhtoanById, addThanhtoan, addMomo, checkStatus, updateThanhtoan, sendMail, getTongTien}
