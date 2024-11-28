@@ -4,5 +4,6 @@ import SalesOverview from "./SalesOverview";
 import DailyActivities from "./DailyActivities";
 import MapComponent from "./Map";
 import Charts from "./Charts"
+import ChartsCQ from "./ChartsCQ";
 
-export { BlogCard, ProductPerformance, SalesOverview, DailyActivities, MapComponent, Charts};
+export { BlogCard, ProductPerformance, SalesOverview, DailyActivities, MapComponent, Charts, ChartsCQ};
