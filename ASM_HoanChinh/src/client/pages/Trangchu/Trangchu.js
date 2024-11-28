@@ -1,13 +1,21 @@
-import React, { useEffect, useState, Suspense, lazy } from "react";
+import React, { useEffect, useState, Suspense, lazy, useRef } from "react";
 import { TableRow } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import { Link } from 'react-router-dom';
 import './style.css';
-import { getQuanan, paginator } from '../../../services/Quanan/index';
+import { getQuanan, paginator, searchQuanan } from '../../../services/Quanan/index';
 import PaginationRounded from "../../../admin/components/Paginator";
 import { baiviet } from '../../../services/Baiviet';
 import { getDanhgia } from '../../../services/Danhgia';
 import Menu from '../../components/Menu/index'
 import { BASE_URL } from '../../../config/ApiConfig';
+import ORS from 'openrouteservice-js';
+import useGeolocation from "../../components/Map/useGeolocation";
+const client = new ORS.Directions({
+    // api_key: "5b3ce3597851110001cf62481bfe3c5668ca4f02a5a4d522952268ab",
+    api_key: "5b3ce3597851110001cf6248a066b1203eb849da836d3446aa790f2f",
+});
 
 const Map = lazy(() => import('../../components/Map/index'))
 const Trangchu = () => {
@@ -16,6 +24,9 @@ const Trangchu = () => {
     const [baiviets, setBaiViet] = useState([]);
     const [quanan5Km, setQUanan5Km] = useState([]);
     const quanan5km = JSON.parse(localStorage.getItem("QUAN_AN5KM"));
+    const location = useGeolocation()
+    const locationRef = useRef();
+    locationRef.current = location;
     useEffect(() => {
         initData2()
     }, [])
@@ -103,9 +114,75 @@ const Trangchu = () => {
     }
 
     const capitalizeFirstLetter = (string) => {
-        if (!string) return ''; // Kiểm tra chuỗi rỗng
+        if (!string) return '';
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
+
+    const [timKiem, setTimKiem] = useState('');
+    const [dstimkiem, setDstimkiem] = useState([]);
+    const [checkTimKiem, setCheckTimKiem] = useState(false);
+
+    const checkKm = async (latitude, longitude) => {
+        try {
+            const currentLocation = locationRef.current;
+            if (!currentLocation.latitude || !currentLocation.longitude) {
+                console.error("Vị trí người dùng không hợp lệ.");
+                return;
+            }
+            const apiKey = client.defaultArgs.api_key;
+            const openRouteServiceUrl = `https://api.openrouteservice.org/v2/directions/driving-car?api_key=${apiKey}&start=${currentLocation.longitude},${currentLocation.latitude}&end=${longitude},${latitude}`;
+            const response = await fetch(openRouteServiceUrl);
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+            }
+            const distanceKm = (data.features[0].properties.segments[0].distance / 1000).toFixed(1);
+            // const timeMinutes = data.features[0].properties.segments[0].duration / 60;
+            return distanceKm
+        } catch (error) {
+            console.log('Lỗi', error);
+
+        }
+    }
+
+    const handleSearch = async () => {
+        if (timKiem.trim() === "") {
+            setDstimkiem([]);
+            return;
+        }
+
+        try {
+            const res = await getDanhgia();
+            const danhgia = res.data;
+            const ratingLookup = danhgia.reduce((acc, e) => {
+                if (!acc[e.id_quanan]) {
+                    acc[e.id_quanan] = { totalStars: 0, count: 0 };
+                }
+                acc[e.id_quanan].totalStars += e.sao;
+                acc[e.id_quanan].count++;
+                return acc;
+            }, {});
+            const resultSeach = await searchQuanan(timKiem);
+            const promises = resultSeach.data.map(async (item) => {
+                const km = await checkKm(item.lat, item.lng);
+                const rating = ratingLookup[item.id_quanan] || { totalStars: 0, count: 0 };
+                const startTB = rating.count > 0 ? rating.totalStars / rating.count : 0;
+                return { ...item, km, startTB };
+            });
+            const updatedResults = await Promise.all(promises);
+            if (updatedResults) {
+                const sortedResults = updatedResults.sort((a, b) => a.km - b.km);
+                setDstimkiem(sortedResults);
+                setCheckTimKiem(true)
+            } else {
+                setCheckTimKiem(false)
+            }
+
+        } catch (error) {
+            console.error("Lỗi khi tìm kiếm:", error);
+        }
+    };
+
 
     return (
         <div className='container-fluid'>
@@ -114,6 +191,121 @@ const Trangchu = () => {
                     <Suspense fallback={<div>Loading...</div>}>
                         <Map quanan={quananMap} sizeData={quananMap.length} />
                     </Suspense>
+
+                    <div style={{ position: 'absolute', top: '10px', left: '50px', zIndex: 2000 }}>
+                        <div className="input-group mx-auto d-flex">
+                            <input
+                                type="search"
+                                className="form-control p-2"
+                                placeholder="Tìm kiếm quán ăn..."
+                                aria-describedby="search-icon-1"
+                                value={timKiem}
+                                style={{
+                                    width: "175px",
+                                    outline: 'none',
+                                    boxShadow: 'none',
+                                    border: 'none'
+                                }}
+                                onChange={(e) => setTimKiem(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter") {
+                                        handleSearch();
+                                    }
+                                }}
+                            />
+                            {timKiem && (
+                                <button
+                                    className="btn btn-light"
+                                    type="button"
+                                    style={{
+                                        backgroundColor: "#FFFFFF	"
+                                    }}
+                                    onClick={() => {
+                                        setTimKiem("");
+                                        setDstimkiem([]);
+                                        setCheckTimKiem(false)
+                                    }}
+                                >
+                                    <span><ClearIcon /></span>
+                                </button>
+                            )}
+                            <button
+                                className="btn btn-primary"
+                                type="button"
+                                onClick={handleSearch}
+                            >
+                                <SearchIcon />
+                            </button>
+                        </div>
+                        {dstimkiem.length > 0 && (
+                            <div className="dropdown-menu show">
+                                {dstimkiem.map((value, index) => (
+                                    <Link
+                                        to={`/chi-tiet/${value.id_quanan}`}
+                                        key={index}
+                                        className="dropdown-item"
+                                        onClick={() => setTimKiem(value?.ten_quan_an)}
+                                    >
+                                        <div className="card mb-3" fullWidth>
+                                            <img
+                                                src={`${BASE_URL}/uploads/${value?.hinh_anh}`}
+                                                className="card-img-top"
+                                                alt={value.ten_quan_an}
+                                                style={{ width: "100%" }}
+                                            />
+                                            <div className='card-body'>
+                                                <h5 className="tittleQuan" style={{ fontWeight: 'bold' }}>
+                                                    {value?.ten_quan_an}
+                                                    {value.is_delete === 1 && (
+                                                        <span style={{ fontSize: '0.8rem', color: 'red', marginLeft: '5px' }}>
+                                                            (Ngừng hoạt động)
+                                                        </span>
+                                                    )}
+                                                </h5>
+                                                <div className='mb-1'>{renderStars(value.startTB)}</div>
+                                                <div className='mb-1'>{value.km} Km</div>
+                                                <div className='mb-1' style={{
+                                                    color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
+                                                }}>
+                                                    {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? <p style={{ fontSize: "13px", marginBottom: "0px" }}>{value.gio_mo_cua}- {value.gio_dong_cua} Đang mở cửa</p> : <p style={{ fontSize: "13px", marginBottom: "0px" }}>Đã đóng cửa</p>}
+                                                </div>
+                                                <div className='mb-1' style={{
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 1,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'normal'
+                                                }}>
+                                                    {value.dia_chi}
+                                                </div>
+                                                <div className="mb-3 text-dark"
+                                                    style={{
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'normal'
+                                                    }}
+                                                >
+                                                    {value.mo_ta}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        )}
+
+                        {dstimkiem.length === 0 && checkTimKiem && timKiem != '' && (
+                            <div className="dropdown-menu show h-200 text-center">
+                                <p className="mb-3 mt-3">Không tìm thấy quán</p>
+                            </div>
+                        )}
+                    </div>
+
+
                 </div>
             </div>
             <div className="container-fluid">
@@ -130,7 +322,7 @@ const Trangchu = () => {
                     </div>
                     <div className="row g-5 align-items-center">
                         <div className='row mb-3'>
-                            <h2>{quanan5Km.length >0 ? 'Quán ăn gần đây' : ''}</h2>
+                            <h2>{quanan5Km.length > 0 ? 'Quán ăn gần đây' : ''}</h2>
                             {
                                 quanan5Km.map((value, index) => {
                                     return (
@@ -142,8 +334,16 @@ const Trangchu = () => {
                                             </div>
                                             <div className='card-body'>
                                                 <h5 className="tittleQuan" style={{ fontWeight: 'bold' }}>
-                                                    <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
+                                                    <Link to={`/chi-tiet/${value.id_quanan}`}>
+                                                        {value?.ten_quan_an}
+                                                        {value.is_delete === 1 && (
+                                                            <span style={{ fontSize: '0.8rem', color: 'red', marginLeft: '5px' }}>
+                                                                (Ngừng hoạt động)
+                                                            </span>
+                                                        )}
+                                                    </Link>
                                                 </h5>
+
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                 <div className='mb-1'>{value.distanceKm} Km</div>
                                                 <div className='mb-1' style={{
@@ -192,7 +392,14 @@ const Trangchu = () => {
                                             </div>
                                             <div className='card-body'>
                                                 <h5 className="tittleQuan" style={{ fontWeight: 'bold' }}>
-                                                    <Link to={`/chi-tiet/${value.id_quanan}`}>{value?.ten_quan_an}</Link>
+                                                    <Link to={`/chi-tiet/${value.id_quanan}`}>
+                                                        {value?.ten_quan_an}
+                                                        {value.is_delete === 1 && (
+                                                            <span style={{ fontSize: '0.8rem', color: 'red', marginLeft: '5px' }}>
+                                                                (Ngừng hoạt động)
+                                                            </span>
+                                                        )}
+                                                    </Link>
                                                 </h5>
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                 <div className='mb-1'>{value.distanceKm}</div>
@@ -212,14 +419,14 @@ const Trangchu = () => {
                                                     {value.dia_chi}
                                                 </div>
                                                 <div className="mb-3 text-dark"
-                                                     style={{
-                                                         display: '-webkit-box',
-                                                         WebkitLineClamp: 2,
-                                                         WebkitBoxOrient: 'vertical',
-                                                         overflow: 'hidden',
-                                                         textOverflow: 'ellipsis',
-                                                         whiteSpace: 'normal'
-                                                     }}
+                                                    style={{
+                                                        display: '-webkit-box',
+                                                        WebkitLineClamp: 2,
+                                                        WebkitBoxOrient: 'vertical',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'normal'
+                                                    }}
                                                 >
                                                     {value.mo_ta}
                                                 </div>
@@ -341,7 +548,7 @@ const Trangchu = () => {
                                                                 color: 'gray',
                                                             }}
                                                         >
-                                                            Tác giả: {baiviet.created_user === 0 ?"FoodSeeker": ""}
+                                                            Tác giả: {baiviet.created_user === 0 ? "FoodSeeker" : ""}
                                                         </p>
 
                                                     </Link>

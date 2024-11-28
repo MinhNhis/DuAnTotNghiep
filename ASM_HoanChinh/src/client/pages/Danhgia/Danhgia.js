@@ -246,25 +246,6 @@ const Danhgia = () => {
                                         <h2 className="display-5 mb-0" style={{ fontSize: '35px' }}>Bạn chưa sử dụng dịch vụ hoặc chưa đặt chỗ tại quán sẽ không thể đánh giá. Xin hãy quay lại !</h2>
                                     </div>
                             }
-                            <div className="col-md-6 col-lg-5">
-                                <div>
-                                    <div className="d-inline-flex w-100 border border-primary p-4 rounded mb-4">
-                                        <i className="fas fa-map-marker-alt fa-2x text-primary me-4"></i>
-                                        <div className="">
-                                            <h5>Địa chỉ</h5>
-                                            <p>{quanan?.dia_chi}</p>
-                                        </div>
-                                    </div>
-                                    <div className="d-inline-flex w-100 border border-primary p-4 rounded">
-                                        <i className="fa fa-phone-alt fa-2x text-primary me-4"></i>
-                                        <div className="">
-                                            <h5>Số điện thoại</h5>
-                                            <p className="mb-2">{quanan?.dien_thoai ? `${quanan.dien_thoai.slice(0, 4)} ${formatPhoneNumber(quanan.dien_thoai.slice(0))}` : "Không có số điện thoại"}</p>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

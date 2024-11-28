@@ -95,7 +95,7 @@ const UpdateBaiViet = () => {
                                 </div>
                             </div>
                             <div className="col-6">
-                                <div className="mb-3">
+                                <div className="mb-5">
                                     <label htmlFor="noi_dung" className="form-label">Nội dung</label>
                                     <Controller
                                         name="noi_dung"
@@ -112,10 +112,10 @@ const UpdateBaiViet = () => {
                                             />
                                         )}
                                     />
-                                    {formState?.errors?.noi_dung && (
+                                </div>
+                                {formState?.errors?.noi_dung && (
                                         <small className="text-danger">{formState?.errors?.noi_dung?.message}</small>
                                     )}
-                                </div>
                             </div>
                         </div>
                         <div className="row">

@@ -17,12 +17,14 @@ import DeleteCDV from "../admin/views/cacdichvu/Delete/index.js";
 import CacDichVu from "../admin/views/cacdichvu/index.js";
 import ChiTietDon from "../client/pages/Chitietdon/Chitietdon.js";
 import Profile from "../client/pages/Profile/index.js";
+import Notification from "../client/components/Notification";
 import Client from "../client/pages/index.js";
 import ThanhToan from "../admin/views/thanhtoandki/index.js";
 import ThanhToanDKi from "../admin/views/thanhtoandki/Add/index.js";
 import Success from "../admin/views/thanhtoandki/Success/index.js";
 import Failed from "../admin/views/thanhtoandki/Failed/index.js";
 import DeleteBaiviet from "../admin/views/baiviet/Delete/index.js";
+import Restart from "../admin/views/quanan/Restart/index.js";
 
 //Bài viết
 const BaiViet = lazy(() => import("../admin/views/baiviet/index.js"));
@@ -159,6 +161,11 @@ const ThemeRoutes = [
         path: '/profile',
         element: <Profile />
       },
+
+      {
+        path: '/notification',
+        element: <Notification/>
+      },
     ]
   },
   {
@@ -222,6 +229,7 @@ const ThemeRoutes = [
       { path: "admin/quanan/edit/:id_quanan", exact: true, element: <EditQuanAn /> },
       { path: "admin/quanan/delete/:id_quanan", exact: true, element: <DeleteQuanAn /> },
       { path: "admin/quanan/chi-tiet/:id", exact: true, element: <ListQuanAn /> },
+      { path: "admin/quanan/restart/:id", exact: true, element: <Restart /> },
 
       { path: "admin/loai-khach-hang/add", exact: true, element: <AddLKH /> },
       { path: "admin/loai-khach-hang/edit/:id", exact: true, element: <EditLKH /> },

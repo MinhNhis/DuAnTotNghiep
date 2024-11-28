@@ -43,14 +43,13 @@ const getBaivietById = async (id_baiviet) => {
   return res;
 };
 
-const updatebaiviet = async (id_baiviet, { tieu_de, noi_dung, hinh_anh, ngay_dang, created_user }) => {
+const updatebaiviet = async (id_baiviet, { tieu_de, noi_dung, hinh_anh, ngay_dang }) => {
   const formData = new FormData();
 
   formData.append("tieu_de", tieu_de);
   formData.append("noi_dung", noi_dung);
   formData.append("hinh_anh", hinh_anh);
   formData.append("ngay_dang", ngay_dang);
-  formData.append("created_user", created_user);
 
   const res = await request({
     method: "PUT",
