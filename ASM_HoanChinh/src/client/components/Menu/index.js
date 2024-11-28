@@ -48,6 +48,7 @@ const Menu = () => {
         const res = await paginator(1);
         setMenus(res.data);
     };
+
     const initData = async () => {
         if (!selectedSubCategory) {
             setMenus([]);
@@ -74,9 +75,9 @@ const Menu = () => {
     };
     useEffect(() => {
         initData();
-        AllMenu();
         initAllDanhmuc();
         initDanhmuc();
+        AllMenu();
         initQuanan();
     }, []);
 
@@ -87,20 +88,18 @@ const Menu = () => {
             setSelectedSubCategory(null);
             setMenus([]);
             AllMenu();
-            setShowPagination(true); // Show pagination when no subcategory is selected
+            setShowPagination(true); 
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
-            setShowPagination(true); // Show pagination when category is selected
+            setShowPagination(false); 
         }
     };
-
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
-        setShowPagination(false); // Hide pagination when subcategory is selected
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
@@ -110,12 +109,9 @@ const Menu = () => {
         }
     };
 
-    // useEffect(() => {
-    //     if (selectedCategory) {
-    //         const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
-    //         setSubCategories(filteredSubCategories);
-    //     }
-    // }, [selectedCategory]);
+
+
+
     if (error) return <p>{error}</p>;
 
     const formatPrice = (price) => {
@@ -200,24 +196,17 @@ const Menu = () => {
                     </ul>
 
                     <div className="tab-content">
-                        <div id="tab-1" className="tab-pane fade show p-0 active" >
-                            <div className="row g-4" >
+                        <div id="tab-1" className="tab-pane fade show p-0 active">
+                            <div className="row g-4">
                                 {selectedCategory && menu.length === 0 && (
                                     <div className="col-12 text-center">
-                                        <p className="text-muted">
-                                            Không có món ăn nào trong danh mục này.
-                                        </p>
+                                        <p className="text-muted">Không có món ăn nào trong danh mục này.</p>
                                     </div>
                                 )}
                                 {menu.length > 0 && (
                                     <div className="row" style={{ marginLeft: '25px' }}>
                                         {menu.map((menuItem, index) => (
-                                            <div
-                                                key={index}
-                                                className="col-lg-4 col-md-4 wow mb-2"
-                                                data-wow-delay="0.1s"
-
-                                            >
+                                            <div key={index} className="col-lg-4 col-md-4 wow mb-2" data-wow-delay="0.1s">
                                                 <div className="event-img position-relative d-flex align-items-start" style={{ paddingTop: '20px' }}>
                                                     <Link to={`/chi-tiet/${menuItem.id_quanan}`}>
                                                         {menuItem.hinh_anh && (
@@ -230,22 +219,17 @@ const Menu = () => {
                                                         )}
                                                     </Link>
                                                     <div className="d-flex flex-column justify-content-between" style={{ height: '100%' }}>
-                                                        <h5
-                                                            className="mb-1 text-start"
-                                                            style={{
-                                                                whiteSpace: "nowrap",
-                                                                overflow: "hidden",
-                                                                textOverflow: "ellipsis",
-                                                                width: "150px",
-                                                            }}
-                                                        >
+                                                        <h5 className="mb-1 text-start" style={{
+                                                            whiteSpace: "nowrap",
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            width: "150px",
+                                                        }}>
                                                             {menuItem.ten_menu}
                                                         </h5>
                                                         <div className="d-flex flex-column mb-0">
-                                                            <p className="mb-0 text-start" >
-                                                                Giá: {formatPrice(menuItem.gia)}
-                                                            </p>
-                                                            <p className="mb-0 text-dark text-start  ">
+                                                            <p className="mb-0 text-start">Giá: {formatPrice(menuItem.gia)}</p>
+                                                            <p className="mb-0 text-dark text-start">
                                                                 Quán: {quanan.find(value => value.id_quanan === menuItem.id_quanan)?.ten_quan_an || ''}
                                                             </p>
                                                         </div>
@@ -256,40 +240,38 @@ const Menu = () => {
                                     </div>
                                 )}
 
-
-                                <TableRow
-                                    sx={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginTop: "20px",
-                                        button: {
-                                            backgroundColor: "#d4a762",
-                                            color: "#fff",
-                                            borderRadius: "50%",
-                                            width: "20px",
-                                            height: "20px",
-                                            fontSize: "0.8rem",
-                                            margin: "0 5px",
-                                            "&.Mui-selected": {
-                                                backgroundColor: "#b0853d",
+                                {showPagination && (
+                                    <TableRow
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            marginTop: "20px",
+                                            button: {
+                                                backgroundColor: "#d4a762",
+                                                color: "#fff",
+                                                borderRadius: "50%",
+                                                width: "20px",
+                                                height: "20px",
+                                                fontSize: "0.8rem",
+                                                margin: "0 5px",
+                                                "&.Mui-selected": {
+                                                    backgroundColor: "#b0853d",
+                                                },
                                             },
-                                        },
-                                    }}
-                                >
-
-                                    {showPagination && (
+                                        }}
+                                    >
                                         <PaginationRounded
                                             onDataChange={initPage}
                                             paginator={paginator}
                                         />
-                                    )}
-                                </TableRow>
+                                    </TableRow>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 
