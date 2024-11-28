@@ -6,7 +6,8 @@ import {
   SalesOverview,
   ProductPerformance,
   DailyActivities,
-  MapComponent
+  MapComponent,
+  Charts
 } from "./dashboard1-components";
 
 const Dashboard1 = () => {
@@ -16,7 +17,7 @@ const Dashboard1 = () => {
     <Box>
       <Grid container spacing={0}>
         <Grid item xs={12} lg={12}>
-          <MapComponent />
+          <Charts />
         </Grid>
         {/* ------------------------- row 1 ------------------------- */}
         {/* <Grid item xs={12} lg={12}>
