@@ -533,7 +533,7 @@ const Trangchu = () => {
                                                                 textIndent: '10px',
                                                             }}
                                                         >
-                                                            {capitalizeFirstLetter(baiviet.noi_dung)}
+                                                            <p dangerouslySetInnerHTML={{ __html: capitalizeFirstLetter(baiviet.noi_dung) }}></p>
                                                         </p>
                                                         <p
                                                             style={{
@@ -548,7 +548,7 @@ const Trangchu = () => {
                                                                 color: 'gray',
                                                             }}
                                                         >
-                                                            Tác giả: {baiviet.created_user === 0 ? "FoodSeeker" : ""}
+                                                            Tác giả: {baiviet.created_user === 2 ? "FoodSeeker" : ""}
                                                         </p>
 
                                                     </Link>
