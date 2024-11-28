@@ -114,6 +114,14 @@ const ChiTietDonDatCho = () => {
                                     </TableHead>
                                     <TableCell align="left">{datcho.yeu_cau_khac}</TableCell>
                                 </TableRow>
+                                {datcho.trang_thai === 2 ?
+                                    <TableRow>
+                                        <TableHead>
+                                            <TableCell sx={{ borderBottom: "none" }} align="left">Lý do hủy Đơn</TableCell>
+                                        </TableHead>
+                                        <TableCell align="left">{datcho.ly_do_huy}</TableCell>
+                                    </TableRow>: null
+                                }
                                 <TableRow>
                                     <TableHead>
                                         <TableCell sx={{ borderBottom: "none" }} align="left">Trạng thái</TableCell>

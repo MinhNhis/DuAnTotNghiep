@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import WarningIcon from '@mui/icons-material/Warning';
 import { useNavigate, useParams } from "react-router-dom";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Box, TextField } from "@mui/material";
-import { deleteQuanan, getQuananById } from "../../../../services/Quanan";
+import { deleteQuanan, getQuananById, isDeleteQuanan } from "../../../../services/Quanan";
 import { useSnackbar } from 'notistack';
 import { useCookies } from "react-cookie";
 
@@ -54,11 +54,17 @@ const DeleteQuanAn = () => {
 
     const submit = async () => {
         try {
-            await deleteQuanan(id, {
+            // await deleteQuanan(id, {
+            //     reason: reason ? reaSon(reason) : otherReason,
+            //     id_nguoidung: quanan.created_user,
+            //     role: cookies.role,
+            // });
+            await isDeleteQuanan(id, {
                 reason: reason ? reaSon(reason) : otherReason,
                 id_nguoidung: quanan.created_user,
                 role: cookies.role,
-            });
+                is_delete: 1
+            })
             enqueueSnackbar('Xóa quán ăn thành công!', { variant: 'success' });
             navigate("/admin/quanan");
         } catch (error) {

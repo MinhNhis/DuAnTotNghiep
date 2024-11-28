@@ -15,6 +15,7 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import { useCookies } from "react-cookie";
 import Map from "../../components/Map";
 import { addMenuOrder } from "../../../services/MenuOrder";
+import Notification from "../../components/Notification";
 
 const Gioithieu = () => {
     const { register, handleSubmit, formState } = useForm()
@@ -112,29 +113,31 @@ const Gioithieu = () => {
         navigate(`/chi-tiet/${id}`);
     };
 
-
     const initData = async () => {
         const resultQa = await getQuananById(id);
         setQuanan(resultQa.data);
 
-        // Quán trên Map
-        const resQuan = await getQuanan();
-        const fill = resQuan.data.filter((e) => e.id_quanan === resultQa.data.id_quanan)
-        setQuananMap(fill);
-        /*--------------------------------*/
+        if (resultQa.data.is_delete === 1) {
+            navigate('/notification')
+        } else {
+            // Quán trên Map
+            const resQuan = await getQuanan();
+            const fill = resQuan.data.filter((e) => e.id_quanan === resultQa.data.id_quanan)
+            setQuananMap(fill);
+            /*--------------------------------*/
+            const resultDg = await getDanhgia();
+            setDanhgia(resultDg.data);
 
-        const resultDg = await getDanhgia();
-        setDanhgia(resultDg.data);
+            const resultNdg = await getNguoiDung();
+            setNguoidanhgia(resultNdg.data);
 
-        const resultNdg = await getNguoiDung();
-        setNguoidanhgia(resultNdg.data);
+            const resultMenu = await getMenus();
+            setMenu(resultMenu.data);
 
-        const resultMenu = await getMenus();
-        setMenu(resultMenu.data);
-
-        const resultDatcho = await getDatcho();
-        const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
-        setDatcho(filteredDatcho);
+            const resultDatcho = await getDatcho();
+            const filteredDatcho = resultDatcho.data.filter(datcho => datcho.id_quanan === resultQa.data.id_quanan);
+            setDatcho(filteredDatcho);
+        }
     };
 
 
@@ -196,50 +199,68 @@ const Gioithieu = () => {
         return ma_don;
     };
 
-
+    const isOpen = (openTime, closeTime, times) => {
+        const open= openTime.split(':').map(Number);
+        const close = closeTime.split(':').map(Number);
+        const time = times.split(':').map(Number);
+        return time[0] >= open[0] && time[0] <= close[0];
+    };
+    
     const submit = async (value) => {
-        let ma = 'FS' + randomMadon()
-        setMa(ma)
-        if (value.so_luong > quanan.so_luong_cho) {
-            enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
-        } else {
-            const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian + ':00' && e.trang_thai !== 2);
-            let tongCho = 0
+        const time = value.thoi_gian.split(':').map(Number);
+        if (time[0] > 24) {
+            return enqueueSnackbar("Thời gian không hợp lệ", {variant: 'warning'});
+        }
+        if (!isOpen(quanan.gio_mo_cua, quanan.gio_dong_cua, value.thoi_gian)) {
+            return enqueueSnackbar("Thời gian này quán đã đóng cửa. Vui lòng chọn thời gian khác", {variant: 'warning'});
+        }
+        if (quanan.is_delete === 0) {
+            let ma = 'FS' + randomMadon()
+            setMa(ma)
+            if (value.so_luong > quanan.so_luong_cho) {
+                enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
+            } else {
+                const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian + ':00' && e.trang_thai !== 2);
+                let tongCho = 0
 
-            fillDatcho.forEach((e) => {
-                tongCho += e.so_luong_nguoi
-            })
-            let so_luong_cho_trong = quanan.so_luong_cho - tongCho;
+                fillDatcho.forEach((e) => {
+                    tongCho += e.so_luong_nguoi
+                })
+                let so_luong_cho_trong = quanan.so_luong_cho - tongCho;
 
-            fillDatcho.find(async (e) => {
-                if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
-                    setDialogContent(value);
+                fillDatcho.find(async (e) => {
+                    if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
+                        setDialogContent(value);
+                        if (totalPrice === 0) {
+                            enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })
+                        } else {
+                            localStorage.setItem("ThongTin", JSON.stringify(value));
+                            if (selectedMenuItems) {
+                                localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
+                            }
+                            setOpenDialog(true);
+                        }
+                    } else {
+                        return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
+                    }
+                })
+
+                if (fillDatcho.length === 0) {
                     if (totalPrice === 0) {
                         enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })
                     } else {
+                        setDialogContent(value);
                         localStorage.setItem("ThongTin", JSON.stringify(value));
-                        if (selectedMenuItems) {
-                            localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
-                        }
+                        localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
                         setOpenDialog(true);
                     }
-                } else {
-                    return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
-                }
-            })
 
-            if (fillDatcho.length === 0) {
-                if (totalPrice === 0) {
-                    enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })
-                } else {
-                    setDialogContent(value);
-                    localStorage.setItem("ThongTin", JSON.stringify(value));
-                    localStorage.setItem("ThongTinMon", JSON.stringify(selectedMenuItems));
-                    setOpenDialog(true);
                 }
-
             }
+        } else {
+            return navigate('/notification')
         }
+
 
     }
 
@@ -266,7 +287,6 @@ const Gioithieu = () => {
         let atmosphereCount = 0;
 
         danhgia.forEach(e => {
-            console.log("Đánh giá hiện tại:", e);
             if (e.id_quanan === quanan.id_quanan) {
                 // Kiểm tra xem giá trị có hợp lệ không
                 if (typeof e.danh_gia_do_an === 'number') {
@@ -556,9 +576,12 @@ const Gioithieu = () => {
                                                                 defaultValue={"00:00:00"}
                                                                 sx={{ mb: 3 }}
                                                                 {...register("thoi_gian", {
-                                                                    required: {
-                                                                        value: true,
-                                                                        message: "Thời gian không được bỏ trống"
+                                                                    validate: (thoi_gian) => {
+                                                                        const quan = quanan
+                                                                        if (!isOpen('09:00:00', '22:00:00', thoi_gian)) {
+                                                                             return "Thời gian này quán đã đóng của. Vui lòng chọn thời gian khác"
+                                                                        }
+                                                                       return true
                                                                     },
                                                                     validate: (thoi_gian) => {
                                                                         const selectedDate = new Date(thoi_gian);
@@ -853,9 +876,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.khongkhis?.length > 0 ? (
-                                                            quanan.khongkhis.map((khongkhi, index) =>
-                                                                (<div key={khongkhi.id_khongkhi}>
-                                                                    {khongkhi.khong_khi} </div>))) :
+                                                        quanan.khongkhis.map((khongkhi, index) =>
+                                                        (<div key={khongkhi.id_khongkhi}>
+                                                            {khongkhi.khong_khi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -864,9 +887,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.dichvus?.length > 0 ? (
-                                                            quanan.dichvus.map((dichvu, index) =>
-                                                                (<div key={dichvu.id_dichvu}>
-                                                                    {dichvu.dich_vu} </div>))) :
+                                                        quanan.dichvus.map((dichvu, index) =>
+                                                        (<div key={dichvu.id_dichvu}>
+                                                            {dichvu.dich_vu} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -875,9 +898,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.tiennghis?.length > 0 ? (
-                                                            quanan.tiennghis.map((tiennghi, index) =>
-                                                                (<div key={tiennghi.id_tiennghi}>
-                                                                    {tiennghi.tien_nghi} </div>))) :
+                                                        quanan.tiennghis.map((tiennghi, index) =>
+                                                        (<div key={tiennghi.id_tiennghi}>
+                                                            {tiennghi.tien_nghi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -888,9 +911,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.kehoachs?.length > 0 ? (
-                                                            quanan.kehoachs.map((kehoach, index) =>
-                                                                (<div key={kehoach.id_kehoach}>
-                                                                    {kehoach.ke_hoach} </div>))) :
+                                                        quanan.kehoachs.map((kehoach, index) =>
+                                                        (<div key={kehoach.id_kehoach}>
+                                                            {kehoach.ke_hoach} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -899,9 +922,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.baidoxes?.length > 0 ? (
-                                                            quanan.baidoxes.map((baidoxe, index) =>
-                                                                (<div key={baidoxe.id_baidoxe}>
-                                                                    {baidoxe.bai_do_xe} </div>))) :
+                                                        quanan.baidoxes.map((baidoxe, index) =>
+                                                        (<div key={baidoxe.id_baidoxe}>
+                                                            {baidoxe.bai_do_xe} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -910,9 +933,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.loaikhs?.length > 0 ? (
-                                                            quanan.loaikhs.map((loaikh, index) =>
-                                                                (<div key={loaikh.id_loaikh}>
-                                                                    {loaikh.khach_hang} </div>))) :
+                                                        quanan.loaikhs.map((loaikh, index) =>
+                                                        (<div key={loaikh.id_loaikh}>
+                                                            {loaikh.khach_hang} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>

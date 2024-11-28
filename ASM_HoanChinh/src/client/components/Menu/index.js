@@ -5,7 +5,7 @@ import './style.css'
 import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhmuc } from "../../../services/Danhmuc";
-import { getQuanan } from "../../../services/Quanan";
+import { getQuanan, getQuananById } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
 import { getAllDanhmuc } from "../../../services/Alldanhmuc";
@@ -18,7 +18,6 @@ const Menu = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
-    const [quanan5Km, setQUanan5Km] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
 
@@ -47,7 +46,6 @@ const Menu = () => {
         const res = await paginator(1);
         setMenus(res.data);
     };
-
     const initData = async () => {
         if (!selectedSubCategory) {
             setMenus([]);
@@ -62,28 +60,7 @@ const Menu = () => {
         }
     };
 
-    const quanan5km = JSON.parse(localStorage.getItem("QUAN_AN5KM"));
-    setTimeout(() => {
-        checkLoca(quanan5km)
-    }, 1000);
-    const checkLoca = async (quanan, retries = 3) => {
-        try {
-            if (quanan) {
-                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
-                setQUanan5Km(sortedQuanan);
-            } else {
-                return null
-            }
-        } catch (error) {
-            if (retries > 0) {
-                console.warn("thử lại...", retries);
-                return await checkLoca(quanan, retries - 1);
-            } else {
-                console.error("Lỗi sau nhiều lần thử:", error);
-                return null;
-            }
-        }
-    }
+
     const initAllDanhmuc = async () => {
         const res = await getAllDanhmuc();
         if (res && res.data) {
@@ -160,7 +137,6 @@ const Menu = () => {
         }
     };
 
-
     return (
         <div className="tab-class text-center">
             <div className="container">
@@ -179,42 +155,69 @@ const Menu = () => {
                             </button>
                         </li>
 
-                        {alldanhmuc.map((danhmuc, index) => (
-                            <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
-                                {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
-                                    <a
-                                        className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
-                                        onClick={() => { handleCategoryClick(danhmuc.id_alldanhmuc); }}
-                                        style={{
-                                            width: '220px',
-                                            padding: '10px 20px',
-                                            height: '50px',
-                                            textDecoration: 'none',
-                                            color: '#333',
-                                            transition: 'all 0.3s ease',
-                                        }}
-                                    >
-                                        <span className="text-dark" style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {danhmuc.ten_danhmuc}
-                                            {quanan && quanan.length > 0 && (
-                                                <span className="ml-2 text-dark" style={{ fontWeight: 'bold' }}>
-                                                    - {quanan.find(q => q.created_user === danhmuc.created_user)?.ten_quan_an}
-                                                </span>
-                                            )}
-                                        </span>
-                                    </a>
-                                ) : null}
-                                {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
-                                    <ul className="dropdown-menu2">
-                                        {subCategories.map((subCategory, subIndex) => (
-                                            <li key={subIndex} className="dropdown-item2" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
-                                                {subCategory.danh_muc}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )}
-                            </li>
-                        ))}
+                        {alldanhmuc.map((danhmuc) => {
+                            if (!quanan || !danhmuc) return null;
+
+                            const matchedQuanan = quanan.find(
+                                (e) => e.created_user === danhmuc.created_user && e.is_delete === 0
+                            );
+
+                            if (!matchedQuanan) return null;
+
+                            return (
+                                <li key={danhmuc.id_alldanhmuc} className="nav-item p-2" style={{ position: 'relative' }}>
+                                    {checkDanhmuc(danhmuc.id_alldanhmuc) ?
+                                        <a
+                                            className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''
+                                                }`}
+                                            onClick={() => handleCategoryClick(danhmuc.id_alldanhmuc)}
+                                            style={{
+                                                width: '220px',
+                                                padding: '10px 20px',
+                                                height: '50px',
+                                                textDecoration: 'none',
+                                                color: '#333',
+                                                transition: 'all 0.3s ease',
+                                            }}
+                                        >
+                                            <span
+                                                className="text-dark"
+                                                style={{
+                                                    flex: 1,
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                            >
+                                                {danhmuc.ten_danhmuc}
+                                                {matchedQuanan.ten_quan_an && (
+                                                    <span
+                                                        className="ml-2 text-dark"
+                                                        style={{ fontWeight: 'bold' }}
+                                                    >
+                                                        - {matchedQuanan.ten_quan_an}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </a> : null
+                                    }
+                                    {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
+                                        <ul className="dropdown-menu2">
+                                            {subCategories.map((subCategory) => (
+                                                <li
+                                                    key={subCategory.id_danhmuc}
+                                                    className="dropdown-item2"
+                                                    onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}
+                                                >
+                                                    {subCategory.danh_muc}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </li>
+                            );
+                        })}
+
                     </ul>
 
                     <div className="tab-content">
@@ -294,10 +297,7 @@ const Menu = () => {
                                         },
                                     }}
                                 >
-                                    <PaginationRounded
-                                        onDataChange={initPage}
-                                        paginator={paginator}
-                                    />
+                                    <PaginationRounded onDataChange={initPage} paginator={paginator} />
                                 </TableRow>
                             </div>
                         </div>

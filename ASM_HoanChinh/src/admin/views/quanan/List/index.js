@@ -9,10 +9,12 @@ import { getNguoiDung } from "../../../../services/Nguoidung";
 import { getDanhmuc } from "../../../../services/Danhmuc";
 import { getDanhgia } from "../../../../services/Danhgia";
 import { getDatcho } from "../../../../services/Datcho";
+import { getMenuOrder } from "../../../../services/MenuOrder";
 
 const ListQuanAn = () => {
   const [quanan, setQuanan] = useState(null);
   const [menu, setMenu] = useState([]);
+  const [menuOrder, setMenuOrder] = useState([]);
   const [nguoidung, setNguoidung] = useState([]);
   const [nguoidungdanh, setNguoiDungDanhGia] = useState([]);
   const [selectedTab, setSelectedTab] = useState("menu");
@@ -64,9 +66,12 @@ const ListQuanAn = () => {
         setMenu(menuResult.data);
       }
 
+      const resMenuOrder = await getMenuOrder();
+      setMenuOrder(resMenuOrder.data)
+
       const nguoiDungList = await getNguoiDung();
       const User = nguoiDungList.data.find(
-          (e) => e.id_nguoidung === quananResult.data.created_user
+        (e) => e.id_nguoidung === quananResult.data.created_user
       );
       if (User) {
         setNguoidung(User);
@@ -111,7 +116,6 @@ const ListQuanAn = () => {
     let atmosphereCount = 0;
 
     danhgia.forEach(e => {
-      console.log("Đánh giá hiện tại:", e);
       if (e.id_quanan === quanan.id_quanan) {
         // Kiểm tra xem giá trị có hợp lệ không
         if (typeof e.danh_gia_do_an === 'number') {
@@ -134,25 +138,16 @@ const ListQuanAn = () => {
         console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
       }
     });
-
-    // Log kết quả tính toán
-    console.log({
-      totalFoodStars,
-      foodCount,
-      totalServiceStars,
-      serviceCount,
-      totalAtmosphereStars,
-      atmosphereCount,
-      totalStars,
-      count
-    });
-
     // Tính toán giá trị trung bình
     setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
     setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
     setServiceRating(serviceCount > 0 ? (totalServiceStars / serviceCount).toFixed(1) : 0);
     setAtmosphereRating(atmosphereCount > 0 ? (totalAtmosphereStars / atmosphereCount).toFixed(1) : 0);
   }, [danhgia, quanan]);
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
 
   return (
       <div className="container mt-4">
@@ -256,7 +251,7 @@ const ListQuanAn = () => {
                               )}
                               {showFullDescription && (
                                   <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
-                              Xem ít hơn
+                              Ẩn bớt
                             </span>
                               )}</Typography>
                           </Grid>
@@ -398,6 +393,7 @@ const ListQuanAn = () => {
                               color: "#000",
                               textAlign: "center",
                               paddingTop: "10px",
+                              mb: 3
                             }}
                         >
                           Hiện tại chưa có món ăn nào.
@@ -435,239 +431,110 @@ const ListQuanAn = () => {
                             color: "#000",
                             textAlign: "center",
                             paddingTop: "10px",
+                            mb: 3
                           }}
                       >
                         Hiện tại chưa có danh mục nào.
                       </Typography>
                   )}
-
                 </Box>
-
             )}
 
             {selectedTab === "danhgia" && (
-                <Grid container>
-                  <Grid xs={12} md={12}>
-                    <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
-                      {danhgia.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
-                          danhgia
-                              .filter((fil) => fil.id_quanan === quanan?.id_quanan)
-                              .slice(0, visibleCount) // Show only visibleCount reviews
-                              .map((danhgia) => (
+                <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
+                  {danhgia.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
+                      danhgia
+                          .filter((fil) => fil.id_quanan === quanan?.id_quanan)
+                          .map((danhgia) => (
+                              <Box
+                                  key={danhgia.id_danhgia}
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "flex-start",
+                                    marginBottom: "15px",
+                                    padding: "15px",
+                                    borderRadius: "8px",
+                                    boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)",
+                                    backgroundColor: "#f9f9f9",
+                                  }}
+                              >
+                                <Box sx={{ flex: 1 }}>
                                   <Box
-                                      key={danhgia.id_danhgia}
                                       sx={{
                                         display: "flex",
-                                        alignItems: "flex-start",
-                                        marginBottom: "15px",
-                                        padding: "15px",
-                                        borderRadius: "8px",
-                                        boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)",
-                                        backgroundColor: "#f9f9f9",
+                                        justifyContent: "space-between",
+                                        marginTop: "10px",
                                       }}
                                   >
-                                    <Box sx={{ flex: 1 }}>
-                                      <Box
-                                          sx={{
-                                            display: "flex",
-                                            justifyContent: "space-between",
-                                            marginTop: "10px",
-                                          }}
-                                      >
-                                        {nguoidungdanh.map((ngdg) => {
+                                    {nguoidungdanh.map((ngdg) => {
                                           if (ngdg.id_nguoidung === danhgia.id_nguoidung) {
                                             return (
                                                 <Typography
-                                                    key={ngdg.id_nguoidung}
                                                     sx={{
                                                       fontSize: "15px",
                                                       color: "#000",
                                                     }}
                                                 >
-                                                  <strong style={{ fontSize: '15px',  }}>Người dùng: {ngdg.ten_nguoi_dung}</strong>
+                                                  <strong>{ngdg.ten_nguoi_dung}</strong>
                                                 </Typography>
-                                            );
-                                          } else return null;
-                                        })}
-                                        <Typography
-                                            sx={{
-                                              fontSize: "14px",
-                                              color: "#999",
-                                            }}
-                                        >
-                                          {new Date(danhgia.created_at).toLocaleDateString()}
-                                        </Typography>
-                                      </Box>
-                                      <Typography>
+                                            )
+                                          } else return null
+                                        }
+                                    )}
+                                    <Typography
+                                        sx={{
+                                          fontSize: "14px",
+                                          color: "#999",
+                                        }}
+                                    >
+                                      {new Date(danhgia.created_at).toLocaleDateString()}
+                                    </Typography>
+                                  </Box>
+                                  <Typography>
+                                    <img
+                                        src={danhgia?.hinh_anh ? `${BASE_URL}/uploads/${danhgia?.hinh_anh}` : ""}
+                                        style={{
+                                          width: "40%",
+                                          height: "200px",
+                                          objectFit: "cover",
+                                          borderRadius: "8px",
+                                          marginTop: "10px",
+                                        }}
+                                    />
+                                  </Typography>
+                                  {danhgia.hinh_danh && (
+                                      <Box sx={{ marginTop: "8px" }}>
                                         <img
-                                            src={danhgia?.hinh_anh ? `${BASE_URL}/uploads/${danhgia?.hinh_anh}` : ""}
+                                            src={danhgia.hinh_danh}
+                                            alt="Hình đánh giá"
                                             style={{
-                                              width: "30%",
-                                              height: "200px",
-                                              objectFit: "cover",
+                                              maxWidth: "100%",
                                               borderRadius: "8px",
-                                              marginTop: "10px",
+                                              boxShadow: "0 1px 4px rgba(0, 0, 0, 0.2)",
                                             }}
                                         />
-                                      </Typography>
-                                      {danhgia.hinh_danh && (
-                                          <Box sx={{ marginTop: "8px" }}>
-                                            <img
-                                                src={danhgia.hinh_danh}
-                                                alt="Hình đánh giá"
-                                                style={{
-                                                  maxWidth: "100%",
-                                                  borderRadius: "8px",
-                                                  boxShadow: "0 1px 4px rgba(0, 0, 0, 0.2)",
-                                                }}
-                                            />
-                                          </Box>
-                                      )}
-                                      <Typography
-                                          sx={{
-                                            fontSize: "14px",
-                                            color: "#777",
-                                            marginBottom: "4px",
-                                            marginTop: "10px",
-                                          }}
-                                      >
-                                        <h1 style={{ fontSize: '25px' }}>Đánh giá</h1>
-                                        {renderStars(danhgia.sao)}
-                                      </Typography>
-                                      <Typography
-                                          sx={{
-                                            fontSize: "14px",
-                                            color: "#777",
-                                            marginBottom: "4px",
-                                            marginTop: "10px",
-                                          }}
-                                      >
-                                        <h1 style={{ fontSize: '25px' }}>Các đánh giá khác</h1>
-                                        <p>{renderStars(danhgia.danh_gia_do_an)} (Đánh giá đồ ăn)</p>
-                                        <p>{renderStars(danhgia.danh_gia_dich_vu)} (Đánh giá dịch vụ)</p>
-                                        <p>{renderStars(danhgia.danh_gia_khong_khi)} (Đánh giá không khí)</p>
-                                      </Typography>
-                                      <Typography
-                                          sx={{
-                                            fontSize: "16px",
-                                            color: "#333",
-                                            marginBottom: "8px",
-                                          }}
-                                      >
-                                        <strong>Nội dung:</strong> {danhgia.binh_luan}
-                                      </Typography>
-                                    </Box>
-                                  </Box>
-                              ))
-                      ) : (
-                          <Typography
-                              sx={{
-                                fontSize: "15px",
-                                color: "#000",
-                                textAlign: "center",
-                                paddingTop: "10px",
-                              }}
-                          >
-                            Hiện tại chưa có đánh giá nào.
-                          </Typography>
-                      )}
-
-                      {danhgia.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > visibleCount && (
-                          <Box sx={{ display: "flex", justifyContent: "center", mt:'10px', mb:"10px" }}>
-                            <Button
-                                variant="outlined"
-                                onClick={handleLoadMore}
-                            >
-                              Xem thêm
-                            </Button>
-                          </Box>
-                      )}
-                    </Box>
-                  </Grid>
-                </Grid>
-            )}
-
-            {selectedTab === "dondat" && (
-                <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
-                  {dondat.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
-                      dondat
-                          .filter((fil) => fil.id_quanan === quanan?.id_quanan)
-                          .map((dondat, index) => (
-                              <Box
-                                  key={dondat.id_datcho}
-                                  sx={{
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    marginBottom: "10px",
-                                    padding: "10px",
-                                    borderBottom: "1px solid #E0E0E0",
-                                    backgroundColor: "#f9f9f9",
-                                    borderRadius: "5px",
-                                  }}
-                              >
-                                <Box
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      alignItems: "center",
-                                      marginBottom: "10px",
-                                    }}
-                                >
+                                      </Box>
+                                  )}
+                                  <Typography
+                                      sx={{
+                                        fontSize: "14px",
+                                        color: "#777",
+                                        marginBottom: "4px",
+                                        marginTop: "10px",
+                                      }}
+                                  >
+                                    {renderStars(danhgia.sao)}
+                                  </Typography>
                                   <Typography
                                       sx={{
                                         fontSize: "16px",
-                                        fontWeight: "bold",
                                         color: "#333",
+                                        marginBottom: "8px",
                                       }}
                                   >
-                                    {index + 1}. {dondat.ten_quan}
-                                  </Typography>
-                                  <Typography
-                                      sx={{
-                                        fontSize: "15px",
-                                        color: "#888",
-                                      }}
-                                  >
-                                    {new Date(dondat.ngay_dat).toLocaleDateString()} - {dondat.thoi_gian}
+                                    <strong>Nội dung:</strong> {danhgia.binh_luan}
                                   </Typography>
                                 </Box>
-                                <Box
-                                    sx={{
-                                      flexWrap: "wrap",
-                                      marginBottom: "8px",
-                                    }}
-                                >
-                                  <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                    <strong>Khách hàng:</strong> {dondat.ten_kh}
-                                  </Typography>
-                                  <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                    <strong>Số điện thoại:</strong> {dondat.sdt_kh}
-                                  </Typography>
-                                  <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                    <strong>Email:</strong> {dondat.email_kh}
-                                  </Typography>
-                                </Box>
-                                <Box
-                                    sx={{
-                                      display: "flex",
-                                      flexWrap: "wrap",
-                                      justifyContent: "space-between",
-                                      marginBottom: "8px",
-                                    }}
-                                >
-                                  <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                    <strong>Số lượng người:</strong> {dondat.so_luong_nguoi}
-                                  </Typography>
-                                  <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                    <strong>Trạng thái:</strong> {dondat.trang_thai === 0 ? "Đang chờ xử lý" : null}
-                                    {dondat.trang_thai === 1 ? "Đã có chổ" : null}
-                                    {dondat.trang_thai === 2 ? "Đã hủy" : null}
-
-                                  </Typography>
-                                </Box>
-                                <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                                  <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
-                                </Typography>
                               </Box>
                           ))
                   ) : (
@@ -677,17 +544,153 @@ const ListQuanAn = () => {
                             color: "#000",
                             textAlign: "center",
                             paddingTop: "10px",
+                            mb: 3
                           }}
                       >
-                        Hiện tại chưa có đơn đặt chỗ nào.
+                        Hiện tại chưa có đánh giá nào.
                       </Typography>
                   )}
                 </Box>
             )}
-          </Grid>
 
-        </Card>
-      </div>
+          {selectedTab === "dondat" && (
+            <Box sx={{ paddingLeft: "10px", paddingTop: "15px" }}>
+              {dondat.filter((fil) => fil.id_quanan === quanan?.id_quanan).length > 0 ? (
+                dondat
+                  .filter((fil) => fil.id_quanan === quanan?.id_quanan)
+                  .map((dondat, index) => (
+
+                    <Box sx={{
+                      display: "flex", gap: 4, padding: 2, borderBottom: "1px solid #eee"
+                    }}>
+                      {/* Cột bên trái: Thông tin quán */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#333",
+                            marginBottom: "16px",
+                          }}
+                        >
+                          {index + 1}. {dondat.ten_quan}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Ngày đặt:</strong> {new Date(dondat.ngay_dat).toLocaleDateString()} - {dondat.thoi_gian}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã đơn hàng:</strong> {dondat.ma_don}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã giao dịch:</strong> {dondat.ma_giao_dich}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Tiền cọc:</strong> {formatPrice(dondat.tien_coc)} (30%)
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Khách hàng:</strong> {dondat.ten_kh}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Số điện thoại:</strong> {dondat.sdt_kh}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Email:</strong> {dondat.email_kh}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Số lượng người:</strong> {dondat.so_luong_nguoi}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
+                        </Typography>
+                        {dondat.trang_thai === 2 ?
+                          <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                            <strong>Lý do hủy đơn:</strong> {dondat.ly_do_huy}
+                          </Typography> : null
+                        }
+                        <Typography>
+                          {dondat.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (dondat.trang_thai === 1 ? <span class="badge badge-success">Đã có chỗ</span> : (dondat.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (dondat.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}
+                        </Typography>
+                      </Box>
+
+                      {/* Cột bên phải: Thông tin món */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333", marginBottom: "16px" }}>
+                          Thực đơn đã đặt
+                        </Typography>
+                        {menuOrder.map((item, itemIndex) => {
+                          if (item.id_datcho === dondat.id_datcho) {
+                            return (
+                              <React.Fragment key={itemIndex}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: "8px 0",
+                                    borderBottom: itemIndex < menuOrder.length - 1 ? "1px solid #eee" : "none",
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: "15px", flex: 2 }}>{item.ten_mon}</Typography>
+                                  <Typography
+                                    sx={{ fontSize: "15px", flex: 1, textAlign: "right", color: "#666" }}
+                                  >
+                                    {formatPrice(item.gia)} x {item.so_luong}
+                                  </Typography>
+                                </Box>
+                              </React.Fragment>
+                            );
+                          }
+                          return null;
+                        })}
+
+                        <React.Fragment >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mt: 2,
+                            }}
+                          >
+                            <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>Tổng tiền:</Typography>
+                            <Typography
+                              sx={{
+                                fontSize: "15px",
+                                textAlign: "right",
+                                color: "#666",
+                              }}
+                            >
+                              {menuOrder
+                                .filter((item) => item.id_datcho === dondat.id_datcho)
+                                .reduce((total, item) => total + item.gia * item.so_luong, 0)
+                                .toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                            </Typography>
+                          </Box>
+                        </React.Fragment>
+
+                      </Box>
+                    </Box>
+
+
+                  ))
+              ) : (
+                <Typography
+                  sx={{
+                    fontSize: "15px",
+                    color: "#000",
+                    textAlign: "center",
+                    paddingTop: "10px",
+                    mb: 3
+                  }}
+                >
+                  Hiện tại chưa có đơn đặt chỗ nào.
+                </Typography>
+              )}
+            </Box>
+          )}
+        </Grid>
+      </Card>
+    </div>
   );
 };
 

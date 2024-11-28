@@ -97,7 +97,7 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="col-12 col-sm-10 col-md-8 col-lg-4 col-xl-3">
         <div className="card shadow-sm p-4 border-3">
           <div className="card-header bg-transparent border-0 pb-0">

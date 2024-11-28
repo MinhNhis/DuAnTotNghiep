@@ -24,6 +24,7 @@ const Map = ({ quanan, sizeData }) => {
     const speedRef = useRef(speed);
     const [quanan5kmlocal, setQuanan5Km] = useLocalStorage("QUAN_AN5KM", []);
     const [routesInfo, setRoutesInfo] = useState([]);
+    const [transportMode, setTransportMode] = useState("driving");
     const [routingControl, setRoutingControl] = useState(null);
     const location = useGeolocation();
 
@@ -317,47 +318,58 @@ const Map = ({ quanan, sizeData }) => {
 
     const calculateRouteChiTiet = (latitude, longitude, quan) => {
         const currentLocation = locationRef.current;
-        if (!currentLocation.latitude || !currentLocation.longitude) {
-            console.error("Vị trí người dùng không hợp lệ.");
+        if (!currentLocation.latitude || !currentLocation.longitude || !latitude || !longitude) {
+            console.error("Tọa độ không hợp lệ.");
             return;
         }
+    
         try {
             if (routingControl) {
                 mapRef.current.removeControl(routingControl);
             }
+    
+            const serviceUrl = encodeURI(
+                `https://router.project-osrm.org/route/v1`
+            );
+    
             const newRoutingControl = L.Routing.control({
                 waypoints: [
                     L.latLng(currentLocation.latitude, currentLocation.longitude),
-                    L.latLng(latitude, longitude)
+                    L.latLng(latitude, longitude),
                 ],
                 router: L.Routing.osrmv1({
-                    language: 'vi',
-                    serviceUrl: 'https://router.project-osrm.org/route/v1'
+                    language: "vi",
+                    serviceUrl,
                 }),
                 createMarker: (i, n) => {
                     if (i === n - 1) {
-                        return L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff }).addTo(mapRef.current);
+                        return L.marker(
+                            [latitude, longitude],
+                            { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff }
+                        ).addTo(mapRef.current);
                     }
                 },
                 lineOptions: {
-                    styles: [{ color: 'blue', weight: 4 }]
+                    styles: [{ color: "blue", weight: 4 }],
                 },
                 showAlternatives: false,
                 routeWhileDragging: false,
             }).addTo(mapRef.current);
+    
             setRoutingControl(newRoutingControl);
-            newRoutingControl.on('routesfound', (e) => {
+    
+            newRoutingControl.on("routesfound", (e) => {
                 const routes = e.routes;
                 const summary = routes[0].summary;
                 const distance = summary.totalDistance;
-
+    
                 const distanceKm = distance / 1000;
                 const currentSpeed = speedRef.current;
                 const timeHours = distanceKm / currentSpeed;
                 const timeMinutes = timeHours * 60;
                 const hours = Math.floor(timeMinutes / 60);
                 const minutes = Math.round(timeMinutes % 60);
-
+    
                 const popupContent = `
                     <a href="/chi-tiet/${quan.id_quanan}" style="color: black; text-decoration: none;">
                         <div style="width: 200px; text-align: center;">
@@ -367,25 +379,38 @@ const Map = ({ quanan, sizeData }) => {
                                 ${isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? `<p style="font-size: 12px; margin: 0;">${quan.gio_mo_cua}- ${quan.gio_dong_cua} Đang mở cửa</p>` : `<p style="font-size: 12px; margin: 0;">Đã đóng cửa</p>`}
                             </div>
                             <p style="font-size: 12px;; margin: 0;">${quan.dia_chi}</p>
-                            <p> ${distanceKm.toFixed(2)} Km, Thời gian: ${hours} giờ ${minutes} phút</p>
+                            <p>${distanceKm.toFixed(2)} Km, Thời gian: ${hours} giờ ${minutes} phút</p>
                         </div>
                     </a>
                 `;
-
-                const marker = L.marker([latitude, longitude], { icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff })
-                    .addTo(mapRef.current)
-                marker.bindPopup(popupContent)
+    
+                const marker = L.marker([latitude, longitude], {
+                    icon: isOpen(quan.gio_mo_cua, quan.gio_dong_cua) ? makerIconOn : makerIconOff,
+                }).addTo(mapRef.current);
+                marker.bindPopup(popupContent);
                 marker.openPopup();
-
+    
                 setRoutesInfo((prevRoutes) => [
                     ...prevRoutes,
-                    { latitude, longitude, distanceKm, marker, hinh_anh: quan.hinh_anh, ten_quan_an: quan.ten_quan_an, dia_chi: quan.dia_chi, gio_mo_cua: quan.gio_mo_cua, gio_dong_cua: quan.gio_dong_cua, id_quanan: quan.id_quanan },
+                    {
+                        latitude,
+                        longitude,
+                        distanceKm,
+                        marker,
+                        hinh_anh: quan.hinh_anh,
+                        ten_quan_an: quan.ten_quan_an,
+                        dia_chi: quan.dia_chi,
+                        gio_mo_cua: quan.gio_mo_cua,
+                        gio_dong_cua: quan.gio_dong_cua,
+                        id_quanan: quan.id_quanan,
+                    },
                 ]);
             });
         } catch (error) {
-            console.log("Có lỗi khi tạo tuyến đường", error);
+            console.error("Có lỗi khi tạo tuyến đường:", error);
         }
     };
+    
 
     const updatePopups = () => {
         routesInfo.forEach((route) => {
@@ -420,9 +445,9 @@ const Map = ({ quanan, sizeData }) => {
 
     return (
         <div className="container-fluid">
-            <DriveEtaIcon onClick={() => setSpeed(80)} style={{ cursor: 'pointer', marginRight: '30px' }} title="Ô tô (80 km/h)" />
+            {/* <DriveEtaIcon onClick={() => setSpeed(80)} style={{ cursor: 'pointer', marginRight: '30px' }} title="Ô tô (80 km/h)" />
             <TwoWheelerIcon onClick={() => setSpeed(50)} style={{ cursor: 'pointer', marginRight: '30px' }} title="Xe máy (50 km/h)" />
-            <PedalBikeIcon onClick={() => setSpeed(20)} style={{ cursor: 'pointer' }} title="Xe đạp (20 km/h)" />
+            <PedalBikeIcon onClick={() => setSpeed(20)} style={{ cursor: 'pointer' }} title="Xe đạp (20 km/h)" /> */}
             <div id="map" style={{ height: "100vh", width: "100%" }}></div>
         </div>
     );

@@ -76,7 +76,8 @@ const Profile = () => {
                 try {
                     await editDatcho(booking.id_datcho, {
                         ...booking,
-                        trang_thai: 2
+                        trang_thai: 2,
+                        ly_do_huy: "Hết hạn"
                     });
 
                     await sendEmail(booking.id_datcho, "Hết hạn");
@@ -114,6 +115,7 @@ const Profile = () => {
                 thoi_gian_dat: datcho?.thoi_gian,
                 so_luong_nguoi: datcho?.so_luong,
                 trang_thai: 2,
+                ly_do_huy: value.ly_do_huy,
                 yeu_cau_khac: datcho?.yeu_cau,
                 id_nguoidung: datcho?.id_nguoidung,
             });
@@ -543,6 +545,12 @@ const Profile = () => {
                                             <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
                                         </p>
 
+                                        {value.trang_thai === 2 ?
+                                            <p>
+                                                <strong>Lý do hủy  đơn:</strong> {value?.ly_do_huy}
+                                            </p> : null
+                                        }
+
                                     </div>
                                 </div>
 
@@ -600,7 +608,7 @@ const Profile = () => {
                                 variant="contained"
                                 color="error"
                                 style={
-                                    value?.trang_thai === 2 || value?.trang_thai === 3
+                                    value?.trang_thai === 2 || value?.trang_thai === 3 || value.trang_thai === 1
                                         ? { display: "none" }
                                         : { display: "block", width: "100px" }
                                 }

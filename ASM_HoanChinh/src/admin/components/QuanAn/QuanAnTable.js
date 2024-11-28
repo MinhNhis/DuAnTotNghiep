@@ -21,6 +21,8 @@ import {
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import BlockIcon from '@mui/icons-material/Block';
 import LanguageIcon from '@mui/icons-material/Language';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import { getQuanan, paginator } from "../../../services/Quanan";
@@ -61,12 +63,8 @@ const ExQuanAn = () => {
       const result = await getQuanan();
       setQuanan(result.data);
     }
-
-
   };
   const initQuanan = async () => {
-
-
     if (cookies.role !== 0) {
       const result = await getQuanan();
       setQuanan(result.data);
@@ -124,167 +122,180 @@ const ExQuanAn = () => {
   }, [danhgia, filteredQuanan]);
 
   const renderTable = () => (
-      <>
-        <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: 'nowrap' }}>
-          <TableHead>
-            <TableRow>
+    <>
+      <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: 'nowrap' }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                STT
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Tên Quán Ăn
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Hình Ảnh
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Địa Chỉ
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Trạng thái
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Điện Thoại
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Hành động
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {filteredQuanan.map((items, index) => (
+            <TableRow key={items.id_quanan}>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  STT
+                <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Tên Quán Ăn
+                <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                  <Link
+                    to={`/admin/quanan/chi-tiet/${items?.id_quanan}`}
+                    style={{ textDecoration: "none", color: "inherit" }}
+                  >
+                    {items.ten_quan_an}
+                  </Link>
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Hình Ảnh
+                <Link to={`/admin/quanan/chi-tiet/${items?.id_quanan}`}
+                  style={{ textDecoration: "none", color: "inherit" }}
+                >
+                  {items.hinh_anh && (
+                    <img
+                      style={{ height: "5rem", width: "6rem" }}
+                      src={`${BASE_URL}/uploads/${items.hinh_anh}`}
+                      alt={items.ten_quan_an}
+                    />
+                  )}
+                </Link>
+              </TableCell>
+              <TableCell>
+                <Typography sx={{
+                  ml: 0.5,
+                  fontWeight: "500",
+                  fontSize: "15px",
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitLineClamp: 1,
+                  WebkitBoxOrient: 'vertical',
+                  whiteSpace: 'normal',
+                }}>
+                  {items.dia_chi}
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Địa Chỉ
+                <Typography>
+                  {items.is_delete === 0 ? <span class="badge badge-success">Đang hoạt động</span> : <span class="badge badge-danger">Ngừng hoạt động</span>}
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Điện Thoại
+                <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                  {items.dien_thoai}
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Hành động
-                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <Link to={`/admin/quanan/restart/${items.id_quanan}`}>
+                    <IconButton
+                      aria-label="edit"
+                      color="primary"
+                      style={{ width: "50px", height: "50px", display: items.is_delete === 0 ? "none" : "block" }}
+                    >
+                      <RestartAltIcon />
+                    </IconButton>
+                  </Link>
+
+                  <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
+                    <IconButton
+                      aria-label="delete"
+                      color="danger"
+                      style={{ width: "50px", height: "50px", display: items.is_delete === 1 ? "none" : "block" }}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Link>
+                </Box>
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredQuanan.map((items, index) => (
-                <TableRow key={items.id_quanan}>
-                  <TableCell>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                      {(currentPage - 1) * itemsPerPage + index + 1}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                      <Link
-                          to={`/admin/quanan/chi-tiet/${items?.id_quanan}`}
-                          style={{ textDecoration: "none", color: "inherit" }}
-                      >
-                        {items.ten_quan_an}
-                      </Link>
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Link to={`/admin/quanan/chi-tiet/${items?.id_quanan}`}
-                          style={{ textDecoration: "none", color: "inherit" }}
-                    >
-                      {items.hinh_anh && (
-                          <img
-                              style={{ height: "5rem", width: "6rem" }}
-                              src={`${BASE_URL}/uploads/${items.hinh_anh}`}
-                              alt={items.ten_quan_an}
-                          />
-                      )}
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{
-                      ml: 0.5,
-                      fontWeight: "500",
-                      fontSize: "15px",
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: '-webkit-box',
-                      WebkitLineClamp: 1,
-                      WebkitBoxOrient: 'vertical',
-                      whiteSpace: 'normal',
-                    }}>
-                      {items.dia_chi}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                      {items.dien_thoai}
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
-                      <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
-                        <IconButton
-                            aria-label="edit"
-                            color="primary"
-                            style={{ width: "50px", height: "50px" }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </Link>
-                      <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
-                        <IconButton
-                            aria-label="delete"
-                            color="danger"
-                            style={{ width: "50px", height: "50px" }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Link>
-                    </Box>
-                  </TableCell>
-                </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableRow
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "20px",
-              button: {
-                color: "black",
-                borderRadius: "50%",
-                width: "20px",
-                height: "20px",
-                fontSize: "0.8rem",
-                margin: "0 5px",
-                "&.Mui-selected":
-                    {
-                      backgroundColor: "#CCCCCC",
-                    }
-              },
-            }}>
-          <PaginationRounded
-              onDataChange={cookies.role === 0 ? initData : initQuanan}
-              paginator={paginator}
-          />
-        </TableRow>
-      </>
+          ))}
+        </TableBody>
+      </Table>
+      <TableRow
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "20px",
+          button: {
+            color: "black",
+            borderRadius: "50%",
+            width: "20px",
+            height: "20px",
+            fontSize: "0.8rem",
+            margin: "0 5px",
+            "&.Mui-selected":
+            {
+              backgroundColor: "#CCCCCC",
+            }
+          },
+        }}>
+        <PaginationRounded
+          onDataChange={cookies.role === 0 ? initData : initQuanan}
+          paginator={paginator}
+        />
+      </TableRow>
+    </>
   );
 
   const renderProfile = () => (
-      <div className="container mt-4">
-        <CardContent sx={{ padding: "30px", position: "relative" }}>
-          <Grid container spacing={4}>
-            {filteredQuanan.map((items, index) => (
+    <div className="container mt-4">
+      <CardContent sx={{ padding: "30px", position: "relative" }}>
+        <Grid container spacing={4}>
+          {filteredQuanan.map((items, index) => {
+            if (items.is_delete === 0) {
+              return (
                 <React.Fragment key={index}>
                   <Divider variant="middle" />
                   <Grid container spacing={4}>
                     <Grid item xs={12} md={6}>
                       <img
-                          src={
-                            items?.hinh_anh
-                                ? `${BASE_URL}/uploads/${items?.hinh_anh}`
-                                : ""
-                          }
-                          alt="Restaurant"
-                          style={{
-                            width: "100%",
-                            height: "400px",
-                            borderRadius: "10px",
-                            objectFit: "cover",
-                          }}
+                        src={
+                          items?.hinh_anh
+                            ? `${BASE_URL}/uploads/${items?.hinh_anh}`
+                            : ""
+                        }
+                        alt="Restaurant"
+                        style={{
+                          width: "100%",
+                          height: "400px",
+                          borderRadius: "10px",
+                          objectFit: "cover",
+                        }}
                       />
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -296,9 +307,6 @@ const ExQuanAn = () => {
                           <strong>Địa chỉ:</strong> {items?.dia_chi}
                         </Typography>
                         <Typography variant="body1">
-                          <strong>Đánh giá:  {renderStars(stars)} ({stars})</strong>
-                        </Typography>
-                        <Typography variant="body1">
                           <strong>Điện thoại:</strong> {items?.dien_thoai}
                         </Typography>
                         <Typography variant="body1">
@@ -307,13 +315,13 @@ const ExQuanAn = () => {
                       </Stack>
                       <Box mt={4}>
                         <Typography
-                            variant="h6"
-                            sx={{
-                              fontWeight: "bold",
-                              color: "#1976d2",
-                              textAlign: "left",
-                              mb: 2,
-                            }}
+                          variant="h6"
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#1976d2",
+                            textAlign: "left",
+                            mb: 2,
+                          }}
                         >
                           <strong>Thông tin giới thiệu</strong>
                         </Typography>
@@ -322,29 +330,29 @@ const ExQuanAn = () => {
                             <Typography variant="body1">
                               <strong>Giới thiệu:</strong>
                               <span
-                                  style={{
-                                    ml: 0.5,
-                                    fontSize: "15px",
-                                    overflow: "hidden",
-                                    textOverflow: "ellipsis",
-                                    display: "-webkit-box",
-                                    WebkitLineClamp: showFullDescription ? 'none' : 2,
-                                    WebkitBoxOrient: "vertical",
-                                    whiteSpace: "normal",
-                                  }}
+                                style={{
+                                  ml: 0.5,
+                                  fontSize: "15px",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                  display: "-webkit-box",
+                                  WebkitLineClamp: showFullDescription ? 'none' : 2,
+                                  WebkitBoxOrient: "vertical",
+                                  whiteSpace: "normal",
+                                }}
                               >
-                            {" "}
+                                {" "}
                                 {items?.mo_ta || "Chưa cập nhật"}
-                          </span>
+                              </span>
                               {!showFullDescription && items?.mo_ta && items.mo_ta.length > 100 && (
-                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
-                              ... Xem thêm
-                            </span>
+                                <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                                  ... Xem thêm
+                                </span>
                               )}
                               {showFullDescription && (
-                                  <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
-                              Xem ít hơn
-                            </span>
+                                <span style={{ cursor: 'pointer', color: 'blue' }} onClick={handleToggleDescription}>
+                                  Xem ít hơn
+                                </span>
                               )}
                             </Typography>
 
@@ -354,26 +362,26 @@ const ExQuanAn = () => {
                               <Typography variant="body1">
                                 <strong>Tiện nghi:</strong>{" "}
                                 {items?.tiennghis && items.tiennghis.length > 0
-                                    ? items.tiennghis
-                                        .map((tiennghi) => tiennghi.tien_nghi)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.tiennghis
+                                    .map((tiennghi) => tiennghi.tien_nghi)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                               <Typography variant="body1">
                                 <strong>Không khí:</strong>{" "}
                                 {items?.khongkhis && items.khongkhis.length > 0
-                                    ? items.khongkhis
-                                        .map((khongkhi) => khongkhi.khong_khi)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.khongkhis
+                                    .map((khongkhi) => khongkhi.khong_khi)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                               <Typography variant="body1">
                                 <strong>Dịch vụ:</strong>{" "}
                                 {items?.dichvus && items.dichvus.length > 0
-                                    ? items.dichvus
-                                        .map((dichvu) => dichvu.dich_vu)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.dichvus
+                                    .map((dichvu) => dichvu.dich_vu)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                             </Stack>
                           </Grid>
@@ -382,100 +390,100 @@ const ExQuanAn = () => {
                               <Typography variant="body1">
                                 <strong>Kế hoạch:</strong>{" "}
                                 {items?.kehoachs && items.kehoachs.length > 0
-                                    ? items.kehoachs
-                                        .map((kehoach) => kehoach.ke_hoach)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.kehoachs
+                                    .map((kehoach) => kehoach.ke_hoach)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                               <Typography variant="body1">
                                 <strong>Bãi đỗ xe:</strong>{" "}
                                 {items?.baidoxes && items.baidoxes.length > 0
-                                    ? items.baidoxes
-                                        .map((baidoxe) => baidoxe.bai_do_xe)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.baidoxes
+                                    .map((baidoxe) => baidoxe.bai_do_xe)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                               <Typography variant="body1">
                                 <strong>Loại khách hàng:</strong>{" "}
                                 {items?.loaikhs && items.loaikhs.length > 0
-                                    ? items.loaikhs
-                                        .map((loaikh) => loaikh.khach_hang)
-                                        .join(", ")
-                                    : "Chưa cập nhật"}
+                                  ? items.loaikhs
+                                    .map((loaikh) => loaikh.khach_hang)
+                                    .join(", ")
+                                  : "Chưa cập nhật"}
                               </Typography>
                             </Stack>
                           </Grid>
                         </Grid>
                       </Box>
                       <CardActions
-                          sx={{
-                            position: "absolute",
-                            bottom: -25,
-                            left: 16,
-                          }}
+                        sx={{
+                          position: "absolute",
+                          bottom: -25,
+                          left: 16,
+                        }}
                       >
                         {items.link_website && (
-                            <Button
-                                size="medium"
-                                startIcon={<LanguageIcon />}
-                                href={items.link_website}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                              Website
-                            </Button>
+                          <Button
+                            size="medium"
+                            startIcon={<LanguageIcon />}
+                            href={items.link_website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Website
+                          </Button>
                         )}
                         {items.link_facebook && (
-                            <Button
-                                size="medium"
-                                startIcon={<FacebookIcon />}
-                                href={items.link_facebook}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                              Facebook
-                            </Button>
+                          <Button
+                            size="medium"
+                            startIcon={<FacebookIcon />}
+                            href={items.link_facebook}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Facebook
+                          </Button>
                         )}
                       </CardActions>
                       <CardActions
-                          sx={{
-                            position: "absolute",
-                            top: -30,
-                            right: 16,
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: 'center'
-                          }}
+                        sx={{
+                          position: "absolute",
+                          top: -30,
+                          right: 16,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: 'center'
+                        }}
                       >
                         <Link to={`/admin/quanan/edit/${items.id_quanan}`}>
                           <IconButton
-                              aria-label="edit"
-                              color="primary"
-                              sx={{
-                                width: "45px",
-                                height: "45px",
-                                mb: 1,
-                                backgroundColor: "rgba(230, 230, 230, 0.8)",
-                                "&:hover": {
-                                  backgroundColor: "rgba(255, 255, 255, 1)",
-                                },
-                              }}
+                            aria-label="edit"
+                            color="primary"
+                            sx={{
+                              width: "45px",
+                              height: "45px",
+                              mb: 1,
+                              backgroundColor: "rgba(230, 230, 230, 0.8)",
+                              "&:hover": {
+                                backgroundColor: "rgba(255, 255, 255, 1)",
+                              },
+                            }}
                           >
                             <EditIcon />
                           </IconButton>
                         </Link>
                         <Link to={`/admin/quanan/delete/${items.id_quanan}`}>
                           <IconButton
-                              aria-label="delete"
-                              color="error"
-                              sx={{
-                                width: "45px",
-                                height: "45px",
-                                backgroundColor: "rgba(230, 230, 230, 0.8)",
-                                "&:hover": {
-                                  backgroundColor: "rgba(255, 255, 255, 1)",
-                                },
-                              }}
+                            aria-label="delete"
+                            color="error"
+                            sx={{
+                              width: "45px",
+                              height: "45px",
+                              backgroundColor: "rgba(230, 230, 230, 0.8)",
+                              "&:hover": {
+                                backgroundColor: "rgba(255, 255, 255, 1)",
+                              },
+                            }}
                           >
                             <DeleteIcon />
                           </IconButton>
@@ -484,11 +492,48 @@ const ExQuanAn = () => {
                       </CardActions>
                     </Grid>
                   </Grid>
+                </React.Fragment>)
+            } else {
+              return (
+                <React.Fragment>
+                  <Divider variant="middle" sx={{ my: 3 }} />
+                  <Grid
+                    container
+                    spacing={3}
+                    justifyContent="center"
+                    alignItems="center"
+                    sx={{ textAlign: 'center' }}
+                  >
+                    <Grid item xs={12} md={8}>
+                      <BlockIcon sx={{ fontSize: 100, color: 'error.main', mb: 2 }} />
+                      <Typography
+                        variant="h6"
+                        gutterBottom
+                        sx={{ fontWeight: 'bold', color: 'error.main' }}
+                      >
+                        Quán ăn của bạn đã bị ngừng hoạt động!
+                      </Typography>
+                      <Typography
+                        variant="body1"
+                        color="textSecondary"
+                        sx={{ mb: 1.5 }}
+                      >
+                        Vui lòng liên hệ <a
+                          href="mailto:minhnhidmn0502@gmail.com"
+                          style={{ color: '#1976d2', textDecoration: 'underline' }}
+                        >
+                          minhnhidmn0502@gmail.com
+                        </a> để biết thêm chi tiết.
+                      </Typography>
+                    </Grid>
+                  </Grid>
                 </React.Fragment>
-            ))}
-          </Grid>
-        </CardContent>
-      </div>
+              )
+            }
+          })}
+        </Grid>
+      </CardContent>
+    </div>
 
   );
   return cookies.role === 0 ? renderTable() : renderProfile();

@@ -18,7 +18,7 @@ const getQuananById = async (id) => {
     return res
 }
 
-const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta, created_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
+const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta,is_delete, created_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
@@ -32,6 +32,7 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai,
     data.append("created_user", created_user);
     data.append("so_luong_cho", so_luong_cho);
     data.append("mo_ta", mo_ta);
+    data.append("is_delete", is_delete);
     if (tiennghiIds) {
         tiennghiIds.forEach((e, index) => {
             data.append(`tiennghiIds[${index}]`, e);
@@ -79,7 +80,7 @@ const addQuanan = async ({ ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai,
     return res
 }
 
-const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta, created_user, updated_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
+const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_thoai, gio_mo_cua, gio_dong_cua, link_website, link_facebook, so_luong_cho, mo_ta, is_delete, created_user, updated_user, tiennghiIds, dichvuIds, khongkhiIds, kehoachIds, baidoxeIds, loaikhIds }) => {
     const data = new FormData();
     data.append("ten_quan_an", ten_quan_an);
     data.append("dia_chi", dia_chi);
@@ -92,6 +93,7 @@ const editQuanan = async (id, { ten_quan_an, hinh_anh, dia_chi, lat, lng, dien_t
     data.append("link_facebook", link_facebook);
     data.append("so_luong_cho", so_luong_cho);
     data.append("mo_ta", mo_ta);
+    data.append("is_delete", is_delete);
     data.append("created_user", created_user);
     data.append("updated_user", updated_user);
     tiennghiIds.forEach((e, index) => {
@@ -170,6 +172,21 @@ const deleteQuanan = async (id, { id_nguoidung, reason, role }) => {
     return res
 }
 
+const isDeleteQuanan = async (id, { id_nguoidung, reason, role, is_delete }) => {
+
+    const res = await request({
+        method: "PUT",
+        path: `api/isdelete/${id}`,
+        data: {
+            reason: reason,
+            id_nguoidung: id_nguoidung,
+            role: role,
+            is_delete: is_delete
+        }
+    })
+
+    return res
+}
 const paginator = async (page) => {
     const res = await request({
         method: "GET",
@@ -197,4 +214,4 @@ const getTiennghi = async () => {
     return res
 }
 
-export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan, searchQuanan, getTiennghi, editQuananMoTa}
+export {paginator, getQuanan, getQuananById, addQuanan, editQuanan, deleteQuanan,isDeleteQuanan, searchQuanan, getTiennghi, editQuananMoTa}
