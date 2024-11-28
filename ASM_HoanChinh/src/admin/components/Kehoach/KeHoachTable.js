@@ -28,7 +28,6 @@ const KeHoachTable = () => {
     try {
       const result = await kehoach();
       setKehoach(result.data)
-      console.log(result.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu bãi đỗ xe:", error);
       setKehoach([]);

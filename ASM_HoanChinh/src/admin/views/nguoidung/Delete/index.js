@@ -65,7 +65,7 @@ const DeleteNguoiDung = () => {
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom:'20px', fontSize:'25px' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px', fontSize: '25px' }}>
           <WarningIcon sx={{ fontSize: 40, color: "warning.main", marginRight: 1 }} />
           Bạn có chắc chắn muốn xóa?
         </Box>
@@ -82,7 +82,7 @@ const DeleteNguoiDung = () => {
             rows={1.75}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            sx={{ width: "50%", marginTop: 1 }}
+            sx={{ width: "100%", marginTop: 1 }}
           />
         </DialogContentText>
       </DialogContent>

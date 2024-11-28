@@ -1,12 +1,11 @@
-import React from "react";
-//import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
 
 import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import AddToPhotosOutlinedIcon from '@mui/icons-material/AddToPhotosOutlined';
-import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import { useSnackbar } from "notistack";
 
 import {
   AppBar,
@@ -21,22 +20,33 @@ import {
   ListItemIcon,
 } from "@mui/material";
 
-import userimg from "../../../assets/images/users/user.jpg";
+import ImgUser from "../../../../admin/assets/images/user.png";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { BASE_URL } from "../../../../config/ApiConfig";
+import { getNguoiDungById } from "../../../../services/Nguoidung";
 
 const Header = (props) => {
+  const accounts = JSON.parse(localStorage.getItem("accounts"));
   const [anchorEl, setAnchorEl] = React.useState(null);
-
+  const { enqueueSnackbar } = useSnackbar();
+  const [nguoidung, setnguoidung] = useState({});
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  useEffect(() => {
+    initData()
+  }, []);
 
-  const handleClose = () => {
-    setAnchorEl(null);
+  const initData = async () => {
+    try {
+      const resultNguoiDung = await getNguoiDungById(accounts.id_nguoidung);
+      setnguoidung(resultNguoiDung.data);
+    } catch (error) {
+      enqueueSnackbar("Có lỗi xảy ra khi tải thông tin!", { variant: "error" });
+    }
   };
 
-  // 4
   const [anchorEl4, setAnchorEl4] = React.useState(null);
 
   const handleClick4 = (event) => {
@@ -47,15 +57,10 @@ const Header = (props) => {
     setAnchorEl4(null);
   };
 
-  // 5
   const [anchorEl5, setAnchorEl5] = React.useState(null);
 
   const handleClick5 = (event) => {
     setAnchorEl5(event.currentTarget);
-  };
-
-  const handleClose5 = () => {
-    setAnchorEl5(null);
   };
 
   const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
@@ -68,6 +73,7 @@ const Header = (props) => {
     removeCookie("role", null, { path: "/", expires: date });
     navigate('/login')
   }
+  console.log(nguoidung);
 
   return (
     <AppBar sx={props.sx} elevation={0} className={props.customClass}>
@@ -94,74 +100,8 @@ const Header = (props) => {
         >
           <AddToPhotosOutlinedIcon />
         </IconButton>
-        <Menu
-          id="dd-menu"
-          anchorEl={anchorEl5}
-          keepMounted
-          open={Boolean(anchorEl5)}
-          onClose={handleClose5}
-          anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
-          transformOrigin={{ horizontal: "left", vertical: "top" }}
-          sx={{
-            "& .MuiMenu-paper": {
-              width: "250px",
-              right: 0,
-              top: "70px !important",
-            },
-          }}
-        >
-          <MenuItem onClick={handleClose5}>
-            <Avatar
-              sx={{
-                width: "35px",
-                height: "35px",
-              }}
-            />
-            <Box
-              sx={{
-                ml: 2,
-              }}
-            >
-              New account
-            </Box>
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleClose5}>
-            <Avatar
-              sx={{
-                width: "35px",
-                height: "35px",
-              }}
-            />
-            <Box
-              sx={{
-                ml: 2,
-              }}
-            >
-              New Page
-            </Box>
-          </MenuItem>
-          <MenuItem onClick={handleClose5}>
-            <Avatar
-              sx={{
-                width: "35px",
-                height: "35px",
-              }}
-            />
-            <Box
-              sx={{
-                ml: 2,
-              }}
-            >
-              New Component
-            </Box>
-          </MenuItem>
-        </Menu>
         <Box flexGrow={1} />
 
-        {/* ------------------------------------------- */}
-        {/* Notifications Dropdown */}
-        {/* ------------------------------------------- */}
         <IconButton
           aria-label="menu"
           color="inherit"
@@ -171,32 +111,6 @@ const Header = (props) => {
         >
           <NotificationsNoneOutlinedIcon width="20" height="20" />
         </IconButton>
-        <Menu
-          id="notification-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          sx={{
-            "& .MuiMenu-paper": {
-              width: "200px",
-              right: 0,
-              top: "70px !important",
-            },
-          }}
-        >
-          <MenuItem onClick={handleClose}>Action</MenuItem>
-          <MenuItem onClick={handleClose}>Action Else</MenuItem>
-          <MenuItem onClick={handleClose}>Another Action</MenuItem>
-        </Menu>
-        {/* ------------------------------------------- */}
-        {/* End Notifications Dropdown */}
-        {/* ------------------------------------------- */}
-        {/* ------------------------------------------- */}
-        {/* Profile Dropdown */}
-        {/* ------------------------------------------- */}
         <Box
           sx={{
             width: "1px",
@@ -219,8 +133,9 @@ const Header = (props) => {
             }}
           >
             <Avatar
-              src={userimg}
-              alt={userimg}
+              src={
+                nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`) : (ImgUser)
+              }
               sx={{
                 width: "30px",
                 height: "30px",
@@ -238,45 +153,39 @@ const Header = (props) => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           sx={{
             "& .MuiMenu-paper": {
-              width: "250px",
+              width: "170px",
               right: 0,
               top: "70px !important",
             },
           }}
         >
-          <MenuItem onClick={handleClose4}>
-            <Avatar
+          <Link to={"admin/ho-so"}>
+            <MenuItem
+              onClick={handleClose4}
               sx={{
-                width: "35px",
-                height: "35px",
-              }}
-            />
-            <Box
-              sx={{
-                ml: 2,
+                display: cookies.role === 0 ? "none" : "flex",
+                alignItems: "center",
               }}
             >
-              My account
-            </Box>
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleClose4}>
-            <ListItemIcon>
-              <PersonAddOutlinedIcon fontSize="small" />
-            </ListItemIcon>
-            Add another account
-          </MenuItem>
-          <MenuItem onClick={handleClose4}>
-            <ListItemIcon>
-              <SettingsOutlinedIcon fontSize="small" />
-            </ListItemIcon>
-            Settings
-          </MenuItem>
+              <Avatar sx={{ width: "25px", height: "25px" }} />
+              <Box
+                sx={{
+                  ml: 2, 
+                  fontSize: "16px",
+                  color: "#B58B56", 
+                }}
+              >
+                Hồ sơ
+              </Box>
+            </MenuItem>
+          </Link>
+
+          <Divider sx={{ display: cookies.role === 0 ? 'none' : 'block' }} />
           <MenuItem onClick={logOut}>
             <ListItemIcon>
               <LogoutOutlinedIcon fontSize="small" />
             </ListItemIcon>
-            Logout
+            Đăng xuát
           </MenuItem>
         </Menu>
       </Toolbar>

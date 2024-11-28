@@ -35,7 +35,7 @@ const AddNguoiDung = () => {
   };
 
   const handleClose = () => {
-    navigate('/admin/bai-viet');
+    navigate('/admin/nguoi-dung');
   };
 
 

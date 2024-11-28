@@ -34,11 +34,14 @@
     width: 100%;
 }
 
+input[type="search"]::-webkit-search-cancel-button {
+    display: none; /* Ẩn nút "X" mặc định */
+}
 .input-group input {
     background-color: white;
     height: 50px;
     border: 2px solid #ccc;
-    border-radius: 40px;
+    border-radius: 10px;
     width: 100%;
 }
 

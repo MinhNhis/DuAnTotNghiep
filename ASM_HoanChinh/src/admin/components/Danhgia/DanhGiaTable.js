@@ -150,17 +150,17 @@ const ExDanhGia = () => {
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                  {items.danh_gia_do_an}
+                  {renderStars(items.danh_gia_do_an)}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                  {items.danh_gia_dich_vu}
+                  {renderStars(items.danh_gia_dich_vu)}
                 </Typography>
               </TableCell>
               <TableCell>
                 <Typography sx={{ fontSize: "15px", fontWeight: "500", }}>
-                  {items.danh_gia_khong_khi}
+                  {renderStars(items.danh_gia_khong_khi)}
                 </Typography>
               </TableCell>
               <TableCell>

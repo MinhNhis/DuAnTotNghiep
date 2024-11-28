@@ -1,17 +1,25 @@
 import React from "react";
 import { TextField, Button, Typography, Box, Grid } from '@mui/material';
 import { useForm } from "react-hook-form";
-
+import { lienhe } from "../../../services/Auth";
+import { useSnackbar } from "notistack";
 const LienHe = () => {
 
     const { register, handleSubmit, formState } = useForm();
-    const submit = () =>{
-
+    const { enqueueSnackbar } = useSnackbar();
+    const submit = async (value) => {
+        await lienhe({
+            ten: value.ten_kh,
+            email: value.email,
+            reason: value.noidung,
+            sdt: value.sdt
+        });
+        enqueueSnackbar("Gửi thành công!", { variant: "success" });
     }
-    
+
     return (
         <div className="container">
-       
+
             <div className="container-fluid bg-light py-6 my-6 mt-0 pb-4">
                 <div className="container text-center animated">
                     <h1 className="display-1 mb-4">Liên Hệ</h1>
@@ -32,10 +40,10 @@ const LienHe = () => {
                         noValidate
                         autoComplete="off"
                         sx={{
-                            backgroundColor: 'white', 
-                            padding: '30px', 
+                            backgroundColor: 'white',
+                            padding: '30px',
                             borderRadius: '8px',
-                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)', 
+                            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
                         }}
                     >
                         <h1 className="text-center">Liên hệ</h1>
@@ -132,20 +140,20 @@ const LienHe = () => {
                                         borderRadius: '4px',
                                         resize: 'vertical'
                                     }}
-                                    id="Noidung"
-                                    name="Noidung"
+                                    id="noidung"
+                                    name="noidung"
                                     placeholder="Nội dung"
                                     required
-                                    {...register("Noidung", {
+                                    {...register("noidung", {
                                         required: {
                                             value: true,
                                             message: "Nội dung không được bỏ trống"
                                         }
                                     })}
                                 />
-                                {formState?.errors?.Noidung && (
+                                {formState?.errors?.noidung && (
                                     <small className="text-danger">
-                                        {formState?.errors?.Noidung?.message}
+                                        {formState?.errors?.noidung?.message}
                                     </small>
                                 )}
                             </Grid>
@@ -157,13 +165,13 @@ const LienHe = () => {
                                             width: '100px',
                                             backgroundColor: '#d4a762',
                                             color: 'white',
-                                            marginTop: '10px', 
+                                            marginTop: '10px',
                                             '&:hover': {
                                                 backgroundColor: '#c69c4f',
                                             },
                                         }}
                                         onClick={handleSubmit(submit)}
-                                        className="mt-2" 
+                                        className="mt-2"
                                     >
                                         Gửi
                                     </Button>

@@ -5,7 +5,7 @@ import './style.css'
 import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhmuc } from "../../../services/Danhmuc";
-import { getQuanan } from "../../../services/Quanan";
+import { getQuanan, getQuananById } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
 import { getAllDanhmuc } from "../../../services/Alldanhmuc";
@@ -18,9 +18,10 @@ const Menu = () => {
     const [selectedSubCategory, setSelectedSubCategory] = useState(null);
     const [error, setError] = useState(null);
     const [quanan, setQuanan] = useState([]);
-    const [quanan5Km, setQUanan5Km] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
+    const [showPagination, setShowPagination] = useState(true);
+
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -47,7 +48,6 @@ const Menu = () => {
         const res = await paginator(1);
         setMenus(res.data);
     };
-
     const initData = async () => {
         if (!selectedSubCategory) {
             setMenus([]);
@@ -62,28 +62,7 @@ const Menu = () => {
         }
     };
 
-    const quanan5km = JSON.parse(localStorage.getItem("QUAN_AN5KM"));
-    setTimeout(() => {
-        checkLoca(quanan5km)
-    }, 1000);
-    const checkLoca = async (quanan, retries = 3) => {
-        try {
-            if (quanan) {
-                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
-                setQUanan5Km(sortedQuanan);
-            } else {
-                return null
-            }
-        } catch (error) {
-            if (retries > 0) {
-                console.warn("thử lại...", retries);
-                return await checkLoca(quanan, retries - 1);
-            } else {
-                console.error("Lỗi sau nhiều lần thử:", error);
-                return null;
-            }
-        }
-    }
+
     const initAllDanhmuc = async () => {
         const res = await getAllDanhmuc();
         if (res && res.data) {
@@ -108,16 +87,20 @@ const Menu = () => {
             setSelectedSubCategory(null);
             setMenus([]);
             AllMenu();
+            setShowPagination(true); // Show pagination when no subcategory is selected
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
+            setShowPagination(true); // Show pagination when category is selected
         }
     };
+
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
+        setShowPagination(false); // Hide pagination when subcategory is selected
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
@@ -125,16 +108,16 @@ const Menu = () => {
         } catch (error) {
             setError("Failed to load menus");
         }
-
     };
 
-    useEffect(() => {
-        if (selectedCategory) {
-            const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
-            setSubCategories(filteredSubCategories);
-        }
-    }, [selectedCategory]);
+    // useEffect(() => {
+    //     if (selectedCategory) {
+    //         const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
+    //         setSubCategories(filteredSubCategories);
+    //     }
+    // }, [selectedCategory]);
     if (error) return <p>{error}</p>;
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -293,10 +276,13 @@ const Menu = () => {
                                         },
                                     }}
                                 >
-                                    <PaginationRounded
-                                        onDataChange={initPage}
-                                        paginator={paginator}
-                                    />
+
+                                    {showPagination && (
+                                        <PaginationRounded
+                                            onDataChange={initPage}
+                                            paginator={paginator}
+                                        />
+                                    )}
                                 </TableRow>
                             </div>
                         </div>

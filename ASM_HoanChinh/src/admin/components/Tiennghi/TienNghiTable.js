@@ -28,7 +28,6 @@ const TienNghiTable = () => {
     try {
       const result = await tiennghi();
       setTiennghi(result.data);
-      console.log(result.data);
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu bãi đỗ xe:", error);
       setTiennghi([]);

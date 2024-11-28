@@ -155,6 +155,7 @@ const AddQuanAn = () => {
                     hinh_anh: value?.hinh_anh[0],
                     so_luong_cho: value?.so_luong_cho,
                     mo_ta: value?.mo_ta,
+                    is_delete: 0,
                     link_facebook: value?.link_facebook,
                     created_user: account?.id_nguoidung,
                     updated_user: account?.id_nguoidung,

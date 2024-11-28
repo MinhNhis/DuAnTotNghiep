@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Card, CardContent, Divider, Box, Typography, Grid, Stack } from "@mui/material";
 import { getNguoiDungById } from "../../../../services/Nguoidung";
 import { BASE_URL } from "../../../../config/ApiConfig";
@@ -7,11 +7,16 @@ import ImgUser from "../../../assets/images/user.png";
 import { getQuanan } from "../../../../services/Quanan";
 import { getDatcho } from "../../../../services/Datcho";
 import { getDatchoById } from "../../../../services/Datcho";
+import { getMenuOrder } from "../../../../services/MenuOrder";
+import { getDanhgia } from "../../../../services/Danhgia";
 const EditNguoiDung = () => {
   const [nguoidung, setNguoidung] = useState(null);
   const [quanan, setQuanan] = useState(null);
+  const [menuOrder, setMenuOrder] = useState([]);
   const params = useParams();
   const id = params.id;
+  const [danhgia, setDanhGia] = useState([]);
+  const [stars, setStar] = useState(0);
   //khai báo phần xem thêm nội dung
   const [showFullDescription, setShowFullDescription] = useState(false);
   const handleToggleDescription = () => {
@@ -31,6 +36,9 @@ const EditNguoiDung = () => {
       const result = await getNguoiDungById(id);
       setNguoidung(result.data);
 
+      const resMenuOrder = await getMenuOrder();
+      setMenuOrder(resMenuOrder.data)
+
       if (result.data.id_nguoidung) {
         const quananResult = await getQuanan();
         const quan = quananResult.data.find((e) => e.created_user === result.data.id_nguoidung);
@@ -41,8 +49,45 @@ const EditNguoiDung = () => {
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu:", error);
     }
+    const DanhGiaList = await getDanhgia();
+    setDanhGia(DanhGiaList.data);
+  };
+  const renderStars = (stars) => {
+    return [...Array(5)].map((_, i) => {
+      if (i < Math.floor(stars)) {
+        return <i key={i} className="fas fa-star text-primary me-2"></i>;
+      } else if (i < stars) {
+        return <i key={i} className="fas fa-star-half-alt text-primary me-2"></i>;
+      } else {
+        return <i key={i} className="far fa-star text-primary me-2"></i>;
+      }
+    });
   };
 
+  useEffect(() => {
+
+    let totalStars = 0;
+    let count = 0;
+
+
+    danhgia.forEach(e => {
+      console.log("Đánh giá hiện tại:", e);
+      if (e.id_quanan === quanan.id_quanan) {
+        // Kiểm tra xem giá trị có hợp lệ không
+        if (typeof e.sao === 'number') {
+          totalStars += e.sao;
+          count++;
+        }
+      } else {
+        console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
+      }
+    });
+    // Tính toán giá trị trung bình
+    setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
+  }, [danhgia, quanan]);
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
   return (
     <div className="container mt-4">
       <Card variant="outlined" sx={{ p: 0 }}>
@@ -71,7 +116,7 @@ const EditNguoiDung = () => {
                 {nguoidung?.ten_nguoi_dung || "Chủ quán"}
               </Typography>
               <Typography variant="subtitle1" color="textSecondary">
-                Quản lý quán ăn
+                {nguoidung?.vai_tro === 2 ? "Quản lý quán ăn" : "Người dùng"}
               </Typography>
             </Grid>
             <Grid item xs={12} sm={8}>
@@ -93,25 +138,28 @@ const EditNguoiDung = () => {
             <CardContent>
               <Box sx={{ textAlign: "center", marginBottom: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#1976d2" }}>
-                  <strong>Thông Tin Quán Ăn</strong>
+                  <Link to={`/admin/quanan/chi-tiet/${quanan.id_quanan}`}><strong>Thông Tin Quán Ăn</strong></Link>
                 </Typography>
               </Box>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                  <img
-                    src={quanan?.hinh_anh ? `${BASE_URL}/uploads/${quanan?.hinh_anh}` : ""}
-                    alt="Restaurant"
-                    style={{
-                      width: "100%",
-                      height: "400px",
-                      borderRadius: "10px",
-                      objectFit: "cover",
-                    }}
-                  />
+                  <Link to={`/admin/quanan/chi-tiet/${quanan.id_quanan}`}>
+                    <img
+                      src={quanan?.hinh_anh ? `${BASE_URL}/uploads/${quanan?.hinh_anh}` : ""}
+                      alt="Restaurant"
+                      style={{
+                        width: "100%",
+                        height: "400px",
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Link>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Stack spacing={2}>
                     <Typography variant="body1"><strong>Tên quán ăn:</strong> <span style={{ fontSize: "20px" }}>{quanan?.ten_quan_an}</span></Typography>
+                    <Typography variant="body1"><strong>Đánh giá :  {renderStars(stars)} ({stars})</strong></Typography>
                     <Typography variant="body1"><strong>Địa chỉ:</strong> {quanan?.dia_chi}</Typography>
                     <Typography variant="body1"><strong>Điện thoại:</strong> {quanan?.dien_thoai}</Typography>
                     <Typography variant="body1"><strong>Giờ hoạt động:</strong> {quanan?.gio_mo_cua} - {quanan?.gio_dong_cua}</Typography>
@@ -198,7 +246,7 @@ const EditNguoiDung = () => {
           </>
         )}
         <Grid item xs={12} md={12}>
-          <ul className="nav nav-tabs">
+          {/* <ul className="nav nav-tabs">
             <li className="nav-item">
               <div
                 className={`nav-link ${selectedTab === "dondat" ? "active" : ""}`}
@@ -206,86 +254,120 @@ const EditNguoiDung = () => {
                 onClick={() => setSelectedTab("dondat")}
                 style={{ color: "#007bff", cursor: "pointer" }}
               >
-                Đơn đặt
+               
               </div>
             </li>
-          </ul>
+          </ul> */}
           {selectedTab === "dondat" && (
-            <Box sx={{ paddingLeft: "10px", paddingTop: "15px" , paddingRight:'10px'}}>
+            <Box sx={{ paddingLeft: "10px", paddingTop: "15px", paddingRight: '10px' }}>
               {dondat.filter(fil => fil.created_user === quanan?.id_nguoidung).length > 0 ? (
                 dondat
-                  .filter(fil => fil.id_nguoidung === nguoidung?.id_nguoidung) 
-                  .map((reservation, index) => ( 
-                    <Box
-                      key={reservation.id_datcho}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginBottom: "10px",
-                        padding: "10px",
-                        borderBottom: "1px solid #E0E0E0",
-                        backgroundColor: "#EEEEEE",
-                        borderRadius: "5px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                        }}
-                      >
+                  .filter(fil => fil.id_nguoidung === nguoidung?.id_nguoidung)
+                  .map((dondat, index) => (
+                    <Box sx={{
+                      display: "flex", gap: 4, padding: 2, borderBottom: "1px solid #eee"
+                    }}>
+                      {/* Cột bên trái: Thông tin quán */}
+                      <Box sx={{ flex: 1 }}>
                         <Typography
+                          variant="h6"
                           sx={{
-                            fontSize: "16px",
                             fontWeight: "bold",
                             color: "#333",
+                            marginBottom: "16px",
                           }}
                         >
-                          {index + 1}. {reservation.ten_quan}
+                          {index + 1}. {dondat.ten_quan}
                         </Typography>
-                        <Typography
-                          sx={{
-                            fontSize: "15px",
-                            color: "#888",
-                          }}
-                        >
-                          {new Date(reservation.ngay_dat).toLocaleDateString()} - {reservation.thoi_gian}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Ngày đặt:</strong> {new Date(dondat.ngay_dat).toLocaleDateString()} - {dondat.thoi_gian}
                         </Typography>
-                      </Box>
-                      <Box sx={{ flexWrap: "wrap", marginBottom: "8px" }}>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong style={{color:'#222222'}}>Khách hàng:</strong> {reservation.ten_kh}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã đơn hàng:</strong> {dondat.ma_don}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong style={{color:'#222222'}}>Số điện thoại:</strong> {reservation.sdt_kh}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Mã giao dịch:</strong> {dondat.ma_giao_dich}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong style={{color:'#222222'}}>Email:</strong> {reservation.email_kh}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Tiền cọc:</strong> {formatPrice(dondat.tien_coc)} (30%)
                         </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexWrap: "wrap",
-                          justifyContent: "space-between",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong style={{color:'#222222'}}>Số lượng người:</strong> {reservation.so_luong_nguoi}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Khách hàng:</strong> {dondat.ten_kh}
                         </Typography>
-                        <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                          <strong style={{color:'#222222'}}>Trạng thái:</strong>
-                          {reservation.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : null}
-                          {reservation.trang_thai === 1 ? <span class="badge badge-success">Đã có chổ</span> : null}
-                          {reservation.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : null}
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Số điện thoại:</strong> {dondat.sdt_kh}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Email:</strong> {dondat.email_kh}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Số lượng người:</strong> {dondat.so_luong_nguoi}
+                        </Typography>
+                        <Typography sx={{ fontSize: "15px", color: "#666", marginBottom: "8px" }}>
+                          <strong>Yêu cầu khác:</strong> {dondat.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
+                        </Typography>
+                        <Typography>
+                          {dondat.trang_thai === 0 ? <span class="badge badge-warning">Đang chờ xử lý</span> : (dondat.trang_thai === 1 ? <span class="badge badge-success">Đã có chỗ</span> : (dondat.trang_thai === 2 ? <span class="badge badge-danger">Đã hủy</span> : (dondat.trang_thai === 3 ? <span class="badge badge-success">Đã hoàn thành</span> : "")))}
                         </Typography>
                       </Box>
-                      <Typography sx={{ fontSize: "15px", color: "#555" }}>
-                        <strong style={{color:'#222222'}}>Yêu cầu khác:</strong> {reservation.yeu_cau_khac || "Không có yêu cầu đặc biệt"}
-                      </Typography>
+
+                      {/* Cột bên phải: Thông tin món */}
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: "bold", color: "#333", marginBottom: "16px" }}>
+                          Thực đơn đã đặt
+                        </Typography>
+                        {menuOrder.map((item, itemIndex) => {
+                          if (item.id_datcho === dondat.id_datcho) {
+                            return (
+                              <React.Fragment key={itemIndex}>
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    padding: "8px 0",
+                                    borderBottom: itemIndex < menuOrder.length - 1 ? "1px solid #eee" : "none",
+                                  }}
+                                >
+                                  <Typography sx={{ fontSize: "15px", flex: 2 }}>{item.ten_mon}</Typography>
+                                  <Typography
+                                    sx={{ fontSize: "15px", flex: 1, textAlign: "right", color: "#666" }}
+                                  >
+                                    {formatPrice(item.gia)} x {item.so_luong}
+                                  </Typography>
+                                </Box>
+                              </React.Fragment>
+                            );
+                          }
+                          return null;
+                        })}
+
+                        <React.Fragment >
+                          <Box
+                            sx={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              mt: 2,
+                            }}
+                          >
+                            <Typography sx={{ fontSize: "15px", fontWeight: "bold" }}>Tổng tiền:</Typography>
+                            <Typography
+                              sx={{
+                                fontSize: "15px",
+                                textAlign: "right",
+                                color: "#666",
+                              }}
+                            >
+                              {menuOrder
+                                .filter((item) => item.id_datcho === dondat.id_datcho)
+                                .reduce((total, item) => total + item.gia * item.so_luong, 0)
+                                .toLocaleString("vi-VN", { style: "currency", currency: "VND" })}
+                            </Typography>
+                          </Box>
+                        </React.Fragment>
+
+                      </Box>
                     </Box>
                   ))
               ) : (
