@@ -21,6 +21,8 @@ const Menu = () => {
     const [quanan5Km, setQUanan5Km] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
+    const [showPagination, setShowPagination] = useState(true);
+
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -101,6 +103,32 @@ const Menu = () => {
         initQuanan();
     }, []);
 
+    // const handleCategoryClick = (categoryId) => {
+    //     if (categoryId === null) {
+    //         setIsAllSelected(true);
+    //         setSelectedCategory(null);
+    //         setSelectedSubCategory(null);
+    //         setMenus([]);
+    //         AllMenu();
+    //     } else {
+    //         setIsAllSelected(false);
+    //         setSelectedCategory(categoryId);
+    //         setSelectedSubCategory(null);
+    //         const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
+    //         setSubCategories(filteredSubCategories);
+    //     }
+    // };
+    // const handleSubCategoryClick = async (subCategoryId) => {
+    //     setSelectedSubCategory(subCategoryId);
+    //     try {
+    //         const result = await getMenus();
+    //         const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
+    //         setMenus(filteredMenus);
+    //     } catch (error) {
+    //         setError("Failed to load menus");
+    //     }
+
+    // };
     const handleCategoryClick = (categoryId) => {
         if (categoryId === null) {
             setIsAllSelected(true);
@@ -108,16 +136,20 @@ const Menu = () => {
             setSelectedSubCategory(null);
             setMenus([]);
             AllMenu();
+            setShowPagination(true); // Show pagination when no subcategory is selected
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
+            setShowPagination(true); // Show pagination when category is selected
         }
     };
+
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
+        setShowPagination(false); // Hide pagination when subcategory is selected
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
@@ -125,17 +157,16 @@ const Menu = () => {
         } catch (error) {
             setError("Failed to load menus");
         }
-
     };
 
-    useEffect(() => {
-        if (selectedCategory) {
-            const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
-            setSubCategories(filteredSubCategories);
-        }
-    }, [selectedCategory]);
+    // useEffect(() => {
+    //     if (selectedCategory) {
+    //         const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
+    //         setSubCategories(filteredSubCategories);
+    //     }
+    // }, [selectedCategory]);
     if (error) return <p>{error}</p>;
-    
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -294,10 +325,13 @@ const Menu = () => {
                                         },
                                     }}
                                 >
-                                    <PaginationRounded
-                                        onDataChange={initPage}
-                                        paginator={paginator}
-                                    />
+
+                                    {showPagination && (
+                                        <PaginationRounded
+                                            onDataChange={initPage}
+                                            paginator={paginator}
+                                        />
+                                    )}
                                 </TableRow>
                             </div>
                         </div>
