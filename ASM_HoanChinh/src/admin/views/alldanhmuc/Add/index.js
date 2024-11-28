@@ -61,7 +61,7 @@ const AddAllDanhmuc = () => {
                                     {...register("danhmuc", {
                                         required: {
                                             value: true,
-                                            message: "Tên danh mục không được bỏ trống",
+                                            message: "Tên danh mục chính không được bỏ trống",
                                         },
                                     })}
                                 />
