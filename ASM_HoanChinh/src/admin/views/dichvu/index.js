@@ -37,7 +37,7 @@ const DichVu = () => {
         <Box>
             <Card variant="outlined">
                 <CardContent>
-                    {quan.is_delete === 0 ?
+                    {quan.is_delete !== 1 ?
                         <>
                             <Typography variant="h3" sx={{ fontWeight: "bold" }}>DANH SÁCH DỊCH VỤ</Typography>
                             <Button variant="contained" sx={{ marginLeft: "940px", width: "150px" }} onClick={handleAddDichVu}>Thêm dịch vụ</Button>

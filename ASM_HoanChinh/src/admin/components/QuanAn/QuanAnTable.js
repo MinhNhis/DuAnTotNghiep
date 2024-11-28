@@ -304,6 +304,9 @@ const ExQuanAn = () => {
                           <strong>Tên quán ăn:</strong> <span style={{ fontSize: "20px" }}>{items?.ten_quan_an}</span>
                         </Typography>
                         <Typography variant="body1">
+                          <strong>Đánh giá:  {renderStars(stars)} ({stars})</strong>
+                        </Typography>
+                        <Typography variant="body1">
                           <strong>Địa chỉ:</strong> {items?.dia_chi}
                         </Typography>
                         <Typography variant="body1">

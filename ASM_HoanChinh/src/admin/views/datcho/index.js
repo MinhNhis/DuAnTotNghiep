@@ -32,7 +32,7 @@ const Datcho = () => {
         <Box>
             <Card variant="outlined">
                 <CardContent>
-                    {quan.is_delete === 0 ?
+                    {quan.is_delete !== 1 ?
                         <>
                             <Typography variant="h3" sx={{ fontWeight: "bold" }}>DANH SÁCH ĐƠN</Typography>
                             <Box sx={{ overflow: { xs: "auto", sm: "unset", }, fontWeight: "bold" }}>

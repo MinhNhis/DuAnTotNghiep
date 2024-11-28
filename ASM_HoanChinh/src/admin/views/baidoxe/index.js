@@ -37,7 +37,7 @@ const BaiDoXe = () => {
     <Box>
       <Card variant="outlined">
         <CardContent>
-          {quan.is_delete === 0 ?
+          {quan.is_delete !== 1 ?
             <>
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography variant="h3" sx={{ fontWeight: "bold" }}>

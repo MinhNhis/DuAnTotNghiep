@@ -39,7 +39,7 @@ const Menu = () => {
         <Box>
             <Card variant="outlined">
                 <CardContent>
-                    {quan.is_delete === 0 ?
+                    {quan.is_delete !== 1 ?
                         <>
                             <Typography variant="h3" sx={{ fontWeight: "bold" }}>DANH SÁCH MENU</Typography>
                             <Button variant="contained" sx={{ width: '150px', marginLeft: '940px' }} onClick={handleAddMenu} >Thêm Menu</Button>

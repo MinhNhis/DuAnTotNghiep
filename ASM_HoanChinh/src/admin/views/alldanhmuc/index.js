@@ -37,7 +37,7 @@ const AllDanhmuc = () => {
         <Box>
             <Card variant="outlined">
                 <CardContent>
-                    {quan.is_delete === 0 ?
+                    {quan.is_delete!== 1 ?
                         <>
                             <Typography variant="h3" sx={{ fontWeight: "bold", mb: 2 }}>
                                 DANH SÁCH TẤT CẢ DANH MỤC

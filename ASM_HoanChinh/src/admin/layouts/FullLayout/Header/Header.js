@@ -35,7 +35,7 @@ const Header = (props) => {
     setAnchorEl(event.currentTarget);
   };
   useEffect(() => {
-   initData()
+    initData()
   }, []);
 
   const initData = async () => {
@@ -153,21 +153,34 @@ const Header = (props) => {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           sx={{
             "& .MuiMenu-paper": {
-              width: "250px",
+              width: "170px",
               right: 0,
               top: "70px !important",
             },
           }}
         >
-          <MenuItem onClick={handleClose4}>
-            <Avatar sx={{ width: "35px", height: "35px", }} />
-            <Link to={"admin/ho-so"}>
-              <Box sx={{ ml: 2, display: cookies.role === 0 ? 'none' : 'block' }}>
+          <Link to={"admin/ho-so"}>
+            <MenuItem
+              onClick={handleClose4}
+              sx={{
+                display: cookies.role === 0 ? "none" : "flex",
+                alignItems: "center",
+              }}
+            >
+              <Avatar sx={{ width: "25px", height: "25px" }} />
+              <Box
+                sx={{
+                  ml: 2, 
+                  fontSize: "16px",
+                  color: "#B58B56", 
+                }}
+              >
                 Hồ sơ
               </Box>
-            </Link>
-          </MenuItem>
-          <Divider />
+            </MenuItem>
+          </Link>
+
+          <Divider sx={{ display: cookies.role === 0 ? 'none' : 'block' }} />
           <MenuItem onClick={logOut}>
             <ListItemIcon>
               <LogoutOutlinedIcon fontSize="small" />

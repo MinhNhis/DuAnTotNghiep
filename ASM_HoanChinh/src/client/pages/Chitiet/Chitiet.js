@@ -220,7 +220,7 @@ const Gioithieu = () => {
             if (value.so_luong > quanan.so_luong_cho) {
                 enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
             } else {
-                const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian + ':00' && e.trang_thai !== 2);
+                const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian && e.trang_thai != 2 && e.trang_thai != 3 );
                 let tongCho = 0
 
                 fillDatcho.forEach((e) => {
@@ -229,7 +229,7 @@ const Gioithieu = () => {
                 let so_luong_cho_trong = quanan.so_luong_cho - tongCho;
 
                 fillDatcho.find(async (e) => {
-                    if (value?.thoi_gian + ':00' === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
+                    if (value?.thoi_gian === e.thoi_gian && value?.ngay === e.ngay_dat && Number(value?.so_luong) <= so_luong_cho_trong) {
                         setDialogContent(value);
                         if (totalPrice === 0) {
                             enqueueSnackbar("Vui lòng gọi món trước", { variant: "warning" })

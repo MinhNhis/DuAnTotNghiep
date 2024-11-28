@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Card, CardContent, Divider, Box, Typography, Grid, Stack } from "@mui/material";
 import { getNguoiDungById } from "../../../../services/Nguoidung";
 import { BASE_URL } from "../../../../config/ApiConfig";
@@ -85,9 +85,9 @@ const EditNguoiDung = () => {
     // Tính toán giá trị trung bình
     setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
   }, [danhgia, quanan]);
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-    };
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+  };
   return (
     <div className="container mt-4">
       <Card variant="outlined" sx={{ p: 0 }}>
@@ -138,25 +138,28 @@ const EditNguoiDung = () => {
             <CardContent>
               <Box sx={{ textAlign: "center", marginBottom: 3 }}>
                 <Typography variant="h5" sx={{ fontWeight: "bold", color: "#1976d2" }}>
-                  <strong>Thông Tin Quán Ăn</strong>
+                  <Link to={`/admin/quanan/chi-tiet/${quanan.id_quanan}`}><strong>Thông Tin Quán Ăn</strong></Link>
                 </Typography>
               </Box>
               <Grid container spacing={4}>
                 <Grid item xs={12} md={6}>
-                  <img
-                    src={quanan?.hinh_anh ? `${BASE_URL}/uploads/${quanan?.hinh_anh}` : ""}
-                    alt="Restaurant"
-                    style={{
-                      width: "100%",
-                      height: "400px",
-                      borderRadius: "10px",
-                      objectFit: "cover",
-                    }}
-                  />
+                  <Link to={`/admin/quanan/chi-tiet/${quanan.id_quanan}`}>
+                    <img
+                      src={quanan?.hinh_anh ? `${BASE_URL}/uploads/${quanan?.hinh_anh}` : ""}
+                      alt="Restaurant"
+                      style={{
+                        width: "100%",
+                        height: "400px",
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </Link>
                 </Grid>
                 <Grid item xs={12} md={6}>
                   <Stack spacing={2}>
                     <Typography variant="body1"><strong>Tên quán ăn:</strong> <span style={{ fontSize: "20px" }}>{quanan?.ten_quan_an}</span></Typography>
+                    <Typography variant="body1"><strong>Đánh giá :  {renderStars(stars)} ({stars})</strong></Typography>
                     <Typography variant="body1"><strong>Địa chỉ:</strong> {quanan?.dia_chi}</Typography>
                     <Typography variant="body1"><strong>Điện thoại:</strong> {quanan?.dien_thoai}</Typography>
                     <Typography variant="body1"><strong>Giờ hoạt động:</strong> {quanan?.gio_mo_cua} - {quanan?.gio_dong_cua}</Typography>
