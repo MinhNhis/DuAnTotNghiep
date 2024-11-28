@@ -7,17 +7,19 @@ import {
   ProductPerformance,
   DailyActivities,
   MapComponent,
-  Charts
+  Charts,
+  ChartsCQ
 } from "./dashboard1-components";
+import { useCookies } from "react-cookie";
 
 const Dashboard1 = () => {
-  // 2
+  const [cookie] = useCookies()
 
   return (
     <Box>
       <Grid container spacing={0}>
         <Grid item xs={12} lg={12}>
-          <Charts />
+          {cookie.role === 0 ? <Charts /> : <ChartsCQ/>}
         </Grid>
         {/* ------------------------- row 1 ------------------------- */}
         {/* <Grid item xs={12} lg={12}>
