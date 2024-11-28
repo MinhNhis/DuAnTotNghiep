@@ -20,6 +20,8 @@ const Menu = () => {
     const [quanan, setQuanan] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
     const [subCategories, setSubCategories] = useState([]);
+    const [showPagination, setShowPagination] = useState(true);
+
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -85,16 +87,20 @@ const Menu = () => {
             setSelectedSubCategory(null);
             setMenus([]);
             AllMenu();
+            setShowPagination(true); // Show pagination when no subcategory is selected
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
+            setShowPagination(true); // Show pagination when category is selected
         }
     };
+
     const handleSubCategoryClick = async (subCategoryId) => {
         setSelectedSubCategory(subCategoryId);
+        setShowPagination(false); // Hide pagination when subcategory is selected
         try {
             const result = await getMenus();
             const filteredMenus = result.data.filter(item => item.id_danhmuc === subCategoryId);
@@ -102,17 +108,16 @@ const Menu = () => {
         } catch (error) {
             setError("Failed to load menus");
         }
-
     };
 
-    useEffect(() => {
-        if (selectedCategory) {
-            const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
-            setSubCategories(filteredSubCategories);
-        }
-    }, [selectedCategory]);
+    // useEffect(() => {
+    //     if (selectedCategory) {
+    //         const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === selectedCategory);
+    //         setSubCategories(filteredSubCategories);
+    //     }
+    // }, [selectedCategory]);
     if (error) return <p>{error}</p>;
-    
+
     const formatPrice = (price) => {
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
@@ -137,6 +142,7 @@ const Menu = () => {
         }
     };
 
+
     return (
         <div className="tab-class text-center">
             <div className="container">
@@ -155,69 +161,42 @@ const Menu = () => {
                             </button>
                         </li>
 
-                        {alldanhmuc.map((danhmuc) => {
-                            if (!quanan || !danhmuc) return null;
-
-                            const matchedQuanan = quanan.find(
-                                (e) => e.created_user === danhmuc.created_user && e.is_delete === 0
-                            );
-
-                            if (!matchedQuanan) return null;
-
-                            return (
-                                <li key={danhmuc.id_alldanhmuc} className="nav-item p-2" style={{ position: 'relative' }}>
-                                    {checkDanhmuc(danhmuc.id_alldanhmuc) ?
-                                        <a
-                                            className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''
-                                                }`}
-                                            onClick={() => handleCategoryClick(danhmuc.id_alldanhmuc)}
-                                            style={{
-                                                width: '220px',
-                                                padding: '10px 20px',
-                                                height: '50px',
-                                                textDecoration: 'none',
-                                                color: '#333',
-                                                transition: 'all 0.3s ease',
-                                            }}
-                                        >
-                                            <span
-                                                className="text-dark"
-                                                style={{
-                                                    flex: 1,
-                                                    whiteSpace: 'nowrap',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                }}
-                                            >
-                                                {danhmuc.ten_danhmuc}
-                                                {matchedQuanan.ten_quan_an && (
-                                                    <span
-                                                        className="ml-2 text-dark"
-                                                        style={{ fontWeight: 'bold' }}
-                                                    >
-                                                        - {matchedQuanan.ten_quan_an}
-                                                    </span>
-                                                )}
-                                            </span>
-                                        </a> : null
-                                    }
-                                    {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
-                                        <ul className="dropdown-menu2">
-                                            {subCategories.map((subCategory) => (
-                                                <li
-                                                    key={subCategory.id_danhmuc}
-                                                    className="dropdown-item2"
-                                                    onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}
-                                                >
-                                                    {subCategory.danh_muc}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </li>
-                            );
-                        })}
-
+                        {alldanhmuc.map((danhmuc, index) => (
+                            <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
+                                {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
+                                    <a
+                                        className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
+                                        onClick={() => { handleCategoryClick(danhmuc.id_alldanhmuc); }}
+                                        style={{
+                                            width: '220px',
+                                            padding: '10px 20px',
+                                            height: '50px',
+                                            textDecoration: 'none',
+                                            color: '#333',
+                                            transition: 'all 0.3s ease',
+                                        }}
+                                    >
+                                        <span className="text-dark" style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {danhmuc.ten_danhmuc}
+                                            {quanan && quanan.length > 0 && (
+                                                <span className="ml-2 text-dark" style={{ fontWeight: 'bold' }}>
+                                                    - {quanan.find(q => q.created_user === danhmuc.created_user)?.ten_quan_an}
+                                                </span>
+                                            )}
+                                        </span>
+                                    </a>
+                                ) : null}
+                                {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
+                                    <ul className="dropdown-menu2">
+                                        {subCategories.map((subCategory, subIndex) => (
+                                            <li key={subIndex} className="dropdown-item2" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
+                                                {subCategory.danh_muc}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </li>
+                        ))}
                     </ul>
 
                     <div className="tab-content">
@@ -297,7 +276,13 @@ const Menu = () => {
                                         },
                                     }}
                                 >
-                                    <PaginationRounded onDataChange={initPage} paginator={paginator} />
+
+                                    {showPagination && (
+                                        <PaginationRounded
+                                            onDataChange={initPage}
+                                            paginator={paginator}
+                                        />
+                                    )}
                                 </TableRow>
                             </div>
                         </div>
