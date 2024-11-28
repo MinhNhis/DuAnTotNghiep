@@ -8,6 +8,7 @@ import { getQuanan } from "../../../../services/Quanan";
 import { getDatcho } from "../../../../services/Datcho";
 import { getDatchoById } from "../../../../services/Datcho";
 import { getMenuOrder } from "../../../../services/MenuOrder";
+import { getDanhgia } from "../../../../services/Danhgia";
 const EditNguoiDung = () => {
   const [nguoidung, setNguoidung] = useState(null);
   const [quanan, setQuanan] = useState(null);

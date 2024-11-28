@@ -231,6 +231,7 @@ const ThemeRoutes = [
       { path: "admin/quanan/edit/:id_quanan", exact: true, element: <EditQuanAn /> },
       { path: "admin/quanan/delete/:id_quanan", exact: true, element: <DeleteQuanAn /> },
       { path: "admin/quanan/chi-tiet/:id", exact: true, element: <ListQuanAn /> },
+      { path: "admin/quanan/restart/:id", exact: true, element: <Restart /> },
 
       { path: "admin/loai-khach-hang/add", exact: true, element: <AddLKH /> },
       { path: "admin/loai-khach-hang/edit/:id", exact: true, element: <EditLKH /> },
@@ -256,7 +257,7 @@ const ThemeRoutes = [
       { path: "admin/bai-viet/add", element: <AddBaiViet/>},
       { path: "admin/bai-viet/delete/:id_baiviet", element: <DeleteBaiviet/>},
       { path: "admin/bai-viet/update/:id_baiviet", element: <UpdateBaiViet/>},
-      { path: "admin/bai-viet/chitiet/:id_baiviet", element: <ChitietBaiViet/>,
+      { path: "admin/bai-viet/chitiet/:id_baiviet", element: <ChitietBaiViet/>},
 
       { path: "admin/ho-so",element: <ProfileAdmin/>},
     ],
