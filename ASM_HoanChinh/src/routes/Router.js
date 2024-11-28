@@ -29,6 +29,7 @@ import DeleteBaiviet from "../admin/views/baiviet/Delete/index.js";
 const BaiViet = lazy(() => import("../admin/views/baiviet/index.js"));
 const AddBaiViet = lazy(() => import("../admin/views/baiviet/Add/index.js"));
 const UpdateBaiViet = lazy(() => import("../admin/views/baiviet/Update/index.js"));
+const ChitietBaiViet = lazy(() => import("../admin/views/baiviet/Chitiet/index.js"));
 
 //Dịch vụ
 const DichVu = lazy(() => import("../admin/views/dichvu/index.js"));
@@ -66,6 +67,7 @@ const EditMenu = lazy(() => import("../admin/views/menu/Edit/index.js"));
 const DeleteMenu = lazy(() => import("../admin/views/menu/Delete/index.js"));
 
 //danh mục
+
 const Danhmuc = lazy(() => import("../admin/views/danhmuc/index.js"));
 const AddDanhmuc = lazy(() => import("../admin/views/danhmuc/Add/index.js"));
 const EditDanhmuc = lazy(() => import("../admin/views/danhmuc/Edit/index.js"));
@@ -83,6 +85,7 @@ const AddNguoiDung = lazy(() => import("../admin/views/nguoidung/Add/index.js"))
 const EditNguoiDung = lazy(() => import("../admin/views/nguoidung/Edit/index.js"));
 
 /***** Loại khách hàng*/
+
 const LoaiKhachHang = lazy(() => import("../admin/views/loaikhachhang/index.js"));
 const AddLKH = lazy(() => import("../admin/views/loaikhachhang/Add/index.js"));
 const EditLKH = lazy(() => import("../admin/views/loaikhachhang/Edit/index.js"));
@@ -246,6 +249,7 @@ const ThemeRoutes = [
       { path: "admin/bai-viet/add", element: <AddBaiViet/>},
       { path: "admin/bai-viet/delete/:id_baiviet", element: <DeleteBaiviet/>},
       { path: "admin/bai-viet/update/:id_baiviet", element: <UpdateBaiViet/>},
+      { path: "admin/bai-viet/chitiet/:id_baiviet", element: <ChitietBaiViet/>,
 
       { path: "admin/ho-so",element: <ProfileAdmin/>},
     ],

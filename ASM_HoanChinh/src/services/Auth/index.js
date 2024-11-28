@@ -11,15 +11,16 @@ const loginApi = async ({ email, mat_khau }) => {
         device: "website",
       },
     });
-  
+
     return res;
   }
-  catch(error){
+  catch (error) {
     throw error
-  }  
+  }
 };
 
-const changPassword = async (id_nguoidung, {mat_khau, newMat_khau}) => {
+
+const changPassword = async (id_nguoidung, { mat_khau, newMat_khau }) => {
   try {
     const res = await request({
       method: "PUT",
@@ -35,4 +36,23 @@ const changPassword = async (id_nguoidung, {mat_khau, newMat_khau}) => {
   }
 }
 
-export { loginApi, changPassword };
+const lienhe = async ({ email, sdt, reason, ten }) => {
+  try {
+    const res = await request({
+      method: "POST",
+      path: "/api/lienhe",
+      data: {
+        email: email,
+        sdt: sdt,
+        reason: reason,
+        ten: ten
+      },
+    });
+    return res;
+  }
+  catch (error) {
+    throw error
+  }
+};
+
+export { loginApi, changPassword, lienhe };

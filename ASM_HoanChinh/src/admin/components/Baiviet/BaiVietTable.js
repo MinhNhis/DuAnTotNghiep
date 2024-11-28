@@ -15,6 +15,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { baiviet, paginator } from "../../../services/Baiviet";
 import { BASE_URL } from "../../../config/ApiConfig";
 import PaginationRounded from "../Paginator";
+import Visibility from "@mui/icons-material/Visibility";
 
 const BaiVietTable = () => {
   const [baiviets, setBaiviet] = useState([]);
@@ -40,170 +41,177 @@ const BaiVietTable = () => {
     return text.replace(/(?:^|\.\s+)(\w)/g, (match) => match.toUpperCase());
   };
   return (
-      <>
-        <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
-          <TableHead>
-            <TableRow>
+    <>
+      <Table aria-label="simple table" sx={{ mt: 3, whiteSpace: "nowrap" }}>
+        <TableHead>
+          <TableRow>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                STT
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Bài viết
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Nội dung
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Hình ảnh
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Ngày đăng
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Tác giả
+              </Typography>
+            </TableCell>
+            <TableCell>
+              <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+                Hành động
+              </Typography>
+            </TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {baiviets.map((baiviet, index) => (
+            <TableRow key={baiviet.id_baiviet}>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  STT
+                <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5, }}>
+                  {(currentPage - 1) * itemsPerPage + index + 1}
+
                 </Typography>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Bài viết
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        ml: 0.5,
+                        fontSize: "15px",
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        whiteSpace: 'normal',
+                        width: '200px',
+                      }}
+                    >
+                      {capitalizeFirstLetter(baiviet.tieu_de)}
+                    </Typography>
+                  </Box>
+                </Box>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Nội dung
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        ml: 0.5,
+                        fontSize: "15px",
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 4,
+                        WebkitBoxOrient: 'vertical',
+                        whiteSpace: 'normal',
+                        width: '200px',
+
+                      }}
+                    >
+                      <p dangerouslySetInnerHTML={{ __html: capitalizeFirstLetter(baiviet.noi_dung) }}></p>
+                    </Typography>
+
+                  </Box>
+                </Box>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Hình ảnh
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box>
+                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                      <img src={`${BASE_URL}/uploads/${baiviet.hinh_anh}`} style={{ width: '200px', height: '130px', borderRadius: '5px', }}></img>
+                    </Typography>
+                  </Box>
+                </Box>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Ngày đăng
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box>
+                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                      {baiviet.ngay_dang.split("-").reverse().join("/")}
+                    </Typography>
+                  </Box>
+                </Box>
               </TableCell>
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Tác giả
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Box>
+                    <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
+                      {baiviet.created_user === 0 ? 'FoodSeeker' : ''}
+                    </Typography>
+                  </Box>
+                </Box>
               </TableCell>
+
               <TableCell>
-                <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-                  Hành động
-                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+
+                  <Link to={`/admin/bai-viet/chitiet/${baiviet.id_baiviet}`}>
+                    <IconButton aria-label="chitiet" color="primary">
+                      <Visibility />
+                    </IconButton>
+                  </Link>
+
+                  <Link to={`/admin/bai-viet/update/${baiviet.id_baiviet}`}>
+                    <IconButton aria-label="edit" color="primary">
+                      <EditIcon />
+                    </IconButton>
+                  </Link>
+                  <Link to={`/admin/bai-viet/delete/${baiviet.id_baiviet}`}>
+                    <IconButton aria-label="delete" color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Link>
+                </Box>
+
               </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {baiviets.map((baiviet, index) => (
-                <TableRow key={baiviet.id_baiviet}>
-                  <TableCell>
-                    <Typography variant="body1" sx={{ fontSize: "15px", ml: 0.5, }}>
-                      {(currentPage - 1) * itemsPerPage + index + 1}
-
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box>
-                        <Typography
-                            variant="body1"
-                            sx={{
-                              ml: 0.5,
-                              fontSize: "15px",
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              whiteSpace: 'normal',
-                              width: '200px',
-                            }}
-                        >
-                          {capitalizeFirstLetter(baiviet.tieu_de)}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box>
-                        <Typography
-                            variant="body1"
-                            sx={{
-                              ml: 0.5,
-                              fontSize: "15px",
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 4,
-                              WebkitBoxOrient: 'vertical',
-                              whiteSpace: 'normal',
-                              width: '200px',
-
-                            }}
-                        >
-                          <p dangerouslySetInnerHTML={{ __html: capitalizeFirstLetter(baiviet.noi_dung) }}></p>
-                        </Typography>
-
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box>
-                        <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                          <img src={`${BASE_URL}/uploads/${baiviet.hinh_anh}`} style={{ width: '200px', height: '130px', borderRadius: '5px', }}></img>
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box>
-                        <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                          {baiviet.ngay_dang.split("-").reverse().join("/")}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box>
-                        <Typography sx={{ fontSize: "15px", fontWeight: "500" }}>
-                          {baiviet.created_user === 2 ? 'FoodSeeker' : ''}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>
-                    <Box sx={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-                      <Link to={`/admin/bai-viet/update/${baiviet.id_baiviet}`}>
-                        <IconButton aria-label="edit" color="primary">
-                          <EditIcon />
-                        </IconButton>
-                      </Link>
-                      <Link to={`/admin/bai-viet/delete/${baiviet.id_baiviet}`}>
-                        <IconButton aria-label="delete" color="error">
-                          <DeleteIcon />
-                        </IconButton>
-                      </Link>
-                    </Box>
-
-                  </TableCell>
-                </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TableRow
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "20px",
-              button: {
-                color: "black",
-                borderRadius: "50%",
-                width: "20px",
-                height: "20px",
-                fontSize: "0.8rem",
-                margin: "0 5px",
-                "&.Mui-selected": 
-                {
-                  backgroundColor: "#CCCCCC",
-                }
-              },
-            }}>
-          <PaginationRounded onDataChange={initData} paginator={paginator} />
-        </TableRow>
-      </>
+          ))}
+        </TableBody>
+      </Table>
+      <TableRow
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          marginTop: "20px",
+          button: {
+            color: "black",
+            borderRadius: "50%",
+            width: "20px",
+            height: "20px",
+            fontSize: "0.8rem",
+            margin: "0 5px",
+            "&.Mui-selected":
+            {
+              backgroundColor: "#CCCCCC",
+            }
+          },
+        }}>
+        <PaginationRounded onDataChange={initData} paginator={paginator} />
+      </TableRow>
+    </>
   );
 };
 
