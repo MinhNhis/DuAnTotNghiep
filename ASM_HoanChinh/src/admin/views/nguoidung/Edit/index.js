@@ -65,16 +65,17 @@ const EditNguoiDung = () => {
   };
 
   useEffect(() => {
-
+    if (!quanan) {
+      return;
+    }
+  
     let totalStars = 0;
     let count = 0;
-
-
-    danhgia.forEach(e => {
+  
+    danhgia.forEach((e) => {
       console.log("Đánh giá hiện tại:", e);
       if (e.id_quanan === quanan.id_quanan) {
-        // Kiểm tra xem giá trị có hợp lệ không
-        if (typeof e.sao === 'number') {
+        if (typeof e.sao === "number") {
           totalStars += e.sao;
           count++;
         }
@@ -82,9 +83,10 @@ const EditNguoiDung = () => {
         console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
       }
     });
-    // Tính toán giá trị trung bình
+  
     setStar(count > 0 ? (totalStars / count).toFixed(1) : 0);
   }, [danhgia, quanan]);
+  
   const formatPrice = (price) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
   };
