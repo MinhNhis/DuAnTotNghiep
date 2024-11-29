@@ -97,8 +97,31 @@ const Trangchu = () => {
     const checkLoca = async (quanan, retries = 3) => {
         try {
             if (quanan) {
+                const res = await getDanhgia();
+                const danhgia = res.data
                 const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
-                setQUanan5Km(sortedQuanan);
+                const promises = sortedQuanan.map(async (item, index) => {
+                    const { totalStars, count } = danhgia.reduce(
+                        (acc, e) => {
+                            if (e.id_quanan === item.id_quanan) {
+                                acc.totalStars += e.sao;
+                                acc.count++;
+                            }
+                            return acc;
+                        },
+                        { totalStars: 0, count: 0 }
+                    );
+                    const startTB = count > 0 ? totalStars / count : 0;
+                    return { ...item, startTB };
+                })
+                if (promises) {
+                    const results = await Promise.all(promises);
+                    const fillQuan = results.filter(item => item !== null)
+                    setQUanan5Km(fillQuan);
+                } else {
+                    setQUanan5Km(sortedQuanan);
+                }
+                
             } else {
                 return null
             }

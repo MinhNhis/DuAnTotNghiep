@@ -46,8 +46,10 @@ const KhamPha = () => {
                                 <div className="col-lg-7">
                                     <h2 className="display-5 mb-2" style={{ color: '#D4A762',}}>{value?.tieu_de}</h2>
                                     <p className="mb-3">Cập nhật lần cuối: {value.ngay_dang}</p>
-                                    <p className="mb-3 "  style={{fontSize : '20px', color:'black', textIndent: '20px'}}>{capitalizeFirstLetter(value?.noi_dung)}</p>
-                                    <p className=''> Tác giả: {value.created_user === 0 ?"FoodSeeker": ""}</p>
+                                    <p className="mb-3 "  style={{fontSize : '20px', color:'black', textIndent: '20px'}}>
+                                        <p dangerouslySetInnerHTML={{ __html: capitalizeFirstLetter(value?.noi_dung) }}></p>
+                                        <p className=''> Tác giả: {value.created_user === 2 ?"FoodSeeker": ""}</p>
+                                    </p>
                                 </div>
                             </div>
                             <hr />

@@ -61,7 +61,7 @@ const ChitietBaiViet = () => {
                             </Typography>
                             <Typography variant="body1" sx={{ color: '#333' }}>
                                 <strong>Tác giả: </strong>
-                                <span style={{ color: '#555' }}>{baiviet.created_user === 0 ? 'FoodSeeker' : ''}</span>
+                                <span style={{ color: '#555' }}>{baiviet.created_user === 2 ? 'FoodSeeker' : ''}</span>
                             </Typography>
                         </Stack>
                     </Grid>

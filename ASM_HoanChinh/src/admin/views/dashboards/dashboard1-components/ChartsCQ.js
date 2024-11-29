@@ -24,23 +24,20 @@ const ChartsCQ = () => {
     setDatcho(resultDatcho.data);
 
     const resultQuan = await getQuanan();
-    const quan = resultQuan.data.find((e) => 
-      e.created_user === accounts.id_nguoidung || 
+    const quan = resultQuan.data.find((e) =>
+      e.created_user === accounts.id_nguoidung ||
       e.updated_user === accounts.id_nguoidung
     );
     setQuanan(quan);
-    console.log(quan);
   };
 
   useEffect(() => {
     if (hasCalledRef.current) return;
     initData();
-    hasCalledRef.current = true; // Đảm bảo initData chỉ gọi một lần
-
+    hasCalledRef.current = true;
   }, []);
 
   useEffect(() => {
-    // Chỉ tính toán filteredData khi quán và datcho đã được lấy
     if (quanan.id_quanan && datcho.length > 0) {
       const dCho = datcho.filter((e) => e.id_quanan === quanan.id_quanan);
 
@@ -80,8 +77,10 @@ const ChartsCQ = () => {
   }
 
   return (
-    <div>
-      <h2>Số lượng đơn đặt chỗ theo tháng</h2>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "20px" }}>
+      <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "10px" }}>
+        Số lượng đơn đặt chỗ theo tháng
+      </h2>
       <BarChart
         series={[{ data: barChartData }]}
         height={290}
@@ -108,16 +107,20 @@ const ChartsCQ = () => {
           {
             scaleType: "linear",
             min: 0,
-            max: 10,
             ticks: {
               stepSize: 1,
             },
           },
         ]}
-        margin={{ top: 10, bottom: 30, left: 90, right: 10 }}
+        margin={{ top: 20, bottom: 50, left: 60, right: 20 }}
       />
-      <div style={{ margin: '20px 0' }} />
+      <div style={{ marginTop: "20px" }}>
+        <p style={{ fontSize: "16px", color: "#555" }}>
+          Dữ liệu thể hiện số lượng đơn đặt chỗ của từng tháng trong năm.
+        </p>
+      </div>
     </div>
+
   );
 };
 
