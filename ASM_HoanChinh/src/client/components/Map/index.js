@@ -13,7 +13,8 @@ import { BASE_URL } from "../../../config/ApiConfig";
 
 const client = new ORS.Directions({
     //api_key: "5b3ce3597851110001cf62481bfe3c5668ca4f02a5a4d522952268ab",
-    api_key: "5b3ce3597851110001cf6248a066b1203eb849da836d3446aa790f2f",
+    api_key: "5b3ce3597851110001cf624883cf1792523745b98b054f1fa2fd66d2",
+    //api_key: "5b3ce3597851110001cf6248a066b1203eb849da836d3446aa790f2f",
 });
 
 const Map = ({ quanan, sizeData }) => {
@@ -65,7 +66,7 @@ const Map = ({ quanan, sizeData }) => {
     }, [location.latitude, location.longitude]);
     useEffect(() => {
         loadMap()
-    }, [sizeData, mode]);
+    }, [sizeData]);
 
     useEffect(() => {
         speedRef.current = speed;
@@ -172,7 +173,7 @@ const Map = ({ quanan, sizeData }) => {
 
     const loadMap = async () => {
         if (!mapRef.current) {
-            mapRef.current = L.map("map").setView([userPosition.latitude, userPosition.longitude], 13);
+            mapRef.current = L.map("map", {zoomControl: false,}).setView([userPosition.latitude, userPosition.longitude], 13);
 
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: 19,

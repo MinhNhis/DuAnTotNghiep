@@ -21,10 +21,10 @@ const Footer = () => {
                         <div className="footer-item">
                             <h4 className="mb-4">Dịch Vụ Đặc Biệt</h4>
                             <div className="d-flex flex-column align-items-start">
-                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Bánh Burger Phô Mai</a>
-                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Bánh Sandwich</a>
-                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Bánh Burger Panner</a>
-                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Đặc Biệt Ngọt</a>
+                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Dịch vụ đặt bàn giữ chỗ</a>
+                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Dịch vụ tổ chức sinh nhật</a>
+                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Dịch vụ tiệc cưới</a>
+                                <a className="text-body mb-3" href="/"><i className="fa fa-check text-primary me-2"></i>Dịch vụ đồ ăn mang về </a>
                             </div>
                         </div>
                     </div>

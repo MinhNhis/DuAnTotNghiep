@@ -50,8 +50,6 @@ const Register = () => {
                 <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-4">
                     <div class="card shadow-lg p-3" style={{
                         maxWidth: "90vh",
-                        maxHeight: "95vh", // Giới hạn chiều cao thẻ card
-                        overflow: "auto", // Cho phép cuộn nếu nội dung vượt quá
                     }}>
                         <div className="card-header bg-transparent border-0 pb-0">
                             <Link to="/" className="btn-close position-absolute top-0 end-0 mt-2 me-2"></Link>
@@ -95,7 +93,7 @@ const Register = () => {
                                 <div className="form-group mb-1">
                                     <TextField
                                         label="Email"
-                                        type="email"
+                                        type="text"
                                         variant="outlined"
                                         fullWidth
                                         {...register("email", {

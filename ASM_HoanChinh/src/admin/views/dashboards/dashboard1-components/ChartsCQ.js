@@ -38,6 +38,9 @@ const ChartsCQ = () => {
   }, []);
 
   useEffect(() => {
+    if (!quanan) {
+      return
+    }
     if (quanan.id_quanan && datcho.length > 0) {
       const dCho = datcho.filter((e) => e.id_quanan === quanan.id_quanan);
 
