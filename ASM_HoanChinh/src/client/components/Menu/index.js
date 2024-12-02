@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { TableRow } from "@mui/material";
+import { TableRow, Button } from "@mui/material";
 import './style.css'
 
 import { getMenus, paginator } from "../../../services/MenuPhu";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { getDanhmuc } from "../../../services/Danhmuc";
-import { getQuanan, getQuananById } from "../../../services/Quanan";
+import { getQuanan } from "../../../services/Quanan";
 import { Link } from "react-router-dom";
 import PaginationRounded from "../../../admin/components/Paginator";
 import { getAllDanhmuc } from "../../../services/Alldanhmuc";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+// import { Button } from "bootstrap";
 
 const Menu = () => {
     const [alldanhmuc, setAllDanhmuc] = useState([]);
@@ -22,6 +25,31 @@ const Menu = () => {
     const [subCategories, setSubCategories] = useState([]);
     const [showPagination, setShowPagination] = useState(true);
 
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const itemsToShow = 3;
+
+    const handleNext = () => {
+        if (currentIndex < alldanhmuc.length - itemsToShow) {
+            setCurrentIndex(currentIndex + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(currentIndex - 1);
+        }
+    };
+
+    const arrowButtonStyle = {
+        background: 'none',
+        border: 'none',
+        fontSize: '24px',
+        cursor: currentIndex === 0 || currentIndex >= alldanhmuc.length - itemsToShow ? 'not-allowed' : 'pointer',
+        opacity: currentIndex === 0 || currentIndex >= alldanhmuc.length - itemsToShow ? 0.5 : 1,
+        padding: '10px',
+        margin: '0 10px',
+        color: '#d4a762',
+    };
 
     const initQuanan = async () => {
         const res = await getQuanan();
@@ -88,14 +116,14 @@ const Menu = () => {
             setSelectedSubCategory(null);
             setMenus([]);
             AllMenu();
-            setShowPagination(true); 
+            setShowPagination(true);
         } else {
             setIsAllSelected(false);
             setSelectedCategory(categoryId);
             setSelectedSubCategory(null);
             const filteredSubCategories = danhmuc.filter(cat => cat.id_alldanhmuc === categoryId);
             setSubCategories(filteredSubCategories);
-            setShowPagination(false); 
+            setShowPagination(false);
         }
     };
     const handleSubCategoryClick = async (subCategoryId) => {
@@ -146,7 +174,7 @@ const Menu = () => {
                     <h1 className="display-5 mb-5">Menu</h1>
                 </div>
                 <div className="tab-class text-center">
-                    <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+                    {/* <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
 
                         <li className="nav-item p-2">
                             <button
@@ -193,7 +221,100 @@ const Menu = () => {
                                 )}
                             </li>
                         ))}
-                    </ul>
+                    </ul> */}
+
+                    <div className="category-slider" style={{ display: 'flex', alignItems: 'center', marginLeft:'20px' }}>
+                        <ul className="nav nav-pills d-inline-flex justify-content-center mb-5 wow" data-wow-delay="0.1s">
+                            <li className="nav-item p-2">
+                                <button
+                                    className={`d-flex mx-2 py-2 border border-primary rounded-pill ${isAllSelected ? 'bg-primary' : 'bg-light'}`}
+                                    onClick={() => handleCategoryClick(null)}
+                                >
+                                    <span className="text-dark" style={{ width: '150px', padding: '4px' }}>All</span>
+                                </button>
+                            </li>
+
+                            <Button
+                                onClick={handlePrev}
+                                disabled={currentIndex === 0}
+                                className="arrow-button"
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '24px',
+                                    cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+                                    opacity: currentIndex === 0 ? 0.5 : 1,
+                                    padding: '10px',
+                                    margin: '0 10px',
+                                    color:'#d4a762'
+                                }}
+                            >
+                             <ArrowBackIcon/>
+                             </Button>
+                               
+                         
+
+                            {alldanhmuc.slice(currentIndex, currentIndex + itemsToShow).map((danhmuc, index) => (
+                                <li key={index} className="nav-item p-2" style={{ position: 'relative' }}>
+                                    {checkDanhmuc(danhmuc.id_alldanhmuc) ? (
+                                        <a
+                                            className={`d-flex align-items-center justify-content-between mx-2 py-2 border border-primary bg-light rounded-pill ${selectedCategory === danhmuc.id_alldanhmuc ? 'active' : ''}`}
+                                            onClick={() => { handleCategoryClick(danhmuc.id_alldanhmuc); }}
+                                            style={{
+                                                width: '220px',
+                                                padding: '10px 20px',
+                                                height: '50px',
+                                                textDecoration: 'none',
+                                                color: '#333',
+                                                transition: 'all 0.3s ease',
+                                               
+                                            }}
+                                        >
+                                            <span className="text-dark" style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                {danhmuc.ten_danhmuc}
+                                                {quanan && quanan.length > 0 && (
+                                                    <span className="ml-2 text-dark" style={{ fontWeight: 'bold' }}>
+                                                        - {quanan.find(q => q.created_user === danhmuc.created_user)?.ten_quan_an}
+                                                    </span>
+                                                )}
+                                            </span>
+                                        </a>
+                                    ) : null}
+                                    {selectedCategory === danhmuc.id_alldanhmuc && subCategories.length > 0 && (
+                                        <ul className="dropdown-menu2">
+                                            {subCategories.map((subCategory, subIndex) => (
+                                                <li key={subIndex} className="dropdown-item2" onClick={() => handleSubCategoryClick(subCategory.id_danhmuc)}>
+                                                    {subCategory.danh_muc}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </li>
+                            ))}
+
+                            <Button
+                                onClick={handleNext}
+                                disabled={currentIndex >= alldanhmuc.length - itemsToShow}
+                                className="arrow-button"
+                                style={{
+                                    background: 'none',
+                                    border: 'none',
+                                    fontSize: '24px',
+                                    cursor: currentIndex >= alldanhmuc.length - itemsToShow ? 'not-allowed' : 'pointer',
+                                    opacity: currentIndex >= alldanhmuc.length - itemsToShow ? 0.5 : 1,
+                                    padding: '10px',
+                                    margin: '0 10px',
+                                    color:'#d4a762'
+                                }}
+                            >
+                             <ArrowForwardIcon/>
+                             </Button>
+                        </ul>
+                    </div>
+
+
+
+
 
                     <div className="tab-content">
                         <div id="tab-1" className="tab-pane fade show p-0 active">
