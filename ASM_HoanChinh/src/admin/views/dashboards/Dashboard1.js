@@ -13,7 +13,9 @@ import { getQuanan } from "../../../services/Quanan";
 import { getMenus } from "../../../services/MenuPhu";
 import { getDanhgia } from "../../../services/Danhgia";
 import { getAllDanhmuc } from "../../../services/Alldanhmuc";
-
+import { getThanhtoan } from "../../../services/Thanhtoandki";
+import { baiviet } from "../../../services/Baiviet";
+import { getNguoiDung } from "../../../services/Nguoidung";
 
 const Dashboard1 = () => {
   const [menu, setMenu] = useState([]);
@@ -22,6 +24,9 @@ const Dashboard1 = () => {
   const [quanan, setQuanan] = useState([]);
   const [datcho, setDatCho] = useState([]);
   const [cookies] = useCookies(["token", "role"]);
+  const [thanhtoandk, setThanhToanDK] = useState([]);
+  const [allbaiviet, setBaiViet] = useState([]);
+  const [nguoidung, setNguoiDung] = useState([]);
   const accounts = JSON.parse(localStorage.getItem("accounts"));
   useEffect(() => {
     initData();
@@ -48,6 +53,18 @@ const Dashboard1 = () => {
           setAlldanhmuc(
             resDanhmuc.data.filter((e) => e.created_user === accounts.id_nguoidung)
           );
+          const resttdk = await getThanhtoan();
+          setThanhToanDK(resttdk.data);
+
+          const resquanan = await getQuanan();
+          setQuanan(resquanan.data);
+
+          const resbaiviet = await baiviet();
+          setBaiViet(resbaiviet.data);
+
+          const resnguoidung = await getNguoiDung();
+          setNguoiDung(resnguoidung.data);
+
         } else {
           console.log("Lỗi khi lấy đơn đặt chỗ");
         }
@@ -63,9 +80,9 @@ const Dashboard1 = () => {
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
             primary={cookies.role === 2 ? datcho.length : ""}
-            secondary="Đơn đặt chỗ của bạn"
+            secondary="Đơn đặt chỗ của quán"
             color={theme.palette.warning.main}
-            footerData="Dựa trên tài khoản của bạn"
+            footerData= {`Tổng đặt chổ của quán là ${datcho.length} `}
             iconPrimary=""
             iconFooter=""
           />
@@ -74,9 +91,9 @@ const Dashboard1 = () => {
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
             primary={cookies.role === 2 ? menu.length : ""}
-            secondary="Menu quán ăn"
+            secondary="Menu của quán"
             color={theme.palette.error.main}
-            footerData="Menu quán ăn"
+            footerData={`Tổng menu của quán là ${menu.length}`}
             iconPrimary=""
             iconFooter=""
           />
@@ -85,9 +102,9 @@ const Dashboard1 = () => {
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
             primary={danhgia.length}
-            secondary="Đánh giá quán ăn"
+            secondary="Đánh giá của quán"
             color={theme.palette.success.main}
-            footerData="Đánh giá quán ăn"
+            footerData={`Tổng đánh giá của quán là ${danhgia.length}`}
             iconPrimary=""
             iconFooter=""
           />
@@ -95,9 +112,9 @@ const Dashboard1 = () => {
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
             primary={alldanhmuc.length}
-            secondary="Danh mục quán ăn"
+            secondary="Danh mục của quán"
             color={theme.palette.primary.main}
-            footerData="Danh mục quán ăn"
+            footerData={`Tổng danh mục của quán là ${alldanhmuc.length}`}
             iconPrimary=""
             iconFooter=""
           />
@@ -111,10 +128,10 @@ const Dashboard1 = () => {
       <Grid container spacing={0}>
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
-            primary="200"
+            primary={thanhtoandk.length}
             secondary="Thanh toán đăng ký"
             color={theme.palette.warning.main}
-            footerData="Dựa trên tài khoản Admin"
+            footerData={`Tổng thanh toán chủ quán là ${thanhtoandk.length}`}
             iconPrimary=""
             iconFooter=""
           />
@@ -122,10 +139,10 @@ const Dashboard1 = () => {
 
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
-            primary="200"
-            secondary="Quán ăn"
+            primary={quanan.length}
+            secondary="Quán ăn của chủ quán"
             color={theme.palette.error.main}
-            footerData="Quán ăn"
+            footerData={`Tổng quán ăn là ${quanan.length}`}
             iconPrimary=""
             iconFooter=""
           />
@@ -133,20 +150,20 @@ const Dashboard1 = () => {
 
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
-            primary="200"
-            secondary="Bài viết"
+            primary={allbaiviet.length}
+            secondary="Bài viết dựa trên Admin"
             color={theme.palette.success.main}
-            footerData="Bài viết"
+            footerData={`Tống bài viết là ${allbaiviet.length}`}
             iconPrimary=""
             iconFooter=""
           />
         </Grid>
         <Grid item lg={3} sm={6} xs={12}>
           <ReportCard
-            primary="200"
-            secondary="Người dùng"
+            primary={nguoidung.length}
+            secondary="Tài khoản người dùng"
             color={theme.palette.primary.main}
-            footerData="Người dùng"
+            footerData={`Tổng tài khoản là ${nguoidung.length}`}
             iconPrimary=""
             iconFooter=""
           />
