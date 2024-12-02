@@ -44,6 +44,7 @@ const Trangchu = () => {
     const initData = async (data) => {
         const res = await getDanhgia();
         const danhgia = res.data
+        setDg(res.data)
         const quanan = data.data;
         const promises = quanan.map(async (item, index) => {
             const { totalStars, count } = danhgia.reduce(
@@ -95,37 +96,33 @@ const Trangchu = () => {
         return now >= openingTime && now <= closingTime;
     };
     setTimeout(() => {
-
-            checkLoca(quanan5km)
-
+        checkLoca(quanan5km, dg)
     }, 1000);
-    const checkLoca = async (quanan, retries = 3) => {
+    const checkLoca = async (quanan, danhgia, retries = 3) => {
         try {
             if (quanan) {
-                // const res = await getDanhgia();
-                // const danhgia = res.data
                 const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
-                // const promises = sortedQuanan.map(async (item, index) => {
-                //     const { totalStars, count } = danhgia.reduce(
-                //         (acc, e) => {
-                //             if (e.id_quanan === item.id_quanan) {
-                //                 acc.totalStars += e.sao;
-                //                 acc.count++;
-                //             }
-                //             return acc;
-                //         },
-                //         { totalStars: 0, count: 0 }
-                //     );
-                //     const startTB = count > 0 ? totalStars / count : 0;
-                //     return { ...item, startTB };
-                // })
-                // if (promises) {
-                //     const results = await Promise.all(promises);
-                //     const fillQuan = results.filter(item => item !== null)
-                //     setQUanan5Km(fillQuan);
-                // } else {
+                const promises = sortedQuanan.map(async (item, index) => {
+                    const { totalStars, count } = danhgia.reduce(
+                        (acc, e) => {
+                            if (e.id_quanan === item.id_quanan) {
+                                acc.totalStars += e.sao;
+                                acc.count++;
+                            }
+                            return acc;
+                        },
+                        { totalStars: 0, count: 0 }
+                    );
+                    const startTB = count > 0 ? totalStars / count : 0;
+                    return { ...item, startTB };
+                })
+                if (promises) {
+                    const results = await Promise.all(promises);
+                    const fillQuan = results.filter(item => item !== null)
+                    setQUanan5Km(results);
+                } else {
                     setQUanan5Km(sortedQuanan);
-                //}
+                }
 
             } else {
                 return null

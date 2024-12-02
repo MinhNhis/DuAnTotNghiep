@@ -14,6 +14,7 @@ import {
     FormControlLabel,
     Radio,
     FormLabel,
+    Box
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { editNguoiDung, getNguoiDungById } from "../../../services/Nguoidung";
@@ -21,7 +22,7 @@ import "./profile.css";
 import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
 import { changPassword } from "../../../services/Auth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getQuanan } from "../../../services/Quanan";
 import { getMenuOrder } from "../../../services/MenuOrder";
 
@@ -203,6 +204,11 @@ const Profile = () => {
             )
         }
     }
+
+    const saveId = (id) => {
+        localStorage.setItem("id_datcho", id);
+    }
+    
     return (
         <>
             <div className="profile-container">
@@ -602,20 +608,39 @@ const Profile = () => {
                                     </div>
                                 </div>
                             </div>
-
-
-                            <Button
-                                variant="contained"
-                                color="error"
-                                style={
-                                    value?.trang_thai === 2 || value?.trang_thai === 3 || value.trang_thai === 1
-                                        ? { display: "none" }
-                                        : { display: "block", width: "100px" }
-                                }
-                                onClick={() => handleClickOpen(value?.id_datcho)}
+                            <Box
+                                display="flex"
+                                justifyContent="flex-start"
+                                alignItems="center"
+                                gap={2} 
                             >
-                                Hủy đơn
-                            </Button>
+                                <Button
+                                    variant="contained"
+                                    color="error"
+                                    style={
+                                        value?.trang_thai === 2 || value?.trang_thai === 3 || value?.trang_thai === 1
+                                            ? { display: "none" }
+                                            : { display: "block", width: "100px" }
+                                    }
+                                    onClick={() => handleClickOpen(value?.id_datcho)}
+                                >
+                                    Hủy đơn
+                                </Button>
+                                <Link to={`/danh-gia/${value.id_quanan}`} style={{ textDecoration: "none" }}>
+                                    <Button
+                                        variant="contained"
+                                        style={
+                                            value?.is_danhgia === 0 || value.trang_thai === 2
+                                                ? { display: "none" }
+                                                : { display: "block", width: "150px", backgroundColor: "#d4a762", color: "#fff" }
+                                        }
+                                        onClick={()=>saveId(value.id_datcho)}
+                                    >
+                                        Viết đánh giá
+                                    </Button>
+                                </Link>
+                            </Box>
+
                             <Dialog open={open} onClose={handleClose}>
                                 <DialogTitle>Xác nhận hủy đơn</DialogTitle>
                                 <DialogContent>
