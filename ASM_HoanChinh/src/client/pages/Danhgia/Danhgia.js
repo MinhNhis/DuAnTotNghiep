@@ -9,7 +9,7 @@ import { addDanhgia } from "../../../services/Danhgia";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { getQuananById } from "../../../services/Quanan";
 import { useCookies } from "react-cookie";
-import { getDatcho } from "../../../services/Datcho";
+import { editDatcho, getDatcho } from "../../../services/Datcho";
 
 const Danhgia = () => {
     const navigate = useNavigate()
@@ -17,6 +17,7 @@ const Danhgia = () => {
     const { enqueueSnackbar } = useSnackbar();
     const params = useParams()
     const id = params.id
+    const id_datcho = localStorage.getItem("id_datcho")
     const [quanan, setQuanan] = useState([])
     const [error, setError] = useState()
     const [datcho, setDatcho] = useState([]);
@@ -46,9 +47,9 @@ const Danhgia = () => {
 
 
     const [rating, setRating] = useState(0);
-    const [serviceRating, setServiceRating] = useState(0); // Đánh giá dịch vụ
-    const [foodRating, setFoodRating] = useState(0); // Đánh giá đồ ăn
-    const [atmosphereRating, setAtmosphereRating] = useState(0); // Đánh giá không khí
+    const [serviceRating, setServiceRating] = useState(0); 
+    const [foodRating, setFoodRating] = useState(0); 
+    const [atmosphereRating, setAtmosphereRating] = useState(0); 
 
     const handleClick = (index) => {
         setRating(index + 1);
@@ -78,7 +79,7 @@ const Danhgia = () => {
 
     const submit = async (value) => {
         if (serviceRating !== 0 && foodRating !== 0 && atmosphereRating !== 0 && rating !== 0) {
-            await addDanhgia({
+            const res = await addDanhgia({
                 binh_luan: value?.noi_dung,
                 danh_gia_dich_vu: serviceRating,
                 danh_gia_do_an: foodRating,
@@ -88,6 +89,12 @@ const Danhgia = () => {
                 id_nguoidung: accounts?.id_nguoidung,
                 id_quanan: quanan?.id_quanan
             })
+            if (res) {
+                await editDatcho(id_datcho, {
+                    is_danhgia: 0
+                })
+                localStorage.removeItem("id_datcho");
+            }
             navigate(`/chi-tiet/${quanan.id_quanan}`)
         } else {
             enqueueSnackbar("Bạn chưa chọn đánh giá", {

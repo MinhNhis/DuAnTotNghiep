@@ -18,7 +18,7 @@ const getDatchoById = async (id) => {
     return res
 }
 
-const addDatcho = async ({ ma_don, tien_coc, ma_giao_dich, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, ly_do_huy, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+const addDatcho = async ({ ma_don, tien_coc, ma_giao_dich, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, ly_do_huy, yeu_cau_khac, id_nguoidung, id_quanan, is_danhgia }) => {
 
     const res = await request({
         method: "POST",
@@ -38,7 +38,8 @@ const addDatcho = async ({ ma_don, tien_coc, ma_giao_dich, ten_quan, ten_kh, sdt
             ly_do_huy: ly_do_huy,
             yeu_cau_khac: yeu_cau_khac,
             id_nguoidung: id_nguoidung,
-            id_quanan: id_quanan
+            id_quanan: id_quanan,
+            is_danhgia: is_danhgia
 
         }
     })
@@ -46,7 +47,7 @@ const addDatcho = async ({ ma_don, tien_coc, ma_giao_dich, ten_quan, ten_kh, sdt
     return res
 }
 
-const editDatcho = async (id, { ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, ly_do_huy, yeu_cau_khac, id_nguoidung, id_quanan }) => {
+const editDatcho = async (id, { ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay_dat, thoi_gian, so_luong_nguoi, trang_thai, ly_do_huy, yeu_cau_khac, id_nguoidung, id_quanan, is_danhgia }) => {
 
     const res = await request({
         method: "PUT",
@@ -64,7 +65,8 @@ const editDatcho = async (id, { ma_don, ten_quan, ten_kh, sdt_kh, email_kh, ngay
             ly_do_huy: ly_do_huy,
             yeu_cau_khac: yeu_cau_khac,
             id_nguoidung: id_nguoidung,
-            id_quanan
+            id_quanan,
+            is_danhgia: is_danhgia
         }
     })
 

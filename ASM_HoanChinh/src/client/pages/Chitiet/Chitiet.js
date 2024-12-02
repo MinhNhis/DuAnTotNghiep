@@ -74,7 +74,8 @@ const Gioithieu = () => {
                 trang_thai: 0,
                 yeu_cau_khac: value?.yeu_cau,
                 id_nguoidung: Number(accounts.id_nguoidung),
-                id_quanan: Number(id)
+                id_quanan: Number(id),
+                is_danhgia: 1
             })
             if (selectedMenuItems) {
                 selectedMenuItems.forEach(async (value) => {
@@ -976,7 +977,7 @@ const Gioithieu = () => {
                     <div className="row mb-3">
                         <div className="col-12">
                             <Link
-                                to={`/danh-gia/${quanan.id_quanan}`}
+                                to={`/profile`}
                                 className="d-flex align-items-center mb-2"
                                 style={{ fontSize: "20px", fontWeight: "bold" }}
                             >
