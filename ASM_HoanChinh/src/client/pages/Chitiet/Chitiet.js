@@ -977,12 +977,12 @@ const Gioithieu = () => {
                     <div className="row mb-3">
                         <div className="col-12">
                             <Link
-                                to={`/profile`}
+                                to={cookies.role === 1?`/profile`: '/login'}
                                 className="d-flex align-items-center mb-2"
                                 style={{ fontSize: "20px", fontWeight: "bold" }}
                             >
                                 <Button
-                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }}
+                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px"}}
                                     className="mt-0"
                                 >
                                     Viết đánh giá

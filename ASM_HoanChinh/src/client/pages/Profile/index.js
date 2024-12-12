@@ -25,6 +25,7 @@ import { changPassword } from "../../../services/Auth";
 import { Link, useNavigate } from "react-router-dom";
 import { getQuanan } from "../../../services/Quanan";
 import { getMenuOrder } from "../../../services/MenuOrder";
+import { useCookies } from "react-cookie";
 
 const Profile = () => {
     const accounts = JSON.parse(localStorage.getItem("accounts"));
@@ -38,6 +39,7 @@ const Profile = () => {
     const [nguoidung, setnguoidung] = useState();
     const [open, setOpen] = useState(false);
     const [id, setId] = useState(null);
+    const [cookie, removeCookie] = useCookies('role');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -178,6 +180,7 @@ const Profile = () => {
                 newMat_khau: value.mat_khau_moi,
             })
             localStorage.removeItem("accounts");
+            removeCookie("role")
             enqueueSnackbar("Đổi mật khẩu thành công!", { variant: "success" });
             navigate("/login");
         } catch (error) {
