@@ -10,15 +10,17 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
-    RadioGroup,
+    Card,
+    Typography,
+    Box,
+    FormControl,
     FormControlLabel,
-    Radio,
+    RadioGroup,
     FormLabel,
-    Box
+    Radio
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { editNguoiDung, getNguoiDungById } from "../../../services/Nguoidung";
-import "./profile.css";
 import { BASE_URL } from "../../../config/ApiConfig";
 import ImgUser from "../../../admin/assets/images/user.png";
 import { changPassword } from "../../../services/Auth";
@@ -211,417 +213,484 @@ const Profile = () => {
     const saveId = (id) => {
         localStorage.setItem("id_datcho", id);
     }
-    
+
     return (
         <>
-            <div className="profile-container">
-                <div className="profile-sidebar">
-                    <div className="profile-avatar">
-                        <img
-                            src={
-                                nguoidung?.hinh_anh ? (nguoidung.hinh_anh.startsWith('http') ? nguoidung.hinh_anh : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`) : (ImgUser)
-                            }
-                            alt="User Avatar"
-                            className="avatar-img"
-                        />
-                        <h4 className="profile-name">
-                            {nguoidung?.ten_nguoi_dung || "N/A"}
-                        </h4>
-                    </div>
-                    <ul className="profile-menu">
-                        <li className="menu-item">
-                            <strong> Ngày sinh:</strong>{" "}
-                            {nguoidung?.ngay_sinh
-                                ? nguoidung.ngay_sinh.split("-").reverse().join("/")
-                                : "N/A"}
-                        </li>
-                        <li className="menu-item">
-                            <strong> Giới tính:</strong> {nguoidung?.gioi_tinh || "N/A"}
-                        </li>
-                        <li className="menu-item">
-                            <strong> Điện thoại:</strong> {nguoidung?.so_dien_thoai || "N/A"}
-                        </li>
-                        <li className="menu-item">
-                            <strong> Email: </strong> {nguoidung?.email || "N/A"}
-                        </li>
-                        <li className="menu-item">
-                            <strong> Địa Chỉ:</strong> {nguoidung?.dia_chi || "N/A"}
-                        </li>
-                        <li className="menu-item-pass">
-                            <a href="#">Quên Mật Khẩu</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <div className="profile-content">
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <form className="profile-form">
-                                <h5 className="form-title">Cập nhật Hồ Sơ</h5>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Họ và tên"
-                                            variant="outlined"
-                                            fullWidth
-                                            defaultValue={accounts?.ten_nguoi_dung || ""}
-                                            {...profileForm.register("ten_nguoi_dung", {
-                                                required: "Tên người dùng không được bỏ trống",
-                                                minLength: {
-                                                    value: 3,
-                                                    message: "Tên người dùng phải nhiều hơn 3 ký tự",
-                                                },
-                                            })}
-                                        />
-                                        {profileForm.formState?.errors?.ten_nguoi_dung && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.ten_nguoi_dung?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Email"
-                                            variant="outlined"
-                                            fullWidth
-                                            defaultValue={accounts?.email || ""}
-                                            {...profileForm.register("email", {
-                                                required: "Email không được bỏ trống",
-                                                pattern: {
-                                                    value: /^\S+@\S+$/i,
-                                                    message: "Email không hợp lệ",
-                                                },
-                                            })}
-                                        />
-                                        {profileForm.formState?.errors?.email && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.email?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Số điện thoại"
-                                            variant="outlined"
-                                            fullWidth
-                                            defaultValue={accounts?.so_dien_thoai || ""}
-                                            {...profileForm.register("so_dien_thoai", {
-                                                required: "Số điện thoại không được bỏ trống",
-                                                pattern: {
-                                                    value: /^[0-9\b]+$/,
-                                                    message: "Số điện thoại không hợp lệ",
-                                                },
-                                                maxLength: {
-                                                    value: 10,
-                                                    message: "Số điện thoại phải 10 số"
-                                                },
-                                                minLength: {
-                                                    value: 10,
-                                                    message: "Số điện thoại phải 10 số"
-                                                }
-                                            })}
-                                        />
-                                        {profileForm.formState?.errors?.so_dien_thoai && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.so_dien_thoai?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Địa chỉ"
-                                            variant="outlined"
-                                            fullWidth
-                                            defaultValue={accounts?.dia_chi || ""}
-                                            {...profileForm.register("dia_chi", {
-                                                required: "Địa chỉ không được bỏ trống",
-                                            })}
-                                        />
-                                        {profileForm.formState?.errors?.dia_chi && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.dia_chi?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            fullWidth
-                                            type="date"
-                                            defaultValue={accounts?.ngay_sinh || ""}
-                                            {...profileForm.register("ngay_sinh", {
-                                                required: "Ngày sinh không được bỏ trống",
-                                            })}
-                                        />
-                                        {profileForm.formState?.errors?.ngay_sinh && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.ngay_sinh?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            variant="outlined"
-                                            fullWidth
-                                            type="file"
-                                            {...profileForm.register("hinh_anh")}
-                                        />
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <FormLabel component="legend">Giới tính</FormLabel>
-                                        <RadioGroup
-                                            aria-labelledby="demo-radio-buttons-group-label"
-                                            defaultValue="Nam"
-                                            name="radio-buttons-group"
-                                            row
-                                        >
-                                            <FormControlLabel
-                                                value="Nam"
-                                                control={<Radio />}
-                                                label="Nam"
-                                                {...profileForm.register("gioi_tinh", {
-                                                    required: "Giới tính không được bỏ trống",
-                                                })}
-                                            />
-                                            <FormControlLabel
-                                                value="Nữ"
-                                                control={<Radio />}
-                                                label="Nữ"
-                                                {...profileForm.register("gioi_tinh", {
-                                                    required: "Giới tính không được bỏ trống",
-                                                })}
-                                            />
-                                        </RadioGroup>
-                                        {profileForm.formState?.errors?.gioi_tinh && (
-                                            <small className="text-danger">
-                                                {profileForm.formState?.errors?.gioi_tinh?.message}
-                                            </small>
-                                        )}
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Button
-                                            variant="contained"
-                                            fullWidth
-                                            style={{ width: "100px", backgroundColor: "#d4a762" }}
-                                            onClick={profileForm.handleSubmit(onUpdateProfile)}
-                                            type="submit"
-                                        >
-                                            Cập nhật
-                                        </Button>
-                                    </Grid>
-                                </Grid>
-                            </form>
-                        </Grid>
-                        {accounts ?
-                            <Grid item xs={6} sx={{ display: accounts.googleId === 3 ? 'none' : 'flex' }}>
-                                <form className="profile-form" >
-                                    <h5 className="form-title">Đổi mật khẩu</h5>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                label="Mật khẩu hiện tại"
-                                                variant="outlined"
-                                                type={"password"}
-                                                fullWidth
-                                                {...passwordForm.register("mat_khau_cu", {
-                                                    required: "Mật khẩu cũ không được bỏ trống",
-                                                    minLength: {
-                                                        value: 6,
-                                                        message: "Mật khẩu phải có ít nhất 6 ký tự",
-                                                    },
-                                                })}
-                                            />
-                                            {passwordForm.formState?.errors?.mat_khau_cu && (
-                                                <small className="text-danger">
-                                                    {passwordForm.formState?.errors?.mat_khau_cu?.message}
-                                                </small>
-                                            )}
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                label="Mật khẩu mới"
-                                                variant="outlined"
-                                                type={"password"}
-                                                fullWidth
-                                                {...passwordForm.register("mat_khau_moi", {
-                                                    required: "Mật khẩu mới không được bỏ trống",
-                                                    minLength: {
-                                                        value: 6,
-                                                        message: "Mật khẩu phải có ít nhất 6 ký tự",
-                                                    },
-                                                })}
-                                            />
-                                            {passwordForm.formState?.errors?.mat_khau_moi && (
-                                                <small className="text-danger">
-                                                    {passwordForm.formState?.errors?.mat_khau_moi?.message}
-                                                </small>
-                                            )}
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <TextField
-                                                label="Xác nhận mật khẩu mới"
-                                                variant="outlined"
-                                                type={"password"}
-                                                fullWidth
-                                                {...passwordForm.register("xac_nhan_mat_khau", {
-                                                    required: "Xác nhận mật khẩu không được bỏ trống",
-                                                    minLength: {
-                                                        value: 6,
-                                                        message: "Mật khẩu phải có ít nhất 6 ký tự",
-                                                    },
-                                                    validate: (value) =>
-                                                        value === passwordForm.watch("mat_khau_moi") ||
-                                                        "Mật khẩu xác nhận không khớp",
-                                                })}
-                                            />
-                                            {passwordForm.formState?.errors?.xac_nhan_mat_khau && (
-                                                <small className="text-danger">
-                                                    {
-                                                        passwordForm.formState?.errors?.xac_nhan_mat_khau
-                                                            ?.message
-                                                    }
-                                                </small>
-                                            )}
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Button
-                                                variant="contained"
-                                                fullWidth
-                                                style={{ width: "100px", backgroundColor: "#d4a762" }}
-                                                onClick={passwordForm.handleSubmit(onChangePassword)}
-                                                type="submit"
-                                            >
-                                                Thay đổi
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
-                                </form>
-                            </Grid> : null
-                        }
-
+            <Card sx={{ padding: 2, maxWidth: { xs: '100%', md: '1200px' }, margin: '0 auto' }}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} md={4}>
+                        <Box sx={{
+                            border: "1px solid #ddd", borderRadius: "8px", padding: 2, textAlign: "center", backgroundColor: "#f9f9f9",
+                        }}>
+                            <Box sx={{ marginBottom: 2 }}>
+                                <img
+                                    src={
+                                        nguoidung?.hinh_anh
+                                            ? nguoidung.hinh_anh.startsWith("http")
+                                                ? nguoidung.hinh_anh
+                                                : `${BASE_URL}/uploads/${nguoidung.hinh_anh}`
+                                            : ImgUser
+                                    }
+                                    alt="User Avatar"
+                                    style={{
+                                        width: "100px", height: "100px", borderRadius: "50%", objectFit: "cover",
+                                    }}
+                                />
+                                <Typography variant="h6" sx={{ marginTop: 1 }}>
+                                    {nguoidung?.ten_nguoi_dung || "N/A"}
+                                </Typography>
+                            </Box>
+                            <Box component="ul" sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "flex-start",
+                                gap: "8px",
+                            }}>
+                                <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                    <strong>Ngày sinh:</strong>{" "}
+                                    {nguoidung?.ngay_sinh
+                                        ? nguoidung.ngay_sinh.split("-").reverse().join("/")
+                                        : "N/A"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                    <strong>Giới tính:</strong> {nguoidung?.gioi_tinh || "N/A"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                    <strong>Điện thoại:</strong> {nguoidung?.so_dien_thoai || "N/A"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                    <strong>Email:</strong> {nguoidung?.email || "N/A"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                                    <strong>Địa chỉ:</strong> {nguoidung?.dia_chi || "N/A"}
+                                </Typography>
+                            </Box>
+                        </Box>
                     </Grid>
-                </div>
-            </div>
+                    <Grid item xs={12} md={8}>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12} md={6}>
+                                <Box
+                                    sx={{
+                                        border: "1px solid #ddd",
+                                        borderRadius: "8px",
+                                        padding: 2,
+                                        backgroundColor: "#fff",
+                                    }}
+                                >
+                                    <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                                        Cập nhật Hồ Sơ
+                                    </Typography>
+                                    <form onSubmit={profileForm.handleSubmit(onUpdateProfile)}>
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Họ và tên"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    defaultValue={accounts?.ten_nguoi_dung || ""}
+                                                    {...profileForm.register("ten_nguoi_dung", {
+                                                        required: "Tên người dùng không được bỏ trống",
+                                                        minLength: {
+                                                            value: 3,
+                                                            message: "Tên người dùng phải nhiều hơn 3 ký tự",
+                                                        },
+                                                    })}
+                                                />
+                                                {profileForm.formState?.errors?.ten_nguoi_dung && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.ten_nguoi_dung?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Email"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    defaultValue={accounts?.email || ""}
+                                                    {...profileForm.register("email", {
+                                                        required: "Email không được bỏ trống",
+                                                        pattern: {
+                                                            value: /^\S+@\S+$/i,
+                                                            message: "Email không hợp lệ",
+                                                        },
+                                                    })}
+                                                />
+                                                {profileForm.formState?.errors?.email && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.email?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Số điện thoại"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    defaultValue={accounts?.so_dien_thoai || ""}
+                                                    {...profileForm.register("so_dien_thoai", {
+                                                        required: "Số điện thoại không được bỏ trống",
+                                                        pattern: {
+                                                            value: /^[0-9\b]+$/,
+                                                            message: "Số điện thoại không hợp lệ",
+                                                        },
+                                                        maxLength: {
+                                                            value: 10,
+                                                            message: "Số điện thoại phải 10 số"
+                                                        },
+                                                        minLength: {
+                                                            value: 10,
+                                                            message: "Số điện thoại phải 10 số"
+                                                        }
+                                                    })}
+                                                />
+                                                {profileForm.formState?.errors?.so_dien_thoai && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.so_dien_thoai?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    label="Địa chỉ"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    defaultValue={accounts?.dia_chi || ""}
+                                                    {...profileForm.register("dia_chi", {
+                                                        required: "Địa chỉ không được bỏ trống",
+                                                    })}
+                                                />
+                                                {profileForm.formState?.errors?.dia_chi && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.dia_chi?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    type="date"
+                                                    defaultValue={accounts?.ngay_sinh || ""}
+                                                    {...profileForm.register("ngay_sinh", {
+                                                        required: "Ngày sinh không được bỏ trống",
+                                                    })}
+                                                />
+                                                {profileForm.formState?.errors?.ngay_sinh && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.ngay_sinh?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    type="file"
+                                                    {...profileForm.register("hinh_anh")}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <FormLabel component="legend">Giới tính</FormLabel>
+                                                <RadioGroup
+                                                    aria-labelledby="demo-radio-buttons-group-label"
+                                                    defaultValue="Nam"
+                                                    name="radio-buttons-group"
+                                                    row
+                                                >
+                                                    <FormControlLabel
+                                                        value="Nam"
+                                                        control={<Radio />}
+                                                        label="Nam"
+                                                        {...profileForm.register("gioi_tinh", {
+                                                            required: "Giới tính không được bỏ trống",
+                                                        })}
+                                                    />
+                                                    <FormControlLabel
+                                                        value="Nữ"
+                                                        control={<Radio />}
+                                                        label="Nữ"
+                                                        {...profileForm.register("gioi_tinh", {
+                                                            required: "Giới tính không được bỏ trống",
+                                                        })}
+                                                    />
+                                                </RadioGroup>
+                                                {profileForm.formState?.errors?.gioi_tinh && (
+                                                    <small className="text-danger">
+                                                        {profileForm.formState?.errors?.gioi_tinh?.message}
+                                                    </small>
+                                                )}
+                                            </Grid>
 
-            <div className="profile-bookings">
-                <h3 className="mb-4">Thông Tin Đặt Chỗ</h3>
+                                            <Grid item xs={12}>
+                                                <Button
+                                                    variant="contained"
+                                                    fullWidth
+                                                    style={{ width: "100px", backgroundColor: "#d4a762" }}
+                                                    onClick={profileForm.handleSubmit(onUpdateProfile)}
+                                                    type="submit"
+                                                >
+                                                    Cập nhật
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </form>
+                                </Box>
+                            </Grid>
+                            {accounts ?
+                                <Grid item xs={12} md={6} sx={{ display: accounts.googleId === 3 ? 'none' : 'flex' }}>
+                                    <Box
+                                        sx={{
+                                            border: "1px solid #ddd",
+                                            borderRadius: "8px",
+                                            padding: 2,
+                                            backgroundColor: "#fff",
+                                        }}
+                                    >
+                                        <Typography variant="h4" sx={{ marginBottom: 2 }}>
+                                            Đổi mật khẩu
+                                        </Typography>
+                                        <form onSubmit={passwordForm.handleSubmit(onChangePassword)}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        label="Mật khẩu hiện tại"
+                                                        variant="outlined"
+                                                        type={"password"}
+                                                        fullWidth
+                                                        {...passwordForm.register("mat_khau_cu", {
+                                                            required: "Mật khẩu cũ không được bỏ trống",
+                                                            minLength: {
+                                                                value: 6,
+                                                                message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                            },
+                                                        })}
+                                                    />
+                                                    {passwordForm.formState?.errors?.mat_khau_cu && (
+                                                        <small className="text-danger">
+                                                            {passwordForm.formState?.errors?.mat_khau_cu?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        label="Mật khẩu mới"
+                                                        variant="outlined"
+                                                        type={"password"}
+                                                        fullWidth
+                                                        {...passwordForm.register("mat_khau_moi", {
+                                                            required: "Mật khẩu mới không được bỏ trống",
+                                                            minLength: {
+                                                                value: 6,
+                                                                message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                            },
+                                                        })}
+                                                    />
+                                                    {passwordForm.formState?.errors?.mat_khau_moi && (
+                                                        <small className="text-danger">
+                                                            {passwordForm.formState?.errors?.mat_khau_moi?.message}
+                                                        </small>
+                                                    )}
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        label="Xác nhận mật khẩu mới"
+                                                        variant="outlined"
+                                                        type={"password"}
+                                                        fullWidth
+                                                        {...passwordForm.register("xac_nhan_mat_khau", {
+                                                            required: "Xác nhận mật khẩu không được bỏ trống",
+                                                            minLength: {
+                                                                value: 6,
+                                                                message: "Mật khẩu phải có ít nhất 6 ký tự",
+                                                            },
+                                                            validate: (value) =>
+                                                                value === passwordForm.watch("mat_khau_moi") ||
+                                                                "Mật khẩu xác nhận không khớp",
+                                                        })}
+                                                    />
+                                                    {passwordForm.formState?.errors?.xac_nhan_mat_khau && (
+                                                        <small className="text-danger">
+                                                            {
+                                                                passwordForm.formState?.errors?.xac_nhan_mat_khau
+                                                                    ?.message
+                                                            }
+                                                        </small>
+                                                    )}
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Button
+                                                        variant="contained"
+                                                        fullWidth
+                                                        style={{ width: "100px", backgroundColor: "#d4a762" }}
+                                                        onClick={passwordForm.handleSubmit(onChangePassword)}
+                                                        type="submit"
+                                                    >
+                                                        Thay đổi
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </form>
+                                    </Box>
+                                </Grid>
+                                : null
+                            }
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Typography variant="h4" className="mb-4" sx={{padding: 2}}>
+                    Thông Tin Đặt Chỗ
+                </Typography>
                 {dondatcho.map((value, index) => {
                     return value?.id_nguoidung === accounts?.id_nguoidung ? (
-                        <div className="booking-card" key={index}>
-                            <div className="d-flex justify-content-between align-items-center">
-                                <h4 className="booking-title">Quán ăn: {value.ten_quan}</h4>
+                        <Box
+                            key={index}
+                            className="booking-card"
+                            sx={{
+                                mb: 4,
+                                p: 2,
+                                border: "1px solid #ddd",
+                                borderRadius: "8px",
+                                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+                            }}
+                        >
+                            <Box
+                                display="flex"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                mb={2}
+                            >
+                                <Typography variant="h6" className="booking-title">
+                                    Quán ăn: {value.ten_quan}
+                                </Typography>
                                 <span
                                     className={`badge ${value?.trang_thai === 0
                                         ? "badge-warning"
                                         : value?.trang_thai === 1 || value?.trang_thai === 3
                                             ? "badge-success"
                                             : "badge-danger"
-                                        }`}
+                                    }`}
                                 >
-                                    {value?.trang_thai === 0 ? "Đang chờ xử lý" : ""}
-                                    {value?.trang_thai === 1 ? "Đã có chỗ" : ""}
-                                    {value?.trang_thai === 2 ? "Đã hủy" : ""}
-                                    {value?.trang_thai === 3 ? "Đã hoàn thành" : ""}
+                                    {value?.trang_thai === 0 && "Đang chờ xử lý"}
+                                    {value?.trang_thai === 1 && "Đã có chỗ"}
+                                    {value?.trang_thai === 2 && "Đã hủy"}
+                                    {value?.trang_thai === 3 && "Đã hoàn thành"}
                                 </span>
-                            </div>
-                            <div className="row">
-                                <div className="col-4">
-                                    <div className="booking-details">
-                                        <p>
+                            </Box>
+                            <Grid container spacing={2}>
+                                {/* Left Column */}
+                                <Grid item xs={12} md={4}>
+                                    <Box className="booking-details">
+                                        <Typography>
                                             <strong>Mã đơn:</strong> {value?.ma_don}
-                                        </p>
-
-                                        <p>
+                                        </Typography>
+                                        <Typography>
                                             <strong>Mã giao dịch:</strong> {value?.ma_giao_dich}
-                                        </p>
-
-                                        <p>
-                                            <strong>Tiền cọc:</strong> {formatPrice(value?.tien_coc)} {'(30%)'}
-                                        </p>
-
-                                        <p>
-                                            <strong>Ngày:</strong>
-                                            {value?.ngay_dat.split("T")[0]}
-                                        </p>
-
-                                        <p>
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Tiền cọc:</strong> {formatPrice(value?.tien_coc)}{" "}
+                                            (30%)
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Ngày:</strong> {value?.ngay_dat.split("T")[0]}
+                                        </Typography>
+                                        <Typography>
                                             <strong>Thời gian:</strong> {value?.thoi_gian}
-                                        </p>
-                                        <p>
+                                        </Typography>
+                                        <Typography>
                                             <strong>Số lượng khách:</strong> {value?.so_luong_nguoi}
-                                        </p>
-                                        <p>
-                                            <strong>Yêu cầu:</strong> {value?.yeu_cau_khac}
-                                        </p>
+                                        </Typography>
+                                        <Typography>
+                                            <strong>Yêu cầu:</strong> {value?.yeu_cau_khac || "N/A"}
+                                        </Typography>
+                                        {value.trang_thai === 2 && (
+                                            <Typography>
+                                                <strong>Lý do hủy đơn:</strong> {value?.ly_do_huy}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                </Grid>
 
-                                        {value.trang_thai === 2 ?
-                                            <p>
-                                                <strong>Lý do hủy  đơn:</strong> {value?.ly_do_huy}
-                                            </p> : null
-                                        }
-
-                                    </div>
-                                </div>
-
-                                <div className="col-8">
-                                    <div className="mb-3">
-                                        <h6>Thông tin gọi món</h6>
-                                    </div>
-                                    <div className="booking-details mt-3">
-                                        {
-                                            menuorder.map((item) => {
+                                {/* Right Column */}
+                                <Grid item xs={12} md={8}>
+                                    <Box>
+                                        <Typography variant="h6" gutterBottom>
+                                            Thông tin gọi món
+                                        </Typography>
+                                        <Box className="booking-details mt-3">
+                                            {menuorder.map((item, idx) => {
                                                 if (item.id_datcho === value.id_datcho) {
                                                     return (
-                                                        <div className="row booking-details">
-                                                            <div className="col-4">
-                                                                <div className="text-dark">{item.ten_mon}</div>
-                                                            </div>
-                                                            <div className="col-8 text-dark">
-                                                                {formatPrice(item.gia)} x {item.so_luong}
-                                                            </div>
-                                                            <hr className="text-dark" style={{ width: "50%" }}></hr>
-                                                        </div>
-                                                    )
+                                                        <Box
+                                                            key={idx}
+                                                            className="row booking-details"
+                                                            sx={{ mb: 1 }}
+                                                        >
+                                                            <Grid container alignItems="center">
+                                                                <Grid item xs={6}>
+                                                                    <Typography>{item.ten_mon}</Typography>
+                                                                </Grid>
+                                                                <Grid item xs={6}>
+                                                                    <Typography>
+                                                                        {formatPrice(item.gia)} x {item.so_luong}
+                                                                    </Typography>
+                                                                </Grid>
+                                                            </Grid>
+                                                            <hr
+                                                                className="text-dark"
+                                                                style={{ width: "50%" }}
+                                                            ></hr>
+                                                        </Box>
+                                                    );
                                                 }
-                                            })
-                                        }
+                                                return null;
+                                            })}
+                                            {thongBao(menuorder, value.id_datcho)}
 
-                                        {
-                                            thongBao(menuorder, value.id_datcho)
-                                        }
-                                        <div className="row booking-details">
-                                            <div className="col-4">
-                                                <p className="text-dark" style={{ fontWeight: "bold" }}>Tổng tiền:
+                                            <Grid container className="booking-details">
+                                                <Grid item xs={6}>
+                                                    <Typography sx={{ fontWeight: "bold" }}>
+                                                        Tổng tiền:
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography sx={{ fontWeight: "bold" }}>
+                                                        {menuorder
+                                                            .filter(
+                                                                (item) => item.id_datcho === value.id_datcho
+                                                            )
+                                                            .reduce(
+                                                                (total, item) => total + item.gia * item.so_luong,
+                                                                0
+                                                            )
+                                                            .toLocaleString("vi-VN", {
+                                                                style: "currency",
+                                                                currency: "VND",
+                                                            })}
+                                                    </Typography>
+                                                </Grid>
+                                            </Grid>
+                                        </Box>
+                                    </Box>
+                                </Grid>
+                            </Grid>
 
-                                                </p>
-                                            </div>
-                                            <div className="col-8">
-                                                <p style={{ fontWeight: "bold" }}>
-                                                    {
-                                                        menuorder
-                                                            .filter(item => item.id_datcho === value.id_datcho)
-                                                            .reduce((total, item) => total + item.gia * item.so_luong, 0)
-                                                            .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-                                                    }
-                                                </p>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
+                            {/* Action Buttons */}
                             <Box
                                 display="flex"
                                 justifyContent="flex-start"
                                 alignItems="center"
-                                gap={2} 
+                                gap={2}
+                                mt={2}
                             >
                                 <Button
                                     variant="contained"
                                     color="error"
                                     style={
-                                        value?.trang_thai === 2 || value?.trang_thai === 3 || value?.trang_thai === 1
+                                        value?.trang_thai === 2 ||
+                                        value?.trang_thai === 3 ||
+                                        value?.trang_thai === 1
                                             ? { display: "none" }
                                             : { display: "block", width: "100px" }
                                     }
@@ -629,27 +698,38 @@ const Profile = () => {
                                 >
                                     Hủy đơn
                                 </Button>
-                                <Link to={`/danh-gia/${value.id_quanan}`} style={{ textDecoration: "none" }}>
+                                <Link
+                                    to={`/danh-gia/${value.id_quanan}`}
+                                    style={{ textDecoration: "none" }}
+                                >
                                     <Button
                                         variant="contained"
                                         style={
                                             value?.is_danhgia === 0 || value.trang_thai === 2
                                                 ? { display: "none" }
-                                                : { display: "block", width: "150px", backgroundColor: "#d4a762", color: "#fff" }
+                                                : {
+                                                    display: "block",
+                                                    width: "150px",
+                                                    backgroundColor: "#d4a762",
+                                                    color: "#fff",
+                                                }
                                         }
-                                        onClick={()=>saveId(value.id_datcho)}
+                                        onClick={() => saveId(value.id_datcho)}
                                     >
                                         Viết đánh giá
                                     </Button>
                                 </Link>
                             </Box>
 
+                            {/* Dialog for Cancel Confirmation */}
                             <Dialog open={open} onClose={handleClose}>
                                 <DialogTitle>Xác nhận hủy đơn</DialogTitle>
                                 <DialogContent>
                                     <DialogContentText>
                                         Bạn có chắc chắn muốn hủy đặt chỗ quán{" "}
-                                        {dondatcho.find((item) => item.id_datcho === id)?.ten_quan}{" "}
+                                        {
+                                            dondatcho.find((item) => item.id_datcho === id)?.ten_quan
+                                        }{" "}
                                         này không?
                                     </DialogContentText>
                                     <TextField
@@ -662,13 +742,13 @@ const Profile = () => {
                                             "& .MuiInputBase-input": { color: "black" },
                                             "& .MuiInputLabel-root": { color: "black" },
                                             "& .Mui-disabled": { color: "black" },
-                                            mt: 2
+                                            mt: 2,
                                         }}
                                         {...register("ly_do_huy", {
                                             required: {
                                                 value: true,
-                                                message: "Vui lòng nhập lý do"
-                                            }
+                                                message: "Vui lòng nhập lý do",
+                                            },
                                         })}
                                     />
                                     {formState?.errors?.ly_do_huy && (
@@ -678,7 +758,11 @@ const Profile = () => {
                                     )}
                                 </DialogContent>
                                 <DialogActions>
-                                    <Button onClick={handleSubmit(onHuydon)} color="error" autoFocus>
+                                    <Button
+                                        onClick={handleSubmit(onHuydon)}
+                                        color="error"
+                                        autoFocus
+                                    >
                                         Có
                                     </Button>
                                     <Button onClick={handleClose} color="primary">
@@ -686,10 +770,10 @@ const Profile = () => {
                                     </Button>
                                 </DialogActions>
                             </Dialog>
-                        </div>
+                        </Box>
                     ) : null;
                 })}
-            </div>
+            </Card>
         </>
     );
 };
