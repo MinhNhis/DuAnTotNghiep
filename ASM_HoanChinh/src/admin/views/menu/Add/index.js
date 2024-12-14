@@ -126,7 +126,7 @@ const AddMenu = () => {
                                     <div className="mb-2">
                                         <label className="form-label">Giá</label>
                                         <TextField
-                                            type="number"
+                                            type="text"
                                             variant="outlined"
                                             fullWidth
                                             min={0}
@@ -141,6 +141,10 @@ const AddMenu = () => {
                                                 min: {
                                                     value: 0,
                                                     message: "Giá không được nhập nhỏ hơn 0",
+                                                },
+                                                pattern: {
+                                                    value: /^[0-9]+$/,
+                                                    message: "Giá không đúng định dạng",
                                                 },
                                             })}
                                         />

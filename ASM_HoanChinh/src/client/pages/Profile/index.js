@@ -375,6 +375,16 @@ const Profile = () => {
                                                     defaultValue={accounts?.ngay_sinh || ""}
                                                     {...profileForm.register("ngay_sinh", {
                                                         required: "Ngày sinh không được bỏ trống",
+                                                        validate: {
+                                                            isValidDate: (value) => {
+                                                                const selectedDate = new Date(value);
+                                                                const today = new Date();
+                                                                today.setHours(0, 0, 0, 0);
+                                                                return (
+                                                                    selectedDate <= today || "Ngày sinh không được lớn hơn ngày hiện tại"
+                                                                );
+                                                            },
+                                                        },
                                                     })}
                                                 />
                                                 {profileForm.formState?.errors?.ngay_sinh && (
@@ -539,7 +549,7 @@ const Profile = () => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Typography variant="h4" className="mb-4" sx={{padding: 2}}>
+                <Typography variant="h4" className="mb-2" sx={{padding: 2}}>
                     Thông Tin Đặt Chỗ
                 </Typography>
                 {dondatcho.map((value, index) => {

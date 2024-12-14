@@ -198,6 +198,11 @@ const Register = () => {
                                         {...register("so_dien_thoai", {
                                             required: "Số điện thoại không được bỏ trống",
                                             minLength: { value: 10, message: "Số điện thoại phải có ít nhất 10 chữ số" },
+                                            maxLength: { value: 10, message: "Số điện thoại phải có ít nhất 10 chữ số" },
+                                            pattern: {
+                                                value: /^[0-9]+$/,
+                                                message: "Số điện thoại chỉ được chứa chữ số",
+                                            },
                                         })}
                                         error={!!formState.errors.so_dien_thoai}
                                         helperText={formState.errors.so_dien_thoai?.message}

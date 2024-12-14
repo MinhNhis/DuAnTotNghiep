@@ -429,7 +429,8 @@ const Trangchu = () => {
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
                                                 {/* <div className='mb-1'>{value.distanceKm} Km</div> */}
                                                 <div className='mb-1' style={{
-                                                    color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
+                                                    color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red',
+                                                    display: value.is_delete === 1? 'none': 'block'
                                                 }}>
                                                     {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? <p style={{ fontSize: "13px", marginBottom: "0px" }}>{value.gio_mo_cua}- {value.gio_dong_cua} Đang mở cửa</p> : <p style={{ fontSize: "13px", marginBottom: "0px" }}>Đã đóng cửa</p>}
                                                 </div>

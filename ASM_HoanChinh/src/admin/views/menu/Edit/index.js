@@ -160,8 +160,6 @@ const EditMenu = () => {
                       </small>
                     )}
                   </div>
-                </div>
-                <div className="col-6">
                   <div className="mb-3">
                     <label className="form-label">Giá</label>
                     <Controller
@@ -171,7 +169,7 @@ const EditMenu = () => {
                       render={({ field }) => (
                         <TextField
                           {...field}
-                          type="number"
+                          type="text"
                           min={0}
                           fullWidth
                           variant="outlined"
@@ -180,11 +178,15 @@ const EditMenu = () => {
                       {...register("gia", {
                         required: {
                           value: true,
-                          message: "Price không được bỏ trống",
+                          message: "Giá không được bỏ trống",
                         },
                         min: {
                           value: 0,
-                          message: "Price không được nhập nhỏ hơn 0",
+                          message: "Giá không được nhập nhỏ hơn 0",
+                        },
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "Giá không đúng định dạng",
                         },
                       })}
                     />
@@ -194,7 +196,35 @@ const EditMenu = () => {
                       </small>
                     )}
                   </div>
-                  <div className="mn-3">
+                </div>
+                <div className="col-6">
+                <div className="mb-3">
+                <label className="form-label">Hình ảnh</label>
+                <div className="mb-3 mt-3">
+                  <img
+                    style={{ width: "167px" }}
+                    src={`${BASE_URL}/uploads/${menu.hinh_anh}`}
+                    alt="Preview"
+                  />
+                </div>
+                <TextField
+                  type="file"
+                  fullWidth
+                  variant="outlined"
+                  {...register("hinh_anh", {
+                    // required: {
+                    //   value: true,
+                    //   message: "Hình ảnh không được bỏ trống",
+                    // },
+                  })}
+                />
+                {formState?.errors?.hinh_anh && (
+                  <small className="text-danger">
+                    {formState?.errors?.hinh_anh?.message}
+                  </small>
+                )}
+              </div>
+                  <div className="mn-3" style={{display: 'none'}}>
                     <label className="form-lablr">Quán ăn</label>
                     <Controller
                       name="quan_an"
@@ -241,32 +271,6 @@ const EditMenu = () => {
                     )}
                   </div>
                 </div>
-              </div>
-              <div className="mb-3">
-                <label className="form-label">Hình ảnh</label>
-                <div className="mb-3 mt-3">
-                  <img
-                    style={{ width: "100px" }}
-                    src={`${BASE_URL}/uploads/${menu.hinh_anh}`}
-                    alt="Preview"
-                  />
-                </div>
-                <TextField
-                  type="file"
-                  fullWidth
-                  variant="outlined"
-                  {...register("hinh_anh", {
-                    required: {
-                      value: true,
-                      message: "Hình ảnh không được bỏ trống",
-                    },
-                  })}
-                />
-                {formState?.errors?.hinh_anh && (
-                  <small className="text-danger">
-                    {formState?.errors?.hinh_anh?.message}
-                  </small>
-                )}
               </div>
               <div className="mb-3">
                 <Button variant="contained" color="primary" sx={{ width: "100px", marginRight: 2 }} onClick={handleSubmit(onSubmit)}>{`Sửa`} </Button>

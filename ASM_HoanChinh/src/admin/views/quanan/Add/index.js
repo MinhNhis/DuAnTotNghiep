@@ -199,7 +199,7 @@ const AddQuanAn = () => {
                       <span style={{ color: 'red', marginLeft: '5px' }}>*</span>
                     </label>
                     <TextField
-                      type="number"
+                      type="text"
                       fullWidth
                       variant="outlined"
                       min={0}
@@ -218,7 +218,11 @@ const AddQuanAn = () => {
                         minLength: {
                           value: 10,
                           message: "Số điện thoại không đúng định dạng"
-                        }
+                        },
+                        pattern: {
+                          value: /^[0-9]+$/,
+                          message: "Số điện thoại không đúng định dạng",
+                        },
                       })}
                     />
                     {formState?.errors?.dien_thoai && (
@@ -281,6 +285,19 @@ const AddQuanAn = () => {
                                 return "Vui lòng thêm giờ mở cửa"
                               }
                               return true
+                            },
+                            validate: (thoi_gian) => {
+                              if (thoi_gian === "00:00:00") {
+                                return "Thời gian không được bỏ trống";
+                              }
+
+                              // Kiểm tra định dạng HH:mm:ss
+                              const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+                              if (!timeRegex.test(thoi_gian)) {
+                                return "Thời gian không đúng định dạng";
+                              }
+
+                              return true;
                             }
                           })}
                         />
@@ -313,6 +330,19 @@ const AddQuanAn = () => {
                                 return "Vui lòng thêm giờ đóng cửa"
                               }
                               return true
+                            },
+                            validate: (thoi_gian) => {
+                              if (thoi_gian === "00:00:00") {
+                                return "Thời gian không được bỏ trống";
+                              }
+
+                              // Kiểm tra định dạng HH:mm:ss
+                              const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
+                              if (!timeRegex.test(thoi_gian)) {
+                                return "Thời gian không đúng định dạng";
+                              }
+
+                              return true;
                             }
                           })}
                         />

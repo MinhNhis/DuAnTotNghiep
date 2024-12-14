@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { BASE_URL } from "../../../config/ApiConfig";
 import { TextField, Button } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const { register, handleSubmit, formState } = useForm();
@@ -10,6 +11,7 @@ const ForgotPassword = () => {
   const [messageType, setMessageType] = useState('danger');
   const { enqueueSnackbar } = useSnackbar();
   const PageUrl = BASE_URL;
+  const navigate = useNavigate()
 
   const submit = async (data) => {
     try {
@@ -24,7 +26,9 @@ const ForgotPassword = () => {
       const responseData = await response.json();
       if (response.ok && responseData.message === 'Password reset email sent.') {
         enqueueSnackbar("Mật khẩu đã được gửi về email", {
-          variant: "success",})
+          variant: "success",
+        })
+        navigate('/')
       } else {
         enqueueSnackbar(responseData.message, {
           variant: "error",
@@ -33,7 +37,7 @@ const ForgotPassword = () => {
     } catch (error) {
       console.error('Error:', error);
       enqueueSnackbar('Đã xảy ra lỗi, vui lòng thử lại sau.', {
-         variant: "error"
+        variant: "error"
       });
     }
   };
@@ -86,13 +90,13 @@ const ForgotPassword = () => {
         </div>
 
         <Button type="submit" className="btn btn-primary w-100 "
-        sx={{
-          borderRadius: "5px",
-          height: "37px",
-          backgroundColor: "#d4a762",
-          color: "white",
-          fontWeight: "bold",
-        }}>
+          sx={{
+            borderRadius: "5px",
+            height: "37px",
+            backgroundColor: "#d4a762",
+            color: "white",
+            fontWeight: "bold",
+          }}>
           Đặt Lại Mật Khẩu
         </Button>
         {message && (

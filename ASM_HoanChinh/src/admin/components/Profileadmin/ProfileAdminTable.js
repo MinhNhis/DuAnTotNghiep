@@ -235,6 +235,16 @@ const  ProfileAdminTable = () => {
                     defaultValue={accounts?.ngay_sinh || ""}
                     {...profileForm.register("ngay_sinh", {
                       required: "Ngày sinh không được bỏ trống",
+                      validate: {
+                        isValidDate: (value) => {
+                            const selectedDate = new Date(value);
+                            const today = new Date();
+                            today.setHours(0, 0, 0, 0);
+                            return (
+                                selectedDate <= today || "Ngày sinh không được lớn hơn ngày hiện tại"
+                            );
+                        },
+                    },
                     })}
                   />
                   {profileForm.formState?.errors?.ngay_sinh && (
