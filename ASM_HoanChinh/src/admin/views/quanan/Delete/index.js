@@ -54,11 +54,15 @@ const DeleteQuanAn = () => {
 
     const submit = async () => {
         try {
-            // await deleteQuanan(id, {
-            //     reason: reason ? reaSon(reason) : otherReason,
-            //     id_nguoidung: quanan.created_user,
-            //     role: cookies.role,
-            // });
+            if (cookies.role === 2) {
+                await deleteQuanan(id, {
+                    reason: reason ? reaSon(reason) : otherReason,
+                    id_nguoidung: quanan.created_user,
+                    role: cookies.role,
+                });
+                navigate("/admin/quanan");
+                return
+            }
             await isDeleteQuanan(id, {
                 reason: reason ? reaSon(reason) : otherReason,
                 id_nguoidung: quanan.created_user,

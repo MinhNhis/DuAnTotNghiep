@@ -18,7 +18,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 
 const Menuitems = [
   {
-    title: "Dashboard",
+    title: "Trang chủ",
     icon: HomeOutlinedIcon,
     href: "/admin",
   },

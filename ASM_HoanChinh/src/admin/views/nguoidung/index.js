@@ -17,7 +17,7 @@ const DichVu = () => {
             <Card variant="outlined">
                 <CardContent>
                     <Typography variant="h3" sx={{ fontWeight: "bold" }}>DANH SÁCH NGƯỜI DÙNG</Typography>
-                        <Button variant="contained" sx={{ marginLeft: "940px", width:"150px" }} onClick={handleAddnguoidung}>Thêm người dùng</Button>
+                        <Button variant="contained" sx={{ marginLeft: "940px", width:"150px", display: 'none' }} onClick={handleAddnguoidung}>Thêm người dùng</Button>
                     <Box sx={{ overflow: { xs: "auto", sm: "unset", }, fontWeight: "bold" }}>
                         <NguoiDungTable />
                     </Box>
