@@ -46,6 +46,14 @@ const Gioithieu = () => {
     const [foodRating, setFoodRating] = useState(0); // Đánh giá đồ ăn
     const [serviceRating, setServiceRating] = useState(0); // Đánh giá dịch vụ
     const [atmosphereRating, setAtmosphereRating] = useState(0); // Đánh giá không khí
+    const [ratingCounts, setRatingCounts] = useState({
+        5: 0,
+        4: 0,
+        3: 0,
+        2: 0,
+        1: 0,
+    });
+
 
 
     useEffect(() => {
@@ -141,8 +149,6 @@ const Gioithieu = () => {
         }
     };
 
-
-
     const [cookies, setCookie, removeCookie] = useCookies(["token", "role"]);
     useEffect(() => {
         getUserInfo();
@@ -206,7 +212,7 @@ const Gioithieu = () => {
         const time = times.split(':').map(Number);
         return time[0] >= open[0] && time[0] <= close[0];
     };
-    
+
     const submit = async (value) => {
         const time = value.thoi_gian.split(':').map(Number);
         if (time[0] > 24) {
@@ -286,6 +292,13 @@ const Gioithieu = () => {
         let foodCount = 0;
         let serviceCount = 0;
         let atmosphereCount = 0;
+        let counts= {
+            5: 0,
+            4: 0,
+            3: 0,
+            2: 0,
+            1: 0,
+        };
 
         danhgia.forEach(e => {
             if (e.id_quanan === quanan.id_quanan) {
@@ -306,6 +319,9 @@ const Gioithieu = () => {
                     totalStars += e.sao;
                     count++;
                 }
+                if (typeof e.sao === 'number' && counts[e.sao] !== undefined) {
+                    counts[e.sao]++;
+                }
             } else {
                 console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
             }
@@ -315,6 +331,7 @@ const Gioithieu = () => {
         setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
         setServiceRating(serviceCount > 0 ? (totalServiceStars / serviceCount).toFixed(1) : 0);
         setAtmosphereRating(atmosphereCount > 0 ? (totalAtmosphereStars / atmosphereCount).toFixed(1) : 0);
+        setRatingCounts(counts);
     }, [danhgia, quanan]);
 
     const handleLoadMore = () => {
@@ -338,6 +355,8 @@ const Gioithieu = () => {
             enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
         }
     };
+
+
 
     return (
         <>
@@ -522,7 +541,7 @@ const Gioithieu = () => {
                                                                         message: "Sô điện thoại phải 10 số"
                                                                     },
                                                                     pattern: {
-                                                                        value: /^[0-9]+$/, 
+                                                                        value: /^[0-9]+$/,
                                                                         message: "Số điện thoại chỉ được chứa chữ số",
                                                                     },
                                                                 })}
@@ -584,9 +603,9 @@ const Gioithieu = () => {
                                                                     validate: (thoi_gian) => {
                                                                         const quan = quanan
                                                                         if (!isOpen('09:00:00', '22:00:00', thoi_gian)) {
-                                                                             return "Thời gian này quán đã đóng của. Vui lòng chọn thời gian khác"
+                                                                            return "Thời gian này quán đã đóng của. Vui lòng chọn thời gian khác"
                                                                         }
-                                                                       return true
+                                                                        return true
                                                                     },
                                                                     validate: (thoi_gian) => {
                                                                         const selectedDate = new Date(thoi_gian);
@@ -604,16 +623,16 @@ const Gioithieu = () => {
                                                                         if (thoi_gian === "00:00:00") {
                                                                             return "Thời gian không được bỏ trống";
                                                                         }
-                                                                    
+
                                                                         // Kiểm tra định dạng HH:mm:ss
                                                                         const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
                                                                         if (!timeRegex.test(thoi_gian)) {
                                                                             return "Thời gian không đúng định dạng HH:mm:ss";
                                                                         }
-                                                                    
+
                                                                         return true;
                                                                     }
-                                                                    
+
                                                                 })}
                                                             />
                                                             {formState?.errors?.thoi_gian && (
@@ -888,9 +907,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.khongkhis?.length > 0 ? (
-                                                        quanan.khongkhis.map((khongkhi, index) =>
-                                                        (<div key={khongkhi.id_khongkhi}>
-                                                            {khongkhi.khong_khi} </div>))) :
+                                                            quanan.khongkhis.map((khongkhi, index) =>
+                                                                (<div key={khongkhi.id_khongkhi}>
+                                                                    {khongkhi.khong_khi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -899,9 +918,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.dichvus?.length > 0 ? (
-                                                        quanan.dichvus.map((dichvu, index) =>
-                                                        (<div key={dichvu.id_dichvu}>
-                                                            {dichvu.dich_vu} </div>))) :
+                                                            quanan.dichvus.map((dichvu, index) =>
+                                                                (<div key={dichvu.id_dichvu}>
+                                                                    {dichvu.dich_vu} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -910,9 +929,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.tiennghis?.length > 0 ? (
-                                                        quanan.tiennghis.map((tiennghi, index) =>
-                                                        (<div key={tiennghi.id_tiennghi}>
-                                                            {tiennghi.tien_nghi} </div>))) :
+                                                            quanan.tiennghis.map((tiennghi, index) =>
+                                                                (<div key={tiennghi.id_tiennghi}>
+                                                                    {tiennghi.tien_nghi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -923,9 +942,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.kehoachs?.length > 0 ? (
-                                                        quanan.kehoachs.map((kehoach, index) =>
-                                                        (<div key={kehoach.id_kehoach}>
-                                                            {kehoach.ke_hoach} </div>))) :
+                                                            quanan.kehoachs.map((kehoach, index) =>
+                                                                (<div key={kehoach.id_kehoach}>
+                                                                    {kehoach.ke_hoach} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -934,9 +953,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.baidoxes?.length > 0 ? (
-                                                        quanan.baidoxes.map((baidoxe, index) =>
-                                                        (<div key={baidoxe.id_baidoxe}>
-                                                            {baidoxe.bai_do_xe} </div>))) :
+                                                            quanan.baidoxes.map((baidoxe, index) =>
+                                                                (<div key={baidoxe.id_baidoxe}>
+                                                                    {baidoxe.bai_do_xe} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -945,9 +964,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.loaikhs?.length > 0 ? (
-                                                        quanan.loaikhs.map((loaikh, index) =>
-                                                        (<div key={loaikh.id_loaikh}>
-                                                            {loaikh.khach_hang} </div>))) :
+                                                            quanan.loaikhs.map((loaikh, index) =>
+                                                                (<div key={loaikh.id_loaikh}>
+                                                                    {loaikh.khach_hang} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -1004,7 +1023,7 @@ const Gioithieu = () => {
                                 <div className="card-body">
                                     <div className="row">
                                         <div className="col-4">
-                                            <h4 className="mb-1" style={{ fontWeight: "bold" }}>
+                                            <h4 className="mb-3" style={{ fontWeight: "bold" }}>
                                                 Đánh giá
                                             </h4>
                                         </div>
@@ -1020,7 +1039,10 @@ const Gioithieu = () => {
                                             style={{ borderRight: "1px solid #000" }}
                                         >
                                             <div className="row">
+
+
                                                 <div className="col-6 text-dark">
+
                                                     <p> Tuyệt vời</p>
                                                     <p> Rất tốt</p>
                                                     <p> Trung Bình</p>
@@ -1028,30 +1050,41 @@ const Gioithieu = () => {
                                                     <p> Kinh khủng</p>
                                                 </div>
                                                 <div className="col-6">
+
                                                     <p>
+
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
+                                                        ({ratingCounts[5]})
                                                     </p>
+
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
+                                                        ({ratingCounts[4]})
                                                     </p>
+
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
+                                                        ({ratingCounts[3]})
                                                     </p>
+
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
+                                                        ({ratingCounts[2]})
                                                     </p>
+
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
+                                                        ({ratingCounts[1]})
                                                     </p>
                                                 </div>
                                             </div>
