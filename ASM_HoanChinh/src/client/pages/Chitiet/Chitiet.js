@@ -340,6 +340,9 @@ const Gioithieu = () => {
                     totalStars += e.sao;
                     count++;
                 }
+                if (typeof e.sao === 'number' && counts[e.sao] !== undefined) {
+                    counts[e.sao]++;
+                }
             } else {
                 console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
             }
@@ -349,6 +352,7 @@ const Gioithieu = () => {
         setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
         setServiceRating(serviceCount > 0 ? (totalServiceStars / serviceCount).toFixed(1) : 0);
         setAtmosphereRating(atmosphereCount > 0 ? (totalAtmosphereStars / atmosphereCount).toFixed(1) : 0);
+        setRatingCounts(counts);
     }, [danhgia, quanan]);
 
     const handleLoadMore = () => {
@@ -372,7 +376,6 @@ const Gioithieu = () => {
             enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
         }
     };
-
     return (
         <>
             <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
