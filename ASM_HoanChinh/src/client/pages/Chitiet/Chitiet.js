@@ -36,7 +36,7 @@ const Gioithieu = () => {
     const [datcho, setDatcho] = useState([]);
     const accounts = JSON.parse(localStorage.getItem("accounts"))
     const { enqueueSnackbar } = useSnackbar();
-
+    const hasCalledRefquan = useRef(false);
     const [visibleCount, setVisibleCount] = useState(2);
     const [selectedMenuItems, setSelectedMenuItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -57,8 +57,11 @@ const Gioithieu = () => {
 
 
     useEffect(() => {
+
+        if (hasCalledRefquan.current) return;
         localStorage.setItem("Link", `chi-tiet/${id}`)
-        initData()
+        initData();
+        hasCalledRefquan.current = true;
     }, [])
 
     const addDondatcho = async (idOrder, transId, orderInfo, amount, resultCode) => {
@@ -207,19 +210,38 @@ const Gioithieu = () => {
     };
 
     const isOpen = (openTime, closeTime, times) => {
-        const open= openTime.split(':').map(Number);
+        const open = openTime.split(':').map(Number);
         const close = closeTime.split(':').map(Number);
         const time = times.split(':').map(Number);
         return time[0] >= open[0] && time[0] <= close[0];
     };
 
+    const isOpenQuan = (openTime, closeTime) => {
+        const now = new Date();
+        let openHour, openMinute, closeHour, closeMinute;
+        try {
+            [openHour, openMinute] = openTime.split(':').slice(0, 2).map(Number);
+            [closeHour, closeMinute] = closeTime.split(':').slice(0, 2).map(Number);
+        } catch (error) {
+            return false;
+        }
+        const openingTime = new Date(now);
+        const closingTime = new Date(now);
+
+        openingTime.setHours(openHour, openMinute, 0);
+        closingTime.setHours(closeHour, closeMinute, 0);
+
+        return now >= openingTime && now <= closingTime;
+    };
+
+
     const submit = async (value) => {
         const time = value.thoi_gian.split(':').map(Number);
         if (time[0] > 24) {
-            return enqueueSnackbar("Thời gian không hợp lệ", {variant: 'warning'});
+            return enqueueSnackbar("Thời gian không hợp lệ", { variant: 'warning' });
         }
         if (!isOpen(quanan.gio_mo_cua, quanan.gio_dong_cua, value.thoi_gian)) {
-            return enqueueSnackbar("Thời gian này quán đã đóng cửa. Vui lòng chọn thời gian khác", {variant: 'warning'});
+            return enqueueSnackbar("Thời gian này quán đã đóng cửa. Vui lòng chọn thời gian khác", { variant: 'warning' });
         }
         if (quanan.is_delete === 0) {
             let ma = 'FS' + randomMadon()
@@ -227,7 +249,7 @@ const Gioithieu = () => {
             if (value.so_luong > quanan.so_luong_cho) {
                 enqueueSnackbar(`Số lượng người không được quá sô lượng chỗ của quán ${quanan.so_luong_cho}`, { variant: "error" });
             } else {
-                const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian && e.trang_thai != 2 && e.trang_thai != 3 );
+                const fillDatcho = datcho.filter((e) => e.ngay_dat === value.ngay && e.thoi_gian === value.thoi_gian && e.trang_thai != 2 && e.trang_thai != 3);
                 let tongCho = 0
 
                 fillDatcho.forEach((e) => {
@@ -302,7 +324,6 @@ const Gioithieu = () => {
 
         danhgia.forEach(e => {
             if (e.id_quanan === quanan.id_quanan) {
-                // Kiểm tra xem giá trị có hợp lệ không
                 if (typeof e.danh_gia_do_an === 'number') {
                     totalFoodStars += e.danh_gia_do_an;
                     foodCount++;
@@ -319,9 +340,6 @@ const Gioithieu = () => {
                     totalStars += e.sao;
                     count++;
                 }
-                if (typeof e.sao === 'number' && counts[e.sao] !== undefined) {
-                    counts[e.sao]++;
-                }
             } else {
                 console.log("Không khớp id quán ăn:", e.id_quanan, quanan.id_quanan);
             }
@@ -331,7 +349,6 @@ const Gioithieu = () => {
         setFoodRating(foodCount > 0 ? (totalFoodStars / foodCount).toFixed(1) : 0);
         setServiceRating(serviceCount > 0 ? (totalServiceStars / serviceCount).toFixed(1) : 0);
         setAtmosphereRating(atmosphereCount > 0 ? (totalAtmosphereStars / atmosphereCount).toFixed(1) : 0);
-        setRatingCounts(counts);
     }, [danhgia, quanan]);
 
     const handleLoadMore = () => {
@@ -355,8 +372,6 @@ const Gioithieu = () => {
             enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
         }
     };
-
-
 
     return (
         <>
@@ -420,12 +435,12 @@ const Gioithieu = () => {
                     </Box>
                     <Box display="flex" flexDirection="column" gap={2} mt={2}>
                         <TextField
-                            label="Số tiền đặt cọc"
+                            label={formatPrice(totalPrice * 0.3)}
                             name="soTien"
                             type="number"
                             fullWidth
                             variant="outlined"
-                            value={totalPrice * 0.3}
+                            // value={totalPrice * 0.3}
                             disabled
                             sx={{
                                 "& .MuiInputBase-input": { color: "black" },
@@ -434,12 +449,12 @@ const Gioithieu = () => {
                             }}
                         />
                         <TextField
-                            label="Nội dung"
+                            label={ma}
                             name="noiDung"
                             rows={4}
                             fullWidth
                             variant="outlined"
-                            value={ma}
+                            // value={ma}
                             disabled
                             sx={{
                                 "& .MuiInputBase-input": { color: "black" },
@@ -473,14 +488,34 @@ const Gioithieu = () => {
                     </div>
                 </div>
                 <div className="container">
-                    <div class="d-flex align-items-center justify-content-between ">
+                    <div className="d-flex align-items-center justify-content-between">
                         <h2
                             className="display-5 mb-3"
                             style={{ fontSize: "30px", fontWeight: "bold" }}
                         >
-                            {quanan.ten_quan_an}
+                            {quanan.ten_quan_an}{" "}
+                            {isOpenQuan(quanan.gio_mo_cua, quanan.gio_dong_cua) ? (
+                                <span
+                                    style={{
+                                        fontSize: "16px",
+                                        color: "green",
+                                        fontWeight: "normal",
+                                    }}
+                                >
+                                   {'('} Đang mở cửa {quanan.gio_mo_cua} - {quanan.gio_dong_cua} {')'}
+                                </span>
+                            ) : (
+                                <span
+                                    style={{
+                                        fontSize: "16px",
+                                        color: "red",
+                                        fontWeight: "normal",
+                                    }}
+                                >
+                                    {'('} Đã đóng cửa {quanan.gio_mo_cua} - {quanan.gio_dong_cua} {')'}
+                                </span>
+                            )}
                         </h2>
-
                     </div>
                     <p className="mb-4">
                         {quanan.mo_ta}
@@ -495,15 +530,17 @@ const Gioithieu = () => {
                                             <div className="col-lg-12 mb-4">
                                                 <Box component="form" noValidate autoComplete="off">
                                                     <Grid container spacing={0.5}>
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="name"
-                                                                label="Tên của bạn*"
+                                                                label={
+                                                                    <span>
+                                                                        Tên của bạn<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 variant="outlined"
                                                                 defaultValue={accounts?.ten_nguoi_dung || ""}
-
-                                                                sx={{ mb: 2 }}
                                                                 {...register("ten_kh", {
                                                                     required: {
                                                                         value: true,
@@ -518,15 +555,18 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 type="number"
                                                                 fullWidth
                                                                 id="phone"
-                                                                label="Số điện thoại*"
+                                                                label={
+                                                                    <span>
+                                                                        Số điện thoại<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 variant="outlined"
                                                                 defaultValue={accounts?.so_dien_thoai || ""}
-                                                                sx={{ mb: 2 }}
                                                                 {...register("sdt", {
                                                                     required: {
                                                                         value: true,
@@ -553,16 +593,18 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="date"
-                                                                label="Ngày"
+                                                                label={
+                                                                    <span>
+                                                                        Ngày<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 type="date"
                                                                 InputLabelProps={{ shrink: true }}
                                                                 variant="outlined"
-                                                                required
-                                                                sx={{ mb: 2 }}
                                                                 {...register("ngay", {
                                                                     required: {
                                                                         value: true,
@@ -588,17 +630,19 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="date"
-                                                                label="Thời Gian"
+                                                                label={
+                                                                    <span>
+                                                                        Thời gian<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 type="text"
                                                                 InputLabelProps={{ shrink: true }}
                                                                 variant="outlined"
-                                                                required
                                                                 defaultValue={"00:00:00"}
-                                                                sx={{ mb: 3 }}
                                                                 {...register("thoi_gian", {
                                                                     validate: (thoi_gian) => {
                                                                         const quan = quanan
@@ -623,7 +667,7 @@ const Gioithieu = () => {
                                                                         if (thoi_gian === "00:00:00") {
                                                                             return "Thời gian không được bỏ trống";
                                                                         }
-
+                                                                    
                                                                         // Kiểm tra định dạng HH:mm:ss
                                                                         const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
                                                                         if (!timeRegex.test(thoi_gian)) {
@@ -642,15 +686,17 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="guests"
-                                                                label="Số lượng khách"
+                                                                label={
+                                                                    <span>
+                                                                        Số lượng khách<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 type="number"
                                                                 variant="outlined"
-                                                                required
-                                                                sx={{ mb: 2 }}
                                                                 {...register("so_luong", {
                                                                     required: {
                                                                         value: true,
@@ -671,15 +717,18 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="guests"
-                                                                label="Email*"
+                                                                label={
+                                                                    <span>
+                                                                        Email<span style={{ color: 'red' }}>*</span>
+                                                                    </span>
+                                                                }
                                                                 type="email"
                                                                 variant="outlined"
                                                                 defaultValue={accounts?.email || ""}
-                                                                sx={{ mb: 2 }}
                                                                 {...register("email", {
                                                                     required: {
                                                                         value: true,
@@ -698,19 +747,18 @@ const Gioithieu = () => {
                                                             )}
                                                         </Grid>
 
-                                                        <Grid item xs={12}>
+                                                        <Grid item xs={12} sx={{ mb: 2 }}>
                                                             <TextField
                                                                 fullWidth
                                                                 id="guests"
                                                                 label="Yêu cầu khác"
                                                                 type="text"
                                                                 variant="outlined"
-                                                                sx={{ mb: 2 }}
                                                                 {...register("yeu_cau", {
-                                                                    required: {
-                                                                        value: true,
-                                                                        message: "Yêu cầu không được bỏ trống"
-                                                                    }
+                                                                    // required: {
+                                                                    //     value: true,
+                                                                    //     message: "Yêu cầu không được bỏ trống"
+                                                                    // }
                                                                 })}
                                                             />
                                                             {formState?.errors?.yeu_cau && (
@@ -719,7 +767,6 @@ const Gioithieu = () => {
                                                                 </small>
                                                             )}
                                                         </Grid>
-
 
                                                         <Grid item xs={12}>
                                                             <Box display="flex" alignItems="center" className="mb-0">
@@ -907,9 +954,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.khongkhis?.length > 0 ? (
-                                                            quanan.khongkhis.map((khongkhi, index) =>
-                                                                (<div key={khongkhi.id_khongkhi}>
-                                                                    {khongkhi.khong_khi} </div>))) :
+                                                        quanan.khongkhis.map((khongkhi, index) =>
+                                                        (<div key={khongkhi.id_khongkhi}>
+                                                            {khongkhi.khong_khi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -918,9 +965,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.dichvus?.length > 0 ? (
-                                                            quanan.dichvus.map((dichvu, index) =>
-                                                                (<div key={dichvu.id_dichvu}>
-                                                                    {dichvu.dich_vu} </div>))) :
+                                                        quanan.dichvus.map((dichvu, index) =>
+                                                        (<div key={dichvu.id_dichvu}>
+                                                            {dichvu.dich_vu} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -929,9 +976,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.tiennghis?.length > 0 ? (
-                                                            quanan.tiennghis.map((tiennghi, index) =>
-                                                                (<div key={tiennghi.id_tiennghi}>
-                                                                    {tiennghi.tien_nghi} </div>))) :
+                                                        quanan.tiennghis.map((tiennghi, index) =>
+                                                        (<div key={tiennghi.id_tiennghi}>
+                                                            {tiennghi.tien_nghi} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -942,9 +989,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.kehoachs?.length > 0 ? (
-                                                            quanan.kehoachs.map((kehoach, index) =>
-                                                                (<div key={kehoach.id_kehoach}>
-                                                                    {kehoach.ke_hoach} </div>))) :
+                                                        quanan.kehoachs.map((kehoach, index) =>
+                                                        (<div key={kehoach.id_kehoach}>
+                                                            {kehoach.ke_hoach} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -953,9 +1000,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.baidoxes?.length > 0 ? (
-                                                            quanan.baidoxes.map((baidoxe, index) =>
-                                                                (<div key={baidoxe.id_baidoxe}>
-                                                                    {baidoxe.bai_do_xe} </div>))) :
+                                                        quanan.baidoxes.map((baidoxe, index) =>
+                                                        (<div key={baidoxe.id_baidoxe}>
+                                                            {baidoxe.bai_do_xe} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -964,9 +1011,9 @@ const Gioithieu = () => {
                                             <div className="row g-4 text-dark" style={{ whiteSpace: "nowrap" }}>
                                                 <div className="col-sm-4">
                                                     {quanan?.loaikhs?.length > 0 ? (
-                                                            quanan.loaikhs.map((loaikh, index) =>
-                                                                (<div key={loaikh.id_loaikh}>
-                                                                    {loaikh.khach_hang} </div>))) :
+                                                        quanan.loaikhs.map((loaikh, index) =>
+                                                        (<div key={loaikh.id_loaikh}>
+                                                            {loaikh.khach_hang} </div>))) :
                                                         "Chưa cập nhật"
                                                     }
                                                 </div>
@@ -1007,12 +1054,12 @@ const Gioithieu = () => {
                     <div className="row mb-3">
                         <div className="col-12">
                             <Link
-                                to={cookies.role === 1?`/profile`: '/login'}
+                                to={cookies.role === 1 ? `/profile` : '/login'}
                                 className="d-flex align-items-center mb-2"
                                 style={{ fontSize: "20px", fontWeight: "bold" }}
                             >
                                 <Button
-                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px"}}
+                                    style={{ borderRadius: "50px", fontSize: "15px", width: "150px", backgroundColor: "#d4a762", color: "white", marginRight: "-10px" }}
                                     className="mt-0"
                                 >
                                     Viết đánh giá
@@ -1039,10 +1086,7 @@ const Gioithieu = () => {
                                             style={{ borderRight: "1px solid #000" }}
                                         >
                                             <div className="row">
-
-
                                                 <div className="col-6 text-dark">
-
                                                     <p> Tuyệt vời</p>
                                                     <p> Rất tốt</p>
                                                     <p> Trung Bình</p>
@@ -1050,9 +1094,7 @@ const Gioithieu = () => {
                                                     <p> Kinh khủng</p>
                                                 </div>
                                                 <div className="col-6">
-
                                                     <p>
-
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
@@ -1060,7 +1102,6 @@ const Gioithieu = () => {
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         ({ratingCounts[5]})
                                                     </p>
-
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
@@ -1068,20 +1109,17 @@ const Gioithieu = () => {
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         ({ratingCounts[4]})
                                                     </p>
-
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         ({ratingCounts[3]})
                                                     </p>
-
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         ({ratingCounts[2]})
                                                     </p>
-
                                                     <p>
                                                         <i className="fas fa-star text-primary me-2"></i>
                                                         ({ratingCounts[1]})
