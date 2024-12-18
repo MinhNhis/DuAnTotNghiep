@@ -1,96 +1,53 @@
-*,
-*::before,
-*::after {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html,
-body,
-#root {
+/* Container styles */
+.travel-mode-container {
+    display: flex;
+    justify-content: flex-start; /* Các nút nằm sát nhau từ đầu container */
+    align-items: center;
     width: 100%;
-    height: 100%;
-}
-
-#map {
-    width: 100%;
-    height: 500px;
-    /* Giữ cố định height ở đây */
-}
-
-.leaflet-routing-container {
-    display: block; /* Sửa dấu nháy đơn thành đúng cú pháp */
-    max-height: 600px; /* Đặt chiều cao tối đa, có thể tùy chỉnh */
-    overflow-y: auto; /* Bật thanh cuộn dọc */
-    scrollbar-width: thin; /* (Tùy chọn) Làm thanh cuộn nhỏ hơn trên Firefox */
-}
-
-.leaflet-routing-container::-webkit-scrollbar {
-    width: 8px; /* Độ rộng thanh cuộn (trên trình duyệt Webkit) */
-}
-
-.leaflet-routing-container::-webkit-scrollbar-thumb {
-    background-color: #888; /* Màu thanh cuộn */
-    border-radius: 4px; /* Bo góc */
-}
-
-.leaflet-routing-container::-webkit-scrollbar-thumb:hover {
-    background-color: #555; /* Màu khi hover */
-}
-
-
-.directions-panel {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    background: #fff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-
-.leaflet-routing-container {
-    background-color: rgba(255, 255, 255, 0.8); /* Độ trong suốt của bảng */
-    border-radius: 10px; /* Bo tròn các góc */
-    padding: 10px; /* Khoảng cách bên trong */
-    width: 400px; /* Điều chỉnh độ rộng */
-    font-size: 12px; /* Cỡ chữ nhỏ */
-    font-family: Arial, sans-serif; /* Font chữ đơn giản */
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-}
-
-.leaflet-routing-container h2 {
-    font-size: 13px; /* Kích thước tiêu đề */
+    max-width: 400px;
+    margin: 0 auto;
+    gap: 15px; /* Khoảng cách giữa các nút */
+  }
+  
+  .travel-button {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: black;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 5px; /* Giảm padding để nút nhỏ lại */
+  }
+  
+  
+  .travel-button img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 5px;
+  }
+  
+  .travel-button.selected {
+    background-color: #e0f0ff;
+    border-radius: 50%;
+    color: #007bff;
     font-weight: bold;
-    margin-bottom: 10px; /* Khoảng cách dưới tiêu đề */
-    color: #2c3e50; /* Màu tiêu đề */
-}
-
-.leaflet-routing-alt {
-    margin-bottom: 3px; /* Khoảng cách giữa các phần chỉ đường */
-}
-
-.leaflet-routing-alt div {
-    line-height: 1; /* Khoảng cách dòng */
-}
-
-.leaflet-routing-container .leaflet-routing-alt-total {
-    font-size: 14px; /* Kích thước phần khoảng cách và thời gian */
-    font-weight: bold;
-    color: #e74c3c; /* Màu đỏ nổi bật */
-    margin-top: 5px;
-}
-
-.leaflet-routing-container .leaflet-routing-alternatives-container {
-    border-top: 1px solid #dcdcdc; /* Đường viền giữa các phần */
-    margin-top: 10px;
-}
-
-.leaflet-routing-container a {
-    text-decoration: none;
-    color: #3498db; /* Màu liên kết */
-    font-weight: bold;
-}
+  }
+  
+  /* Calculate button style */
+  .calculate-route {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .calculate-route:hover {
+    background-color: #0056b3;
+  }
+  

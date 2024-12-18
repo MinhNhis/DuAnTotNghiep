@@ -196,27 +196,29 @@ const Trangchu = () => {
             });
             const updatedResults = await Promise.all(promises);
             if (updatedResults) {
-                const sortedResults = updatedResults.sort((a, b) => a.km - b.km);
+                const sortedResults = updatedResults.sort((a, b) => {
+                    if (a.is_delete === 1 && b.is_delete !== 1) return 1;
+                    if (a.is_delete !== 1 && b.is_delete === 1) return -1;
+                    return a.km - b.km;
+                });
+
                 setDstimkiem(sortedResults);
-                setCheckTimKiem(true)
+                setCheckTimKiem(true);
             } else {
-                setCheckTimKiem(false)
+                setCheckTimKiem(false);
             }
+
 
         } catch (error) {
             console.error("Lỗi khi tìm kiếm:", error);
         }
     };
 
-
     return (
         <div className='container-fluid'>
             <div className="container-fluid bg-light py-3 my-6 mt-0">
                 <div className="container-fluid" style={{ position: 'relative', width: '100%' }}>
-                    <Suspense fallback={<div>Loading...</div>}>
-                        <Map quanan={quananMap} sizeData={quananMap.length} />
-                    </Suspense>
-
+                    <Map quanan={quananMap} sizeData={quananMap.length} />
                     <div style={{ position: 'absolute', top: '10px', left: '50px', zIndex: 2000 }}>
                         <div className="input-group mx-auto d-flex">
                             <input
@@ -323,7 +325,7 @@ const Trangchu = () => {
                             </div>
                         )}
 
-                        {dstimkiem.length === 0 && checkTimKiem && timKiem != '' && (
+                        {dstimkiem.length === 0 && checkTimKiem && timKiem !== '' && (
                             <div className="dropdown-menu show h-200 text-center">
                                 <p className="mb-3 mt-3">Không tìm thấy quán</p>
                             </div>
@@ -370,7 +372,7 @@ const Trangchu = () => {
                                                 </h5>
 
                                                 <div className='mb-1'>{renderStars(value.startTB)}</div>
-                                                <div className='mb-1'>{value.distanceKm} Km</div>
+                                                <div className='mb-1'>{value.distanceValue <= 100 ? value.distanceValue : (value.distanceValue / 1000).toFixed(1)} {value.distanceValue <= 100 ? 'm' : 'Km'}</div>
                                                 <div className='mb-1' style={{
                                                     color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red'
                                                 }}>
@@ -430,7 +432,7 @@ const Trangchu = () => {
                                                 {/* <div className='mb-1'>{value.distanceKm} Km</div> */}
                                                 <div className='mb-1' style={{
                                                     color: isOpen(value.gio_mo_cua, value.gio_dong_cua) ? 'green' : 'red',
-                                                    display: value.is_delete === 1? 'none': 'block'
+                                                    display: value.is_delete === 1 ? 'none' : 'block'
                                                 }}>
                                                     {isOpen(value.gio_mo_cua, value.gio_dong_cua) ? <p style={{ fontSize: "13px", marginBottom: "0px" }}>{value.gio_mo_cua}- {value.gio_dong_cua} Đang mở cửa</p> : <p style={{ fontSize: "13px", marginBottom: "0px" }}>Đã đóng cửa</p>}
                                                 </div>
@@ -486,7 +488,7 @@ const Trangchu = () => {
                             />
                         </TableRow>
                     </div>
-                    <div className="container-fluid event py-3">
+                    {/* <div className="container-fluid event py-3">
                         <div className="container">
                             <div className="hr-with-icon-centered">
                                 <hr />
@@ -497,7 +499,7 @@ const Trangchu = () => {
                             </div>
                             <Menu />
                         </div>
-                    </div>
+                    </div> */}
                     <div className="container-fluid blog py-3">
                         <div className="container">
                             <div className="hr-with-icon-centered">
@@ -508,7 +510,7 @@ const Trangchu = () => {
                                 <hr />
                             </div>
                             <div className="text-center wow " data-wow-delay="0.1s">
-                                <h1 className="display-5 mb-5">Các bài viết nổi bật </h1>
+                                <h1 className="display-5 mb-5">Các bài viết mới nhất </h1>
                             </div>
                             <div className="row gx-4 justify-content-center">
                                 {baiviets.length > 0 ? (

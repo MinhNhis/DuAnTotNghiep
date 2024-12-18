@@ -111,31 +111,33 @@ const AddQuanAn = () => {
     };
     const checkAddressExists = async (address) => {
         if (!address) return false;
-
+    
+        const apiKey = 'AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38';
+    
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`,
-                { signal: controller.signal }
-            );
-
-            clearTimeout(timeoutId);
-
-            if (response.ok) {
-                const data = await response.json();
-                return data.length > 0;
-            }
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+          const response = await fetch(
+            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`,
+            { signal: controller.signal }
+          );
+    
+          clearTimeout(timeoutId);
+    
+          if (response.ok) {
+            const data = await response.json();
+            return data.results.length > 0;
+          }
         } catch (error) {
-            if (error.name === 'AbortError') {
-                console.error("Request timed out");
-            } else {
-                console.error("Error checking address:", error);
-            }
+          if (error.name === 'AbortError') {
+            console.error("Request timed out");
+          } else {
+            console.error("Error checking address:", error);
+          }
         }
         return false;
-    };
+      };
     const onSubmit = async (value) => {
         try {
             const addressExists = await checkAddressExists(value?.dia_chi);
@@ -389,7 +391,7 @@ const AddQuanAn = () => {
                                 </div>
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Không khí</label>
+                                        <label className="form-label">Không gian</label>
                                         <Controller
                                             name="id_khongkhi"
                                             control={control}
@@ -404,6 +406,7 @@ const AddQuanAn = () => {
                                                         .filter((item) =>
                                                             item?.created_user === account?.id_nguoidung ||
                                                             item?.updated_user === account?.id_nguoidung ||
+                                                            item?.id_khongkhi === 80 ||
                                                             account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
@@ -472,6 +475,7 @@ const AddQuanAn = () => {
                                                             (item) =>
                                                                 item?.created_user === account?.id_nguoidung ||
                                                                 item?.updated_user === account?.id_nguoidung ||
+                                                                item?.id_tiennghi === 27 || item.id_tiennghi === 28 ||
                                                                 account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
@@ -547,6 +551,7 @@ const AddQuanAn = () => {
                                                         .filter((item) =>
                                                             item?.created_user === account?.id_nguoidung ||
                                                             item?.updated_user === account?.id_nguoidung ||
+                                                            item?.id_dichvu === 45 || item?.id_dichvu === 46 ||
                                                             account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
@@ -578,10 +583,10 @@ const AddQuanAn = () => {
                                             id="link_facebook"
                                             placeholder="Link Website"
                                             {...register("link_facebook", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Link Facebook không được bỏ trống",
-                                                },
+                                                // required: {
+                                                //     value: true,
+                                                //     message: "Link Facebook không được bỏ trống",
+                                                // },
                                             })}
                                         />
                                         {formState?.errors?.link_facebook && (
@@ -610,6 +615,7 @@ const AddQuanAn = () => {
                                                         .filter((item) =>
                                                             item?.created_user === account?.id_nguoidung ||
                                                             item?.updated_user === account?.id_nguoidung ||
+                                                            item?.id_baidoxe === 20 || item?.id_baidoxe === 21 || item?.id_baidoxe === 22 ||
                                                             account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
@@ -643,10 +649,10 @@ const AddQuanAn = () => {
                                             id="link_website"
                                             placeholder="Link Website"
                                             {...register("link_website", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Link Website không được bỏ trống",
-                                                },
+                                                // required: {
+                                                //     value: true,
+                                                //     message: "Link Website không được bỏ trống",
+                                                // },
                                             })}
                                         />
                                         {formState?.errors?.link_website && (
@@ -673,6 +679,7 @@ const AddQuanAn = () => {
                                                         .filter((item) =>
                                                             item?.created_user === account?.id_nguoidung ||
                                                             item?.updated_user === account?.id_nguoidung ||
+                                                            item?.id_kehoach === 24||
                                                             account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
