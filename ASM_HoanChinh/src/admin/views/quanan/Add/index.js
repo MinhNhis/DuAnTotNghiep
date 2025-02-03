@@ -4,7 +4,7 @@ import makeAnimated from 'react-select/animated';
 import './index.css';
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, LoadScriptNext } from '@react-google-maps/api';
 import { Card, CardContent, Divider, Box, Typography, TextField, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 import { useSnackbar } from 'notistack';
 
@@ -20,7 +20,7 @@ const mapContainerStyle = {
   height: '50vh',
 };
 const AddQuanAn = () => {
-  const { register, handleSubmit, setValue, formState } = useForm();
+  const { register, handleSubmit, setValue, getValues, formState } = useForm();
   const [map, setMap] = useState(null);
   const [address, setAddress] = useState(null);
   const [quanan, setQuanan] = useState([]);
@@ -345,23 +345,14 @@ const AddQuanAn = () => {
                           defaultValue={'00:00:00'}
                           placeholder="Giờ hoạt động"
                           {...register("gio_mo_cua", {
-                            validate: (gio_mo_cua) => {
-                              if (gio_mo_cua === '00:00:00') {
-                                return "Vui lòng thêm giờ mở cửa"
-                              }
-                              return true
-                            },
                             validate: (thoi_gian) => {
                               if (thoi_gian === "00:00:00") {
                                 return "Thời gian không được bỏ trống";
                               }
-
-                              // Kiểm tra định dạng HH:mm:ss
                               const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
                               if (!timeRegex.test(thoi_gian)) {
                                 return "Thời gian không đúng định dạng";
                               }
-
                               return true;
                             }
                           })}
@@ -379,7 +370,6 @@ const AddQuanAn = () => {
                           Giờ đóng cửa
                           <span style={{ color: 'red', marginLeft: '5px' }}>*</span>
                         </label>
-
                         <TextField
                           type="text"
                           fullWidth
@@ -390,23 +380,18 @@ const AddQuanAn = () => {
                           defaultValue={"00:00:00"}
                           placeholder="Giờ đóng cửa"
                           {...register("gio_dong_cua", {
-                            validate: (gio_dong_cua) => {
-                              if (gio_dong_cua === '00:00:00') {
-                                return "Vui lòng thêm giờ đóng cửa"
-                              }
-                              return true
-                            },
                             validate: (thoi_gian) => {
+                              const gioMoCua = getValues("gio_mo_cua");
                               if (thoi_gian === "00:00:00") {
                                 return "Thời gian không được bỏ trống";
                               }
-
-                              // Kiểm tra định dạng HH:mm:ss
                               const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
                               if (!timeRegex.test(thoi_gian)) {
                                 return "Thời gian không đúng định dạng";
                               }
-
+                              if (gioMoCua && new Date(`1970-01-01T${thoi_gian}`) < new Date(`1970-01-01T${gioMoCua}`)) {
+                                return "Giờ đóng cửa phải lớn hơn giờ mở cửa";
+                              }
                               return true;
                             }
                           })}
@@ -420,6 +405,7 @@ const AddQuanAn = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="col-6" style={{ display: 'none' }}>
                   <div className="mb-3">
                     <label className="form-label">Loại Khách hàng</label>
@@ -706,7 +692,7 @@ const AddQuanAn = () => {
                 </div>
                 <div className="mb-3" style={{ display: openDialog ? 'block' : 'none' }}>
                   <p><strong>Vui lòng xác nhận vị trí !</strong></p>
-                  <LoadScript googleMapsApiKey="AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38">
+                  <LoadScriptNext googleMapsApiKey="AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38">
                     <GoogleMap
                       mapContainerStyle={mapContainerStyle}
                       center={coordinates}
@@ -724,7 +710,7 @@ const AddQuanAn = () => {
                         />
                       ))}
                     </GoogleMap>
-                  </LoadScript>
+                  </LoadScriptNext>
                 </div>
               </div>
               <div className="mb-3">

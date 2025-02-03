@@ -270,7 +270,7 @@ const Gioithieu = () => {
                             setOpenDialog(true);
                         }
                     } else {
-                        return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng chọn thời gian khác cách 2 giờ hoặc ngày khác !`, { variant: "error" });
+                        return enqueueSnackbar(`Số lượng chỗ không đủ. Thời gian này chỉ còn ${so_luong_cho_trong} chỗ! Vui lòng quay lại sau!`, { variant: "error" });
                     }
                 })
 
@@ -314,7 +314,7 @@ const Gioithieu = () => {
         let foodCount = 0;
         let serviceCount = 0;
         let atmosphereCount = 0;
-        let counts= {
+        let counts = {
             5: 0,
             4: 0,
             3: 0,
@@ -376,7 +376,7 @@ const Gioithieu = () => {
             enqueueSnackbar("Có lỗi xảy ra khi thanh toán", { variant: "error" })
         }
     };
-    return (
+    return quanan.is_delete === 0 && (
         <>
             <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ fontSize: "30px" }}>Xác nhận đặt cọc</DialogTitle>
@@ -505,7 +505,7 @@ const Gioithieu = () => {
                                         fontWeight: "normal",
                                     }}
                                 >
-                                   {'('} Đang mở cửa {quanan.gio_mo_cua} - {quanan.gio_dong_cua} {')'}
+                                    {'('} Đang mở cửa {quanan.gio_mo_cua} - {quanan.gio_dong_cua} {')'}
                                 </span>
                             ) : (
                                 <span
@@ -670,7 +670,7 @@ const Gioithieu = () => {
                                                                         if (thoi_gian === "00:00:00") {
                                                                             return "Thời gian không được bỏ trống";
                                                                         }
-                                                                    
+
                                                                         // Kiểm tra định dạng HH:mm:ss
                                                                         const timeRegex = /^([01]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
                                                                         if (!timeRegex.test(thoi_gian)) {

@@ -111,33 +111,33 @@ const AddQuanAn = () => {
     };
     const checkAddressExists = async (address) => {
         if (!address) return false;
-    
+
         const apiKey = 'AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38';
-    
+
         try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 10000);
-    
-          const response = await fetch(
-            `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`,
-            { signal: controller.signal }
-          );
-    
-          clearTimeout(timeoutId);
-    
-          if (response.ok) {
-            const data = await response.json();
-            return data.results.length > 0;
-          }
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`,
+                { signal: controller.signal }
+            );
+
+            clearTimeout(timeoutId);
+
+            if (response.ok) {
+                const data = await response.json();
+                return data.results.length > 0;
+            }
         } catch (error) {
-          if (error.name === 'AbortError') {
-            console.error("Request timed out");
-          } else {
-            console.error("Error checking address:", error);
-          }
+            if (error.name === 'AbortError') {
+                console.error("Request timed out");
+            } else {
+                console.error("Error checking address:", error);
+            }
         }
         return false;
-      };
+    };
     const onSubmit = async (value) => {
         try {
             const addressExists = await checkAddressExists(value?.dia_chi);
@@ -223,28 +223,32 @@ const AddQuanAn = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className="col-6">
-                                    <label className="form-label">Hình ảnh</label>
-                                    <TextField
-                                        type="file"
-                                        fullWidth
-                                        variant="outlined"
-                                        name="images"
-                                        id="images"
-                                        {...register("hinh_anh", {
-                                            // required: {
-                                            //     value: true,
-                                            //     message: "Hình ảnh không được bỏ trống"
-                                            // }
-                                        })}
-                                    />
-                                    {formState?.errors?.hinh_anh && (
-                                        <small className="text-danger">
-                                            {formState?.errors?.hinh_anh?.message}
-                                        </small>
-                                    )}
-                                </div>
 
+                                <div className="col-6">
+                                    <div className="mb-3">
+                                        <label className="form-label">Địa chỉ</label>
+                                        <TextField
+                                            type="text"
+                                            fullWidth variant="outlined"
+                                            min={0}
+                                            name="dia_chi"
+                                            id="dia_chi"
+                                            placeholder="Địa chỉ"
+                                            {...register("dia_chi", {
+                                                required: {
+                                                    value: true,
+                                                    message: "Địa chỉ không được bỏ trống",
+                                                },
+                                            })}
+                                        />
+
+                                        {formState?.errors?.dia_chi && (
+                                            <small className="text-danger">
+                                                {formState?.errors?.dia_chi?.message}
+                                            </small>
+                                        )}
+                                    </div>
+                                </div>
 
                                 <div className="col-6">
                                     <div className="row">
@@ -326,7 +330,7 @@ const AddQuanAn = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="col-6">
+                                <div className="col-6" style={{ display: 'none' }}>
                                     <div className="mb-3">
                                         <label className="form-label">Loại Khách hàng</label>
                                         <Controller
@@ -366,31 +370,6 @@ const AddQuanAn = () => {
 
                                 <div className="col-6">
                                     <div className="mb-3">
-                                        <label className="form-label">Địa chỉ</label>
-                                        <TextField
-                                            type="text"
-                                            fullWidth variant="outlined"
-                                            min={0}
-                                            name="dia_chi"
-                                            id="dia_chi"
-                                            placeholder="Địa chỉ"
-                                            {...register("dia_chi", {
-                                                required: {
-                                                    value: true,
-                                                    message: "Địa chỉ không được bỏ trống",
-                                                },
-                                            })}
-                                        />
-
-                                        {formState?.errors?.dia_chi && (
-                                            <small className="text-danger">
-                                                {formState?.errors?.dia_chi?.message}
-                                            </small>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="col-6">
-                                    <div className="mb-3">
                                         <label className="form-label">Không gian</label>
                                         <Controller
                                             name="id_khongkhi"
@@ -427,6 +406,7 @@ const AddQuanAn = () => {
                                         />
                                     </div>
                                 </div>
+
                                 <div className="col-6">
                                     <div className="mb-3">
                                         <label className="form-label">Số lượng chỗ</label>
@@ -679,7 +659,7 @@ const AddQuanAn = () => {
                                                         .filter((item) =>
                                                             item?.created_user === account?.id_nguoidung ||
                                                             item?.updated_user === account?.id_nguoidung ||
-                                                            item?.id_kehoach === 24||
+                                                            item?.id_kehoach === 24 ||
                                                             account?.vai_tro === 0
                                                         )
                                                         .map((item) => ({
@@ -700,7 +680,27 @@ const AddQuanAn = () => {
                                         />
                                     </div>
                                 </div>
-
+                                <div className="col-6">
+                                    <label className="form-label">Hình ảnh</label>
+                                    <TextField
+                                        type="file"
+                                        fullWidth
+                                        variant="outlined"
+                                        name="images"
+                                        id="images"
+                                        {...register("hinh_anh", {
+                                            // required: {
+                                            //     value: true,
+                                            //     message: "Hình ảnh không được bỏ trống"
+                                            // }
+                                        })}
+                                    />
+                                    {formState?.errors?.hinh_anh && (
+                                        <small className="text-danger">
+                                            {formState?.errors?.hinh_anh?.message}
+                                        </small>
+                                    )}
+                                </div>
                                 <div className="col-12">
                                     <div className="mb-3">
                                         <label className="form-label">Mô tả giới thiệu</label>

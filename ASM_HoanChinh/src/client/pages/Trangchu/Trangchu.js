@@ -101,7 +101,7 @@ const Trangchu = () => {
     const checkLoca = async (quanan, danhgia, retries = 3) => {
         try {
             if (quanan) {
-                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceKm - b.distanceKm);
+                const sortedQuanan = [...quanan5km].sort((a, b) => a.distanceValue - b.distanceValue);
                 const promises = sortedQuanan.map(async (item, index) => {
                     const { totalStars, count } = danhgia.reduce(
                         (acc, e) => {
@@ -149,6 +149,7 @@ const Trangchu = () => {
 
     const checkKm = async (latitude, longitude) => {
         try {
+            
             const currentLocation = locationRef.current;
             if (!currentLocation.latitude || !currentLocation.longitude) {
                 console.error("Vị trí người dùng không hợp lệ.");

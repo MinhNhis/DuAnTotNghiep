@@ -577,6 +577,7 @@ const ListQuanAn = () => {
                         color: "#000",
                         textAlign: "center",
                         paddingTop: "10px",
+                        mb: 3
                       }}
                     >
                       Hiện tại chưa có đánh giá nào.

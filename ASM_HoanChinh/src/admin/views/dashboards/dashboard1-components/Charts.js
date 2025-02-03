@@ -67,7 +67,7 @@ const Charts = () => {
           />
         </div>
 
-        <div style={{ flex: "1", minWidth: "400px", backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
+        {/* <div style={{ flex: "1", minWidth: "400px", backgroundColor: "#ffffff", padding: "20px", borderRadius: "8px", boxShadow: "0 4px 6px rgba(0,0,0,0.1)" }}>
           <h3 style={{ textAlign: "center", fontSize: "18px", fontWeight: "600", marginBottom: "10px" }}>
             Biểu đồ đường
           </h3>
@@ -104,7 +104,7 @@ const Charts = () => {
             ]}
             margin={{ top: 10, bottom: 50, left: 60, right: 20 }}
           />
-        </div>
+        </div> */}
       </div>
     </div>
 

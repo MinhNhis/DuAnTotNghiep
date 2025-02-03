@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsRenderer, InfoWindow } from '@react-google-maps/api';
+import { GoogleMap, LoadScriptNext, Marker, DirectionsRenderer, InfoWindow } from '@react-google-maps/api';
 import { BASE_URL } from '../../../config/ApiConfig';
 import { Link } from 'react-router-dom';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
@@ -13,8 +13,8 @@ const mapContainerStyle = {
   height: '100vh',
 };
 const center = {
-  lat: 10.0447975,
-  lng: 105.7475986,
+  lat: 9.981928881882581,
+  lng: 105.75831424635241,
 };
 
 const Map = ({ quanan, sizeData }) => {
@@ -94,7 +94,7 @@ const Map = ({ quanan, sizeData }) => {
       });
     } catch (error) {
       console.error("Lỗi khi tính toán tuyến đường:", error);
-      alert("Không thể tính toán tuyến đường. Vui lòng thử lại!");
+      // alert("Không thể tính toán tuyến đường. Vui lòng thử lại!");
     }
   };
 
@@ -115,7 +115,7 @@ const Map = ({ quanan, sizeData }) => {
           const distanceText = result.routes[0]?.legs[0]?.distance?.text;
           const distanceValue = result.routes[0]?.legs[0]?.distance?.value;
 
-          if (distanceValue && distanceValue <= 10000 && quan.is_delete === 0) {
+          if (distanceValue && distanceValue <= 5000 && quan.is_delete === 0) {
             setQuanan5Km((prevQuan) => {
               const isDuplicate = prevQuan.some(existingQuan => existingQuan.id_quanan === quan.id_quanan);
               if (!isDuplicate) {
@@ -187,11 +187,17 @@ const Map = ({ quanan, sizeData }) => {
           </div>
         </div>
       )}
-      <LoadScript googleMapsApiKey="AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38">
+      <LoadScriptNext googleMapsApiKey="AIzaSyBzpubjljfcqi-sdF4Ta6sOqjCljxttN38">
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           center={userLocation}
-          zoom={14}
+          zoom={13}
+          options={{
+            mapTypeControl: sizeData === 1 ? true : false,
+            fullscreenControl: false,
+            streetViewControl: false,
+            zoomControl: true,
+          }}
         >
           {userLocation && (
             <Marker position={userLocation} label="Vị trí hiện tại" />
@@ -199,14 +205,15 @@ const Map = ({ quanan, sizeData }) => {
 
           {quanan.map((quan, index) => (
             <React.Fragment key={index}>
-              <Marker
+              {sizeData > 1? <Marker
                 position={userLocation}
                 icon={{
                   url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png",
                   scaledSize: new window.google.maps.Size(50, 50),
                 }}
               />
-              {quan.is_delete === 0 ? (
+              : null}
+              {quan.is_delete === 0 && sizeData > 1 ? (
                 <Marker
                   position={{ lat: quan.lat, lng: quan.lng }}
                   label={{
@@ -289,7 +296,7 @@ const Map = ({ quanan, sizeData }) => {
                   strokeWeight: 6,
                 },
                 draggable: true,
-                suppressMarkers: true,
+                suppressMarkers: false,
               }}
               onLoad={(directionsRenderer) => {
                 if (directionsPanelRef.current) {
@@ -325,7 +332,7 @@ const Map = ({ quanan, sizeData }) => {
           )}
 
         </GoogleMap>
-      </LoadScript>
+      </LoadScriptNext>
     </div>
   ) : null;
 };
